@@ -1,9 +1,9 @@
 .visualizer-container {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 350px 1fr;
     grid-template-rows: auto auto;
     gap: 20px;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -27,6 +27,7 @@
     display: block;
     padding: 2px 5px;
     border-radius: 3px;
+    white-space: pre;
 }
 
 #cpp-code span.highlight {
@@ -41,7 +42,98 @@
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    min-height: 400px;
+    min-height: 500px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab-btn:hover {
+    color: #3498db;
+    background: #f9f9f9;
+}
+
+.tab-btn.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Grid Layout */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+    font-family: monospace;
+}
+
+.grid-cell {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+    position: relative;
+    background: #fff;
+    min-height: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.grid-cell .addr {
+    font-size: 9px;
+    color: #999;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.grid-cell .val {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Variable Colors */
+.var-a { background-color: #e3f2fd; }
+.var-p { background-color: #fce4ec; }
+.var-arr { background-color: #e8f5e9; }
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 12px;
+}
+
+.color-box {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    border: 1px solid #ccc;
 }
 
 .control-panel {
