@@ -19,11 +19,11 @@
             <pre id="cpp-code">
 <span id="line-1">int main() {</span>
 <span id="line-2">    int a = 10;</span>
-<span id="line-3">    int *p = &a;</span>
+<span id="line-3">    int *p = &amp;a;</span>
 <span id="line-4">    int arr[3] = {1, 2, 3};</span>
 <span id="line-5">    *p = 100;</span>
 <span id="line-6">    arr[1] = 50;</span>
-<span id="line-7">    p = &arr[2];</span>
+<span id="line-7">    p = &amp;arr[2];</span>
 <span id="line-8">    *p = 99;</span>
 <span id="line-9">    return 0;</span>
 <span id="line-10">}</span></pre>
@@ -69,6 +69,6 @@
         </div>
     </main>
 
-    <script src="js/script.js"></script>
+    <script type="module" src="js/script.js"></script>
 </body>
 </html>
