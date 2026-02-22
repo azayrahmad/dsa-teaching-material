@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pointer & Array Visualizer - DSA</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <a href="../../index.html" class="back-link">← Back to Home</a>
+        <h1>Pointer & Array Visualizer</h1>
+    </header>
+
+    <main class="visualizer-container">
+        <div class="code-panel">
+            <h3>C++ Code</h3>
+            <pre id="cpp-code">
+<span id="line-1">int main() {</span>
+<span id="line-2">    int a = 10;</span>
+<span id="line-3">    int *p = &amp;a;</span>
+<span id="line-4">    int arr[3] = {1, 2, 3};</span>
+<span id="line-5">    *p = 100;</span>
+<span id="line-6">    arr[1] = 50;</span>
+<span id="line-7">    p = &amp;arr[2];</span>
+<span id="line-8">    *p = 99;</span>
+<span id="line-9">    return 0;</span>
+<span id="line-10">}</span></pre>
+        </div>
+
+        <div class="viz-panel">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="simplified">Simplified View</button>
+                <button class="tab-btn" data-tab="grid">Memory Grid (Byte-level)</button>
+            </div>
+
+            <div id="simplified" class="tab-content active">
+                <h3>Simplified Visualization</h3>
+                <div id="svg-container">
+                    <svg id="memory-svg" width="100%" height="400" viewBox="0 0 400 400">
+                        <!-- Simplified memory boxes and arrows -->
+                    </svg>
+                </div>
+            </div>
+
+            <div id="grid" class="tab-content">
+                <h3>Memory Grid (1 cell = 1 byte)</h3>
+                <div class="grid-controls">
+                    <span class="legend-item"><span class="color-box var-a"></span> a (int)</span>
+                    <span class="legend-item"><span class="color-box var-p"></span> p (int*)</span>
+                    <span class="legend-item"><span class="color-box var-arr"></span> arr (int[3])</span>
+                </div>
+                <div id="memory-grid" class="memory-grid">
+                    <!-- Grid cells will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <h3>Controls</h3>
+            <div class="buttons">
+                <button id="reset-btn">Reset</button>
+                <button id="step-btn">Next Step</button>
+            </div>
+            <div class="status-msg" id="status-msg">
+                Click "Next Step" to begin.
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>
