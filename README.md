@@ -3,6 +3,9 @@ Teaching material for Data Structures & Algorithms course. The syllabus is based
 
 I'm still in the process of sorting it out and restructuring it.
 
+## [New] Interactive Visualizers
+Check out our interactive DSA visualizers [here](./website/index.html).
+
 ## What's covered
 - Basic data collections
 - Sorting and searching algorithms
