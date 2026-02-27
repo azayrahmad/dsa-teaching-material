@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSA Materials</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 80px 0;
+      background: radial-gradient(ellipse at center, rgba(240,192,64,0.05) 0%, transparent 70%);
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .topic-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .topic-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .topic-card h3 {
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    .topic-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav class="top-nav">
+    <div class="nav-links">
+      <a href="/" data-i18n="home">Beranda</a>
+    </div>
+    <div class="controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <h1 data-i18n="welcome">Selamat Datang di Materi Struktur Data & Algoritma</h1>
+      <p data-i18n="subtitle">Materi kuliah, slide interaktif, dan contoh kode C++.</p>
+    </section>
+
+    <h2 data-i18n="topics" style="margin-top: 40px;">Daftar Topik</h2>
+    <div class="topic-grid">
+      <a href="/topics/pointer.html" class="topic-card">
+        <h3>Pointer</h3>
+        <p>Fondasi utama dalam pengelolaan memori dan struktur data dinamis.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Array</h3>
+        <p>Koleksi data linear dengan ukuran tetap.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Struct</h3>
+        <p>Mendefinisikan tipe data bentukan sendiri.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Linked List</h3>
+        <p>Struktur data dinamis yang saling terhubung melalui pointer.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Stack & Queue</h3>
+        <p>Struktur data LIFO dan FIFO.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Searching</h3>
+        <p>Algoritma pencarian Linear dan Binary.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Sorting</h3>
+        <p>Berbagai teknik pengurutan data.</p>
+      </a>
+      <a href="/topics/coming-soon.html" class="topic-card">
+        <h3>Tree</h3>
+        <p>Struktur data hirarkis.</p>
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initApp } from '/src/main.js';
+    initApp();
+  </script>
+</body>
+</html>
