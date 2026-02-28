@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 2 – POINTER sebagai Fondasi Struktur Data</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+<link rel="stylesheet" href="/src/slides.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="/topics/pointer.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" id="slide-0">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 02</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Fondasi</div>
+    <div class="slide-title">POINTER<br><span class="highlight">sebagai Fondasi</span><br>Struktur Data</div>
+    <div class="subtitle">160 menit · 8 Bagian · 13 Slide</div>
+    <div class="desc">Dirancang secara spiral — bukan hanya untuk minggu ini, tetapi menyiapkan Linked List (M6–7) and Tree (M15). Bertahap, tidak overload.</div>
+  </div>
+
+  <!-- SLIDE 1: OVERVIEW / TOC -->
+  <div class="slide" id="slide-1">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Learning Flow</div>
+    <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🔁 Memory Mindset</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">🧠 Pointer Dasar</div><div class="toc-time">35 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Pass by Address</div><div class="toc-time">25 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🔢 Pointer & Array</div><div class="toc-time">20 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">➕ Pointer Arithmetic</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🪞 Double Pointer</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏗 Preview Heap</div><div class="toc-time">10 menit</div></div></div>
+      <div class="toc-item"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🧩 Big Picture</div><div class="toc-time">10 menit</div></div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Memory Mindset -->
+  <div class="slide" id="slide-2">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Memory Mindset · 15 menit</div>
+    <div class="slide-title">Dari <span class="highlight">Variabel</span><br>ke Memori</div>
+    <div class="slide-body">
+      <p>Pemrograman dasar membuat kita fokus pada <strong>nilai</strong>.<br>
+      Struktur data membuat kita fokus pada <strong class="accent">lokasi nilai</strong>.</p>
+      <br>
+      <p>Komputer tidak menyimpan "nama variabel" — yang disimpan adalah:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><strong class="blue">Alamat</strong> — di mana dalam memori nilai itu berada</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong class="green">Isi</strong> — nilai apa yang tersimpan di sana</span></div>
+      </div>
+      <div class="quote">Jika dua variabel menyimpan nilai sama, apakah mereka berada di tempat yang sama?</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Visualisasi Memori -->
+  <div class="slide" id="slide-3">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Memory Mindset</div>
+    <div class="slide-title">🖥 Visualisasi <span class="highlight">Memori</span></div>
+    <div class="slide-body">
+      <p>Setiap variabel menempati <strong>slot unik</strong> di memori:</p>
+      <div class="mem-grid" style="margin-top:28px;">
+        <div class="mem-cell active-cell">
+          <div class="addr">0x1A04</div>
+          <div class="val">10</div>
+          <div class="varlabel">int x</div>
+        </div>
+        <div class="mem-cell">
+          <div class="addr">0x1A08</div>
+          <div class="val">10</div>
+          <div class="varlabel">int y</div>
+        </div>
+      </div>
+      <div class="kp" style="margin-top:24px;">
+        <div class="kp-item"><span class="icon">▸</span><span>x dan y punya nilai sama (<strong class="accent">10</strong>), tapi <strong>alamat berbeda</strong></span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Alamat <strong>tidak bisa kita pilih</strong> — tapi bisa kita <strong class="green">akses</strong></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Definisi Pointer -->
+  <div class="slide" id="slide-4">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Pointer Dasar · 35 menit</div>
+    <div class="slide-title">🧠 Definisi <span class="highlight">Pointer</span></div>
+    <div class="slide-body">
+      <p>Pointer adalah <strong class="accent">variabel yang menyimpan alamat memori</strong>.</p>
+      <pre><span class="type">int</span> x  = 10;
+<span class="type">int</span> *p = &amp;x;   <span class="comment">// p menyimpan alamat x</span></pre>
+      <div class="mem-grid">
+        <div class="mem-cell active-cell">
+          <div class="addr">0x1A04</div>
+          <div class="val">10</div>
+          <div class="varlabel">int x</div>
+        </div>
+        <div class="mem-cell pointer-cell" style="border-color:var(--accent3);">
+          <div class="addr">0x1A08</div>
+          <div class="val">0x1A04</div>
+          <div class="varlabel" style="color:var(--accent3);">int *p</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: 4 Perspektif -->
+  <div class="slide" id="slide-5">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Pointer Dasar</div>
+    <div class="slide-title">4 <span class="highlight">Perspektif</span> Penting</div>
+    <div class="slide-body">
+      <table style="width: 100%;">
+        <tr><th>Ekspresi</th><th>Makna</th><th>Contoh</th></tr>
+        <tr><td>x</td><td>nilai langsung</td><td style="color:var(--accent)">10</td></tr>
+        <tr><td>&amp;x</td><td>alamat x</td><td style="color:var(--accent4)">0x1A04</td></tr>
+        <tr><td>p</td><td>alamat di p</td><td style="color:var(--accent3)">0x1A04</td></tr>
+        <tr><td>*p</td><td>isi alamat</td><td style="color:var(--accent)">10</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Kesalahan Umum -->
+  <div class="slide" id="slide-6">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Pointer Dasar</div>
+    <div class="slide-title">⚠️ Kesalahan <span class="highlight">Umum</span></div>
+    <div class="slide-body">
+      <div class="tip-box">
+        <div class="tip-label">⛔ Berbahaya</div>
+        Pointer belum diinisialisasi (wild pointer).
+      </div>
+      <div class="tip-box">
+        <div class="tip-label">⛔ Berbahaya</div>
+        Dereference NULL (Segmentation Fault).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Pass by Value vs Address -->
+  <div class="slide" id="slide-7">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Pass by Address · 25 menit</div>
+    <div class="slide-title">🔄 Pass by <span class="highlight">Address</span></div>
+    <div class="cols">
+      <div class="col">
+        <p style="color:var(--accent4); font-size:0.8rem;">❌ VALUE</p>
+        <pre><span class="type">void</span> f(<span class="type">int</span> a) { a++; }</pre>
+      </div>
+      <div class="col">
+        <p style="color:var(--accent2); font-size:0.8rem;">✅ ADDRESS</p>
+        <pre><span class="type">void</span> f(<span class="type">int</span> *a) { (*a)++; }</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Pointer & Array -->
+  <div class="slide" id="slide-8">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pointer &amp; Array</div>
+    <div class="slide-title">🔢 Pointer &amp; <span class="highlight">Array</span></div>
+    <div class="slide-body">
+      <div class="equation">arr[i] ≡ *(arr + i)</div>
+      <pre><span class="type">int</span> arr[3] = {10, 20, 30};
+<span class="type">int</span> *p = arr;</pre>
+      <div class="mem-grid">
+        <div class="mem-cell active-cell"><div class="addr">0x100</div><div class="val">10</div></div>
+        <div class="mem-cell"><div class="addr">0x104</div><div class="val">20</div></div>
+        <div class="mem-cell"><div class="addr">0x108</div><div class="val">30</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Pointer Arithmetic -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Arithmetic</div>
+    <div class="slide-title">➕ Pointer <span class="highlight">Arithmetic</span></div>
+    <div class="slide-body">
+      <p>Lompatan sesuai <strong>ukuran tipe</strong>.</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>int = 4 byte</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>char = 1 byte</span></div>
+      </div>
+      <pre>p++; <span class="comment">// maju ke elemen berikutnya</span></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Double Pointer -->
+  <div class="slide" id="slide-10">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 6 · Double Pointer</div>
+    <div class="slide-title">🪞 Double <span class="highlight">Pointer</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> x = 10;
+<span class="type">int</span> *p = &amp;x;
+<span class="type">int</span> **pp = &amp;p;</pre>
+      <div class="mem-grid">
+        <div class="mem-cell active-cell"><div class="addr">0x100</div><div class="val">10</div></div>
+        <div class="mem-cell pointer-cell"><div class="addr">0x200</div><div class="val">0x100</div></div>
+        <div class="mem-cell pointer-cell" style="border-color:var(--accent4);"><div class="addr">0x300</div><div class="val">0x200</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Stack vs Heap -->
+  <div class="slide" id="slide-11">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 7 · Memory Allocation</div>
+    <div class="slide-title">🏗 Stack vs <span class="highlight">Heap</span></div>
+    <div class="cols">
+      <div class="col">
+        <p class="blue">STACK</p>
+        <p>Otomatis, statis.</p>
+      </div>
+      <div class="col">
+        <p class="green">HEAP</p>
+        <p>Manual (malloc/new), dinamis.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Summary -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 13</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 8 · Kesimpulan</div>
+    <div class="slide-title">🏁 <span class="highlight">Ringkasan</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Pointer menyimpan <strong>alamat</strong>.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><code>*p</code> mengakses <strong>nilai</strong>.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Fondasi utama untuk <strong>Struktur Data</strong>.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 13</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '/src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next < 0 || next >= total) return;
+    slides[current].className = dir > 0 ? 'slide prev' : 'slide';
+    current = next;
+    slides[current].className = 'slide active';
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
