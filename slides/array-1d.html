@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 3 – ARRAY 1 DIMENSI – PENDALAMAN & POLA ALGORITMIK</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+<link rel="stylesheet" href="/src/slides.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="/topics/array.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" id="slide-0">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 03</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Array 1D</div>
+    <div class="slide-title">ARRAY 1 DIMENSI:<br><span class="highlight">Pendalaman &amp;</span><br>Pola Algoritmik</div>
+    <div class="subtitle">160 menit · 8 Bagian · 21 Slide</div>
+    <div class="desc">Dari variabel banyak ke struktur data yang terorganisasi. Fokus pada manipulasi sistematis dan pola algoritma umum.</div>
+  </div>
+
+  <!-- SLIDE 1: TUJUAN -->
+  <div class="slide" id="slide-1">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pertemuan</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Menjelaskan penyimpanan array di memori.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Akses dan manipulasi array secara sistematis.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Implementasi pola umum (Traversal, Akumulasi, Cari, Maks/Min).</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Merancang solusi berbasis array untuk kasus sederhana.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: STRUKTUR -->
+  <div class="slide" id="slide-2">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Learning Flow</div>
+    <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🟦 Pembukaan &amp; Koneksi</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">🟦 Struktur Dasar</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🟦 Pola 1: Traversal</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🟦 Pola 2: Akumulasi</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">🟦 Pola 3: Maks &amp; Min</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🟦 Pola 4: Pencarian</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🟦 Mini Project</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🟦 Refleksi</div><div class="toc-time">10 min</div></div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Slide 1 - Judul (Bagian 1) -->
+  <div class="slide" id="slide-3">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Pembukaan &amp; Koneksi · 15 menit</div>
+    <div class="slide-title">Array 1 Dimensi:<br>Dari <span class="highlight">Variabel Banyak</span><br>ke Struktur Data</div>
+    <div class="slide-body">
+      <p>Array bukan hanya “kumpulan variabel”.</p>
+      <p>Ini adalah <strong>struktur data pertama</strong> yang benar-benar terorganisasi.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Slide 2 - Review Pointer -->
+  <div class="slide" id="slide-4">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Review Pointer</div>
+    <div class="slide-title">🧠 Review <span class="highlight">Pointer</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">?</span><span>Apa itu alamat memori?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Apa hubungan pointer dan array?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Mengapa <code>arr</code> bisa dianggap sebagai alamat?</span></div>
+      </div>
+      <pre style="margin-top:20px;"><span class="type">int</span> arr[5]; <span class="comment">// arr adalah alamat elemen pertama</span></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Slide 3 - Visualisasi Memori -->
+  <div class="slide" id="slide-5">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Visualisasi</div>
+    <div class="slide-title">🖥 Visualisasi <span class="highlight">Memori Array</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Contiguous:</strong> Disimpan berurutan tanpa celah.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Index = Offset:</strong> Jarak dari elemen pertama.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><code>arr[2]</code> berarti lompat 2 elemen dari awal.</span></div>
+      </div>
+      <div class="mem-grid" style="margin-top:28px;">
+        <div class="mem-cell active-cell"><div class="addr">0x100</div><div class="val">arr[0]</div></div>
+        <div class="mem-cell"><div class="addr">0x104</div><div class="val">arr[1]</div></div>
+        <div class="mem-cell"><div class="addr">0x108</div><div class="val">arr[2]</div></div>
+        <div class="mem-cell"><div class="addr">0x10C</div><div class="val">arr[3]</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Slide 4 - Deklarasi dan Inisialisasi -->
+  <div class="slide" id="slide-6">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Struktur Dasar · 20 menit</div>
+    <div class="slide-title">📝 Deklarasi &amp; <span class="highlight">Inisialisasi</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> nilai[5];
+<span class="type">int</span> angka[5] = {10, 20, 30, 40, 50};</pre>
+      <div class="tip-box">
+        <div class="tip-label">PENTING</div>
+        <ul>
+          <li>Ukuran bersifat tetap (statis).</li>
+          <li>Tipe data setiap elemen harus sama.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Slide 5 - Mengakses Elemen -->
+  <div class="slide" id="slide-7">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Akses Elemen</div>
+    <div class="slide-title">🔍 Mengakses <span class="highlight">Elemen</span></div>
+    <div class="slide-body">
+      <pre>cout &lt;&lt; angka[0];   <span class="comment">// Output: 10</span>
+angka[2] = 100;     <span class="comment">// Mengubah 30 menjadi 100</span></pre>
+      <div class="kp" style="margin-top:20px;">
+        <div class="kp-item"><span class="icon">⚠️</span><span>Index dimulai dari <strong>0</strong>.</span></div>
+        <div class="kp-item"><span class="icon">⚠️</span><span>Kesalahan umum: akses di luar batas.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Slide 6 - Kesalahan Umum -->
+  <div class="slide" id="slide-8">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Kesalahan Umum</div>
+    <div class="slide-title">⚠️ Kesalahan <span class="highlight">Umum</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> data[3] = {1, 2, 3};
+cout &lt;&lt; data[3];  <span class="comment">// Apa yang terjadi?</span></pre>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">DISKUSI</div>
+        <ul>
+          <li>Mengapa ini berbahaya?</li>
+          <li>Tidak ada error saat compile! (Buffer Overflow)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Slide 7 - Apa Itu Traversal? -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Pola 1: Traversal · 25 menit</div>
+    <div class="slide-title">🔄 Apa Itu <span class="highlight">Traversal?</span></div>
+    <div class="slide-body">
+      <p style="font-size: 1.5rem; text-align: center; margin-top: 40px;">
+        <strong>Traversal</strong> = Mengunjungi semua elemen satu per satu.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Slide 8 - Pola Traversal Dasar -->
+  <div class="slide" id="slide-10">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Pola Traversal</div>
+    <div class="slide-title">🛠 Pola <span class="highlight">Traversal Dasar</span></div>
+    <div class="slide-body">
+      <pre><span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; 5; i++){
+    cout &lt;&lt; angka[i] &lt;&lt; endl;
+}</pre>
+      <div class="kp" style="margin-top:20px;">
+        <div class="kp-item"><span class="icon">1</span><span>Inisialisasi (<code>i = 0</code>)</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Kondisi (<code>i &lt; ukuran</code>)</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Increment (<code>i++</code>)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Slide 9 - Input Dinamis -->
+  <div class="slide" id="slide-11">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Input Dinamis</div>
+    <div class="slide-title">📥 Input <span class="highlight">Dinamis</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> n;
+cout &lt;&lt; <span class="string">"Jumlah data: "</span>;
+cin &gt;&gt; n;
+
+<span class="keyword">const</span> <span class="type">int</span> MAX = 100;
+<span class="type">int</span> data[MAX]; <span class="comment">// Menggunakan batas tetap</span></pre>
+      <p style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
+        Catatan: Standar C++ menyarankan ukuran array ditentukan saat kompilasi.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Slide 10 - Menghitung Total -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pola 2: Akumulasi · 30 menit</div>
+    <div class="slide-title">➕ Menghitung <span class="highlight">Total</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> total = 0;
+
+<span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; i++){
+    total += data[i];
+}</pre>
+      <div class="kp" style="margin-top:20px;">
+        <div class="kp-item"><span class="icon">▸</span><span>Gunakan variabel <strong>akumulator</strong> (<code>total</code>).</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Pola umum untuk banyak algoritma.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Slide 11 - Menghitung Rata-rata -->
+  <div class="slide" id="slide-13">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Rata-rata</div>
+    <div class="slide-title">📊 Menghitung <span class="highlight">Rata-rata</span></div>
+    <div class="slide-body">
+      <pre><span class="type">float</span> rata = (<span class="type">float</span>)total / n;</pre>
+      <div class="tip-box" style="margin-top:30px;">
+        <div class="tip-label">DISKUSI</div>
+        Kenapa kita perlu melakukan <strong>casting</strong> ke <code>(float)</code>?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Slide 12 - Studi Kasus 1 -->
+  <div class="slide" id="slide-14">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Studi Kasus</div>
+    <div class="slide-title">🛠 Studi <span class="highlight">Kasus 1</span></div>
+    <div class="slide-body">
+      <p><strong>Kasus:</strong> Input nilai 5 mahasiswa.</p>
+      <p>Tampilkan:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span>Total Nilai</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Rata-rata Nilai</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Slide 13 - Konsep Dasar Maks/Min -->
+  <div class="slide" id="slide-15">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Pola 3: Maks &amp; Min · 25 menit</div>
+    <div class="slide-title">🔝 Mencari <span class="highlight">Maks &amp; Min</span></div>
+    <div class="slide-body">
+      <p><strong>Strategi:</strong></p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Anggap elemen pertama (<code>index 0</code>) sebagai yang terbesar/terkecil sementara.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Bandingkan dengan setiap elemen berikutnya.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Jika ada yang lebih besar/kecil, update nilai sementara tadi.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: Slide 14 - Implementasi Maksimum -->
+  <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Implementasi Maks</div>
+    <div class="slide-title">🏆 Implementasi <span class="highlight">Maksimum</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> maks = data[0];
+
+<span class="keyword">for</span>(<span class="type">int</span> i = 1; i &lt; n; i++){
+    <span class="keyword">if</span>(data[i] &gt; maks){
+        maks = data[i];
+    }
+}</pre>
+      <div class="quote" style="margin-top:20px;">Mengapa kita mulai loop dari <code>index 1</code>?</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: Slide 16 - Studi Kasus 2 -->
+  <div class="slide" id="slide-17">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Studi Kasus</div>
+    <div class="slide-title">🛠 Studi <span class="highlight">Kasus 2</span></div>
+    <div class="slide-body">
+      <p><strong>Sistem Nilai Mahasiswa:</strong></p>
+      <ul>
+        <li>Tentukan Nilai Tertinggi</li>
+        <li>Tentukan Nilai Terendah</li>
+        <li>Tampilkan siapa yang lulus (Nilai &ge; 60)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: Slide 17 & 18 - Linear Search -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 6 · Pola 4: Pencarian · 20 menit</div>
+    <div class="slide-title">🔍 Linear <span class="highlight">Search</span></div>
+    <div class="slide-body">
+      <pre><span class="type">int</span> cari = 75;
+<span class="type">bool</span> ditemukan = <span class="keyword">false</span>;
+
+<span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; i++){
+    <span class="keyword">if</span>(data[i] == cari){
+        ditemukan = <span class="keyword">true</span>;
+        <span class="keyword">break</span>;
+    }
+}</pre>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">DISKUSI</div>
+        <ul>
+          <li>Apa fungsi <code>break</code> di sana?</li>
+          <li>Apa yang terjadi jika data tidak ditemukan?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: Slide 19 & 20 - Mini Project -->
+  <div class="slide" id="slide-19">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 7 · Mini Project · 20 menit</div>
+    <div class="slide-title">🏗 Tantangan <span class="highlight">Terstruktur</span></div>
+    <div class="slide-body">
+      <p>Buat program <strong>Inventaris Sederhana</strong>:</p>
+      <p><strong>Input:</strong> Jumlah barang &amp; Harga tiap barang.</p>
+      <p><strong>Output:</strong></p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Total nilai inventaris.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Harga barang termahal &amp; termurah.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: Slide 21 - Refleksi -->
+  <div class="slide" id="slide-20">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 8 · Refleksi · 10 menit</div>
+    <div class="slide-title">🏁 <span class="highlight">Refleksi</span> Konseptual</div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">?</span><span>Mengapa array disebut struktur data <strong>statis</strong>?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Apa keterbatasannya?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Bagaimana jika ukuran data berubah-ubah?</span></div>
+      </div>
+      <p style="margin-top: 20px; color: var(--accent2);">➡ Pertemuan 4 (Array 2D)<br>➡ Pertemuan 5 (Struct)</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: SUMMARY -->
+  <div class="slide" id="slide-21">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">21 / 21</div>
+    <div class="section-badge"><span class="dot"></span>Kesimpulan</div>
+    <div class="slide-title">💡 Struktur <span class="highlight">Algoritmik</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Operasi berbasis perulangan.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Setiap elemen harus diperiksa satu per satu.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Sangat cocok untuk data berukuran tetap.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 21</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '/src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next < 0 || next >= total) return;
+    slides[current].className = dir > 0 ? 'slide prev' : 'slide';
+    current = next;
+    slides[current].className = 'slide active';
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
