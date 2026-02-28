@@ -33,6 +33,13 @@
     transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
     pointer-events: none;
   }
+  @media (max-width: 768px) {
+    .slide { padding: 40px 24px; }
+    .slide-title { font-size: 1.8rem; margin-bottom: 20px; }
+    .nav-slides { right: 20px; bottom: 20px; }
+    .top-nav { padding: 10px !important; }
+    .top-nav .nav-links a { font-size: 12px; }
+  }
   .slide.active {
     opacity: 1;
     transform: translateX(0);
@@ -205,6 +212,10 @@
   /* Columns */
   .cols { display: flex; gap: 40px; align-items: flex-start; margin-top: 20px; }
   .col { flex: 1; }
+  @media (max-width: 768px) {
+    .cols { flex-direction: column; gap: 20px; }
+    .toc-grid { grid-template-columns: 1fr; }
+  }
 
   /* Memory box visual */
   .mem-grid {
