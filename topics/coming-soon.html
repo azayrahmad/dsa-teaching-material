@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coming Soon - DSA Materials</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="../src/style.css">
   <style>
     .coming-soon {
       display: flex;
@@ -30,7 +30,7 @@
 <body>
   <nav class="top-nav">
     <div class="nav-links">
-      <a href="/" data-i18n="home">Beranda</a>
+      <a href="../index.html" data-i18n="home">Beranda</a>
     </div>
     <div class="controls">
       <button class="control-btn" id="lang-toggle">ID / EN</button>
@@ -42,12 +42,12 @@
     <div class="coming-soon">
       <h1 data-i18n="comingSoonTitle">Segera Hadir!</h1>
       <p data-i18n="comingSoonDesc">Materi untuk topik ini sedang dalam proses penyusunan.</p>
-      <a href="/" class="btn btn-primary" data-i18n="back">Kembali ke Beranda</a>
+      <a href="../index.html" class="btn btn-primary" data-i18n="back">Kembali ke Beranda</a>
     </div>
   </div>
 
   <script type="module">
-    import { initApp } from '/src/main.js';
+    import { initApp } from '../src/main.js';
     initApp();
   </script>
 </body>
