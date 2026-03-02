@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 4 – ARRAY 2 DIMENSI – MATRIKS & DATA TABULAR</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/array.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <div class="slide active" id="slide-0">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 04</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Array 2D</div>
+    <div class="slide-title">ARRAY 2 DIMENSI:<br><span class="highlight">Matriks &amp;</span><br>Data Tabular</div>
+    <div class="subtitle">160 menit · 7 Bagian · 21 Slide</div>
+    <div class="desc">Representasi data dalam bentuk tabel. Dari satu baris ke baris dan kolom yang terorganisasi.</div>
+  </div>
+
+  <!-- SLIDE 1: TUJUAN (Adapting from Slide 1 outline: Judul) -->
+  <div class="slide" id="slide-1">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pertemuan</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Memahami konsep baris dan kolom pada Array 2D.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Deklarasi, inisialisasi, dan akses elemen matriks.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Implementasi Traversal 2D menggunakan Nested Loop.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Operasi dasar matriks (Penjumlahan &amp; Transpose).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: STRUCTURE (Learning Flow) -->
+  <div class="slide" id="slide-2">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Learning Flow</div>
+    <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
+    <div class="toc-grid">
+      <div class="toc-item" data-slide="3"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🚀 Review &amp; Motivasi</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item" data-slide="5"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">📝 Konsep Dasar</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item" data-slide="9"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Traversal &amp; Contoh</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item" data-slide="11"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🛠 Studi Kasus</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item" data-slide="15"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">➕ Operasi Matriks</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item" data-slide="17"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🏗 Praktikum</div><div class="toc-time">40 min</div></div></div>
+      <div class="toc-item" data-slide="18"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏁 Refleksi</div><div class="toc-time">20 min</div></div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Slide 2 outline - Review Pertemuan 3 -->
+  <div class="slide" id="slide-3">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Review &amp; Motivasi</div>
+    <div class="slide-title">🧠 Review <span class="highlight">Array 1D</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Disimpan berurutan di memori.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Diakses dengan satu indeks.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Cocok untuk data berbentuk list.</span></div>
+      </div>
+      <pre><code class="language-cpp">int nilai[5];</code></pre>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">DISKUSI</div>
+        Jika ada 5 mahasiswa dan 3 mata kuliah, apakah Array 1D cukup? Apa masalahnya jika pakai 3 array terpisah?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Slide 3 outline - Masalah Nyata -->
+  <div class="slide" id="slide-4">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Masalah Nyata</div>
+    <div class="slide-title">📊 Sistem <span class="highlight">Nilai Mahasiswa</span></div>
+    <div class="slide-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Mahasiswa</th>
+            <th>Algoritma</th>
+            <th>Matematika</th>
+            <th>Inggris</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Mhs 1</td><td>85</td><td>90</td><td>80</td></tr>
+          <tr><td>Mhs 2</td><td>70</td><td>75</td><td>85</td></tr>
+          <tr><td>Mhs 3</td><td>95</td><td>88</td><td>92</td></tr>
+        </tbody>
+      </table>
+      <div class="quote">Bagaimana cara menyimpan data tabular seperti ini secara efisien dalam program?</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Slide 4 outline - Solusi Array 2D -->
+  <div class="slide" id="slide-5">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Konsep Dasar · 25 menit</div>
+    <div class="slide-title">💡 Solusi: <span class="highlight">Array 2 Dimensi</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
+        <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
+      </div>
+      <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Slide 5 outline - Visualisasi -->
+  <div class="slide" id="slide-6">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Visualisasi</div>
+    <div class="slide-title">🖥 Visualisasi <span class="highlight">Logis vs Memori</span></div>
+    <div class="slide-body">
+      <p>Secara logis kita melihatnya sebagai tabel:</p>
+      <div class="cols">
+        <div class="col">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px; margin-bottom: 20px;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val" style="font-size: 0.9rem;">[0][0]</div></div>
+            <div class="mem-cell"><div class="addr">0,1</div><div class="val" style="font-size: 0.9rem;">[0][1]</div></div>
+            <div class="mem-cell"><div class="addr">0,2</div><div class="val" style="font-size: 0.9rem;">[0][2]</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val" style="font-size: 0.9rem;">[1][0]</div></div>
+            <div class="mem-cell"><div class="addr">1,1</div><div class="val" style="font-size: 0.9rem;">[1][1]</div></div>
+            <div class="mem-cell"><div class="addr">1,2</div><div class="val" style="font-size: 0.9rem;">[1][2]</div></div>
+          </div>
+        </div>
+        <div class="col">
+          <p style="font-size: 0.9rem;">Namun di <strong>Memori</strong> tetap linear (Row-Major Order):</p>
+          <div class="mem-grid">
+            <div class="mem-cell"><div class="addr">0</div><div class="val" style="font-size: 0.8rem;">[0][0]</div></div>
+            <div class="mem-cell"><div class="addr">1</div><div class="val" style="font-size: 0.8rem;">[0][1]</div></div>
+            <div class="mem-cell"><div class="addr">2</div><div class="val" style="font-size: 0.8rem;">[0][2]</div></div>
+            <div class="mem-cell"><div class="addr">3</div><div class="val" style="font-size: 0.8rem;">[1][0]</div></div>
+            <div class="mem-cell"><div class="addr">4</div><div class="val" style="font-size: 0.8rem;">[1][1]</div></div>
+            <div class="mem-cell"><div class="addr">5</div><div class="val" style="font-size: 0.8rem;">[1][2]</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Slide 6 outline - Deklarasi & Inisialisasi -->
+  <div class="slide" id="slide-7">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Struktur Dasar</div>
+    <div class="slide-title">📝 Deklarasi &amp; <span class="highlight">Inisialisasi</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">int matriks[2][3] = {
+    {1, 2, 3}, // Baris 0
+    {4, 5, 6}  // Baris 1
+};</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Total elemen = 2 &times; 3 = 6.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Setiap baris dibungkus kurung kurawal <code>{}</code>.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Slide 7 outline - Mengakses Elemen -->
+  <div class="slide" id="slide-8">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Akses Elemen</div>
+    <div class="slide-title">🔍 Mengakses <span class="highlight">Elemen</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">cout &lt;&lt; matriks[0][1];  // Output: 2
+matriks[1][2] = 10;     // Mengubah 6 menjadi 10</code></pre>
+      <div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; margin-top: 20px;">
+        <div class="mem-cell active-cell"><div class="addr">[0][0]</div><div class="val" contenteditable="true">1</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[0][1]</div><div class="val" contenteditable="true">2</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[0][2]</div><div class="val" contenteditable="true">3</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][0]</div><div class="val" contenteditable="true">4</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][1]</div><div class="val" contenteditable="true">5</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][2]</div><div class="val" contenteditable="true">6</div></div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label">HATI-HATI</div>
+        Kesalahan umum: Tertukar antara indeks baris dan kolom.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Slide 8 outline - Traversal 2D (Nested Loop) -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Traversal &amp; Contoh · 30 menit</div>
+    <div class="slide-title">🔄 Traversal 2D:<br><span class="highlight">Nested Loop</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 2; i++){         // Loop Baris
+    for(int j = 0; j &lt; 3; j++){     // Loop Kolom
+        cout &lt;&lt; matriks[i][j] &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+}</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Loop luar (<code>i</code>) mengontrol baris mana yang sedang diakses.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Loop dalam (<code>j</code>) mengunjungi setiap kolom pada baris tersebut.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Slide 9 outline - Template Umum -->
+  <div class="slide" id="slide-10">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Template Umum</div>
+    <div class="slide-title">🛠 Template <span class="highlight">Umum Traversal</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; jumlahBaris; i++){
+    for(int j = 0; j &lt; jumlahKolom; j++){
+        // Proses elemen matriks[i][j]
+    }
+}</code></pre>
+      <div class="quote">Pola ini adalah fondasi untuk hampir semua manipulasi data 2D.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Slide 10 outline - Studi Kasus 1 -->
+  <div class="slide" id="slide-11">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Studi Kasus · 30 menit</div>
+    <div class="slide-title">🛠 Studi Kasus 1:<br><span class="highlight">Sistem Nilai</span></div>
+    <div class="slide-body">
+      <p><strong>Kebutuhan:</strong></p>
+      <ul>
+        <li>Data: 5 Mahasiswa, 3 Mata Kuliah.</li>
+        <li>Tugas:
+          <ol>
+            <li>Input nilai dari keyboard.</li>
+            <li>Hitung rata-rata nilai tiap mahasiswa.</li>
+            <li>Hitung rata-rata nilai tiap mata kuliah.</li>
+          </ol>
+        </li>
+      </ul>
+      <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Slide 11 outline - Input Data -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Input Data</div>
+    <div class="slide-title">📥 Input <span class="highlight">Data 2D</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 5; i++){
+    for(int j = 0; j &lt; 3; j++){
+        cout &lt;&lt; "Nilai mhs " &lt;&lt; i+1
+             &lt;&lt; " matkul " &lt;&lt; j+1 &lt;&lt; ": ";
+        cin &gt;&gt; nilai[i][j];
+    }
+}</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><code>i+1</code> dan <code>j+1</code> hanya untuk tampilan (user-friendly).</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Penyimpanan tetap di <code>[i][j]</code> (mulai dari 0).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Slide 12 outline - Rata-rata Tiap Mahasiswa -->
+  <div class="slide" id="slide-13">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pengolahan Baris</div>
+    <div class="slide-title">📊 Rata-rata <span class="highlight">Tiap Mahasiswa</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 5; i++){
+    int total = 0;
+    for(int j = 0; j &lt; 3; j++){
+        total += nilai[i][j];
+    }
+    cout &lt;&lt; "Rata-rata mhs " &lt;&lt; i+1
+         &lt;&lt; ": " &lt;&lt; (float)total / 3 &lt;&lt; endl;
+}</code></pre>
+      <div class="tip-box">
+        <div class="tip-label">KONSEP PENTING</div>
+        Variabel <code>total</code> harus di-reset menjadi 0 setiap kali ganti baris (mahasiswa baru).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Slide 13 outline - Rata-rata Tiap Mata Kuliah -->
+  <div class="slide" id="slide-14">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pengolahan Kolom</div>
+    <div class="slide-title">📉 Rata-rata <span class="highlight">Tiap Mata Kuliah</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int j = 0; j &lt; 3; j++){ // Loop Kolom di luar
+    int total = 0;
+    for(int i = 0; i &lt; 5; i++){ // Loop Baris di dalam
+        total += nilai[i][j];
+    }
+    cout &lt;&lt; "Rata-rata matkul " &lt;&lt; j+1
+         &lt;&lt; ": " &lt;&lt; (float)total / 5 &lt;&lt; endl;
+}</code></pre>
+      <div class="quote">Bandingkan dengan slide sebelumnya. Di sini kita menukar urutan loop untuk memproses data per kolom.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Slide 14 outline - Operasi Matriks: Penjumlahan -->
+  <div class="slide" id="slide-15">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Operasi Matriks · 15 menit</div>
+    <div class="slide-title">➕ Penjumlahan <span class="highlight">Dua Matriks</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">// Syarat: Ukuran A dan B harus sama
+for(int i = 0; i &lt; 3; i++){
+    for(int j = 0; j &lt; 3; j++){
+        C[i][j] = A[i][j] + B[i][j];
+    }
+}</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Elemen dijumlahkan sesuai posisi baris dan kolom yang sama.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: Slide 15 outline - Transpose Matriks -->
+  <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Operasi Matriks</div>
+    <div class="slide-title">🔃 Transpose <span class="highlight">Matriks</span></div>
+    <div class="slide-body">
+      <p>Mengubah baris menjadi kolom dan sebaliknya.</p>
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 3; i++){
+    for(int j = 0; j &lt; 3; j++){
+        transpose[j][i] = matriks[i][j];
+    }
+}</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Perhatikan pertukaran indeks: <code>[i][j]</code> menjadi <code>[j][i]</code>.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: Slide 16 outline - Latihan Terstruktur -->
+  <div class="slide" id="slide-17">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 6 · Praktikum · 40 menit</div>
+    <div class="slide-title">🏗 Tantangan <span class="highlight">Terstruktur</span></div>
+    <div class="slide-body">
+      <p>Buatlah program untuk mengolah Matriks 3&times;3:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Input semua elemen matriks.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Tampilkan total nilai tiap baris.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Tampilkan total nilai tiap kolom.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Cari dan tampilkan elemen terbesar dalam matriks tersebut.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: Slide 17 outline - Diskusi Reflektif -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 7 · Refleksi · 20 menit</div>
+    <div class="slide-title">🏁 <span class="highlight">Diskusi</span> Reflektif</div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">?</span><span>Apa perbedaan mendasar pola Traversal 1D dan 2D?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Mengapa kita membutuhkan nested loop untuk Array 2D?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Kapan penggunaan Array 2D lebih tepat dibanding Array 1D?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: Slide 18 & 19 outline - Koneksi & Rangkuman -->
+  <div class="slide" id="slide-19">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Kesimpulan</div>
+    <div class="slide-title">💡 Rangkuman <span class="highlight">Hari Ini</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span>Array 2D menyimpan data dalam baris dan kolom.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Nested loop adalah kunci akses data tabular.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Operasi baris vs kolom ditentukan oleh urutan loop.</span></div>
+      </div>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">NEXT STEP</div>
+        Bagaimana jika kita ingin menyimpan data dengan tipe berbeda (Nama, NIM, IPK) dalam satu struktur?
+        <br>➡ <strong>Pertemuan 5: Struct</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: Slide 20 outline - Penutup -->
+  <div class="slide" id="slide-20">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Penutup</div>
+    <div class="slide-title">🚀 <span class="highlight">Dunia Nyata</span> Array 2D</div>
+    <div class="slide-body">
+      <p>Konsep yang Anda pelajari hari ini adalah dasar dari:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Pengolahan Citra:</strong> Gambar adalah matriks piksel.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Game:</strong> Board games (Catur, Tic-Tac-Toe).</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Data Science:</strong> Spreadsheet dan Tabel Database.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 21</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const slideIdx = parseInt(item.getAttribute('data-slide'));
+      goToSlide(slideIdx);
+    });
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
