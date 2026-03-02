@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array - DSA Materials</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .topic-header {
+      padding: 60px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .topic-header h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+      .topic-header h1 { font-size: 2rem; }
+      .actions { flex-direction: column; }
+      .code-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+    .topic-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .actions {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .code-list {
+      margin-top: 40px;
+    }
+    .code-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .code-item span {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .download-link {
+      color: var(--accent2);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .download-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-links">
+      <a href="/" data-i18n="home">Beranda</a>
+      <span style="color: var(--border)">/</span>
+      <span style="color: var(--accent)">Array</span>
+    </div>
+    <div class="controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="topic-header">
+      <h1>Array</h1>
+      <p id="topic-desc">Koleksi data linear dengan ukuran tetap. Array memungkinkan penyimpanan data dengan tipe yang sama dalam blok memori yang berurutan.</p>
+
+      <div class="actions">
+        <a href="/slides/array-1d.html" class="btn btn-primary">
+          <span data-i18n="viewSlides">Lihat Slide</span> (1D)
+        </a>
+        <div class="btn btn-outline" style="opacity: 0.6; cursor: default;">
+          Array 2D (<span data-i18n="comingSoon">Segera Hadir</span>)
+        </div>
+      </div>
+    </div>
+
+    <div class="code-list">
+      <h2 data-i18n="downloadCode">Unduh Kode</h2>
+      <div style="margin-top: 20px;">
+        <div class="code-item">
+          <span>2 - Array.cpp</span>
+          <a href="/2_Array/2 - Array.cpp" download class="download-link">Download</a>
+        </div>
+        <div class="code-item">
+          <span>2 - Array - latihan.cpp</span>
+          <a href="/2_Array/2 - Array - latihan.cpp" download class="download-link">Download</a>
+        </div>
+        <div class="code-item">
+          <span>2 - Matriks2x2.cpp</span>
+          <a href="/2_Array/2 - Matriks2x2.cpp" download class="download-link">Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initApp } from '/src/main.js';
+    initApp();
+  </script>
+</body>
+</html>

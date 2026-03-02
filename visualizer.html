@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Memory Visualizer — Improved</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <style>
+        body {
+            margin: 20px;
+            background: teal;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .window { margin-bottom: 20px; }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: 1fr; }
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; box-sizing: border-box; }
+
+        /* ── Memory Grid ── */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 2px;
+            margin: 12px 0;
+            background: #808080;
+            padding: 3px;
+            direction: rtl; /* addresses decrease left-to-right so high addr = left */
+        }
+        .memory-cell {
+            direction: ltr;
+            background: white;
+            border: 1px solid #808080;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            padding: 3px 1px 2px 1px;
+            min-height: 52px;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+        .memory-cell:hover { background: #ffffcc; border-color: #000080; }
+        .memory-cell.occupied { border: 2px solid black; }
+        .memory-cell.occupied:hover { filter: brightness(1.1); }
+
+        /* Padding cells: cross-hatched, not clickable for edit */
+        .memory-cell.padding {
+            background: repeating-linear-gradient(
+                45deg,
+                #d0d0d0 0px, #d0d0d0 3px,
+                #f0f0f0 3px, #f0f0f0 6px
+            );
+            border: 1px dashed #999;
+            cursor: default;
+            opacity: 0.85;
+        }
+        .memory-cell.padding:hover { background: repeating-linear-gradient(
+            45deg, #d0d0d0 0px, #d0d0d0 3px, #f0f0f0 3px, #f0f0f0 6px
+        ); }
+        .memory-cell-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .memory-cell-address {
+            font-size: 7px;
+            color: #555;
+            border-top: 1px solid #d0d0d0;
+            padding-top: 2px;
+            width: 100%;
+            text-align: center;
+        }
+        .padding-label {
+            font-size: 7px;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* ── Code Display ── */
+        .code-display {
+            background: white;
+            border: 2px inset;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 380px;
+            overflow-y: auto;
+            white-space: pre;
+        }
+        .keyword { color: #0000cc; font-weight: bold; }
+        .type    { color: #006666; font-weight: bold; }
+        .variable { color: #000; }
+        .value   { color: #a31515; }
+        .comment { color: #008000; }
+
+        /* ── Symbol Table ── */
+        .symbol-table {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 8px;
+            background: #c0c0c0;
+            border: 2px inset;
+            min-height: 36px;
+        }
+        .symbol-item {
+            display: flex; align-items: center; gap: 6px;
+            padding: 3px 8px;
+            background: white;
+            border: 1px solid #808080;
+        }
+        .symbol-color { width: 18px; height: 18px; border: 1px solid black; flex-shrink: 0; }
+        .symbol-info { font-size: 11px; }
+        .symbol-name { font-weight: bold; }
+        .symbol-type { font-size: 10px; color: #555; }
+
+        /* ── Variable Table ── */
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 8px; }
+        table, th, td { border: 1px solid #808080; }
+        th { background: #000080; color: white; padding: 5px; font-weight: bold; text-align: left; }
+        td { padding: 5px; font-size: 11px; }
+        tbody tr.clickable-row:hover { background: #ffffcc; }
+        .var-name { font-weight: bold; }
+        .mem-addr { font-family: 'Courier New', monospace; color: #800000; }
+        .type-badge {
+            display: inline-block; padding: 1px 5px;
+            background: #c0c0c0; border: 1px solid #808080;
+            font-size: 10px; font-family: 'Courier New', monospace;
+        }
+
+        /* ── Info / Error ── */
+        .info-box {
+            background: #ffffc0;
+            border: 1px solid #808080;
+            padding: 7px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .info-box .label {
+            font-weight: bold;
+            background: #c0c0c0;
+            padding: 1px 6px;
+            margin-right: 4px;
+            border: 1px outset;
+            font-size: 10px;
+        }
+        .align-badge {
+            display: inline-block;
+            background: #ddeeff;
+            border: 1px solid #8899bb;
+            padding: 1px 4px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            margin-left: 3px;
+        }
+        .error-message {
+            background: #ff0000; color: white;
+            border: 2px outset;
+            padding: 8px; margin-top: 8px;
+            font-weight: bold; display: none;
+        }
+        .error-message.show { display: block; }
+
+        /* ── Buttons ── */
+        .button-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .button-row button { flex: 1; min-width: 80px; }
+
+        /* ── Stack Direction Indicator ── */
+        .stack-arrow {
+            text-align: center;
+            font-size: 11px;
+            color: #444;
+            margin: 4px 0 8px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .stack-arrow span { font-weight: bold; }
+
+        /* ── Legend ── */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 6px;
+            font-size: 11px;
+            align-items: center;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-swatch {
+            width: 18px; height: 18px; border: 1px solid #555; flex-shrink: 0;
+        }
+        .legend-swatch.padding-swatch {
+            background: repeating-linear-gradient(45deg,#d0d0d0 0px,#d0d0d0 3px,#f0f0f0 3px,#f0f0f0 6px);
+        }
+        .legend-swatch.free-swatch { background: white; }
+        .legend-swatch.var-swatch { background: #4ecdc4; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Title -->
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">C++ Memory Visualizer — Scientifically Accurate Edition</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <p style="text-align:center; margin:6px 0 2px 0;">
+                <strong>Explore low-level memory allocation with real alignment, padding, and stack direction</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <!-- 1. Variable Declaration -->
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">Variable Declaration</div>
+            </div>
+            <div class="window-body">
+                <form id="variableForm">
+                    <div class="form-group">
+                        <label for="dataType">Data Type:</label>
+                        <select id="dataType" required>
+                            <option value="">Select Type</option>
+                            <optgroup label="Signed Integers">
+                                <option value="char">char  (1 byte, align 1)</option>
+                                <option value="short">short  (2 bytes, align 2)</option>
+                                <option value="int">int  (4 bytes, align 4)</option>
+                                <option value="long long">long long  (8 bytes, align 8)</option>
+                            </optgroup>
+                            <optgroup label="Unsigned Integers">
+                                <option value="unsigned char">unsigned char  (1 byte)</option>
+                                <option value="unsigned short">unsigned short  (2 bytes)</option>
+                                <option value="unsigned int">unsigned int  (4 bytes)</option>
+                            </optgroup>
+                            <optgroup label="Floating Point">
+                                <option value="float">float  (4 bytes, align 4)</option>
+                                <option value="double">double  (8 bytes, align 8)</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="bool">bool  (1 byte)</option>
+                                <option value="pointer">pointer (T*)  (8 bytes, align 8)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="varName">Variable Name:</label>
+                        <input type="text" id="varName" placeholder="e.g., count, x, ptr" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="isArray">
+                        <label for="isArray" style="display:inline;margin-left:5px;">Declare as Array</label>
+                    </div>
+                    <div class="form-group" id="arraySizeGroup" style="display:none;">
+                        <label for="arraySize">Array Size (max 20):</label>
+                        <input type="number" id="arraySize" min="1" max="20" placeholder="e.g., 4">
+                    </div>
+                    <div class="form-group" id="arrayIndexGroup" style="display:none;">
+                        <label for="arrayIndex">Array Index to Edit:</label>
+                        <select id="arrayIndex"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="varValue">Value (optional):</label>
+                        <input type="text" id="varValue" placeholder="e.g., 42, 3.14, or 1,2,3 for arrays">
+                    </div>
+                    <div class="button-row">
+                        <button type="submit" id="submitBtn">Allocate Memory</button>
+                        <button type="button" id="cancelEditBtn" onclick="mm.cancelEdit()" style="display:none;">Cancel</button>
+                        <button type="button" onclick="mm.clearAll()">Clear All</button>
+                    </div>
+                </form>
+                <div class="error-message" id="errorMessage"></div>
+
+                <hr style="margin: 12px 0;">
+                <div class="info-box">
+                    <span class="label">ALIGNMENT</span>
+                    Each type has a required alignment.
+                    <strong>int</strong> must start at an address divisible by 4;
+                    <strong>double</strong> by 8; <strong>short</strong> by 2.
+                    The compiler inserts <em>padding bytes</em> (shown as hatched cells) to
+                    satisfy these requirements — this is why <code>sizeof(struct)</code>
+                    can be larger than the sum of its members.
+                </div>
+                <div class="info-box" style="margin-top:6px;">
+                    <span class="label">STACK DIRECTION</span>
+                    On x86-64, the stack grows toward <em>lower</em> addresses.
+                    New variables appear at <em>smaller</em> addresses (right side of grid).
+                    High addresses are at the <strong>left</strong>.
+                </div>
+                <div class="info-box" style="margin-top:6px;">
+                    <span class="label">ENDIANNESS</span>
+                    x86 is <em>little-endian</em>: the least-significant byte is stored at
+                    the lowest address. For <code>int x = 0x0A0B0C0D</code>, you'll see
+                    bytes: <code>0D 0C 0B 0A</code> at increasing addresses.
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Code + Alignment Reference -->
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">Code Visualization</div>
+            </div>
+            <div class="window-body">
+                <div class="code-display" id="codeDisplay"><span class="comment">// Declare variables on the left to see code here...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Variable Table -->
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Variable Table</div>
+        </div>
+        <div class="window-body">
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type</th>
+                            <th>Address</th>
+                            <th>Alignment</th>
+                            <th>Size</th>
+                            <th>Value</th>
+                            <th>Bytes (little-endian)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="variableTable">
+                        <tr><td colspan="8" style="text-align:center;color:#666;">No variables declared yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="paddingStats" style="font-size:11px;margin:6px 0 0 0;color:#555;"></p>
+        </div>
+    </div>
+
+    <!-- 4. Memory Layout -->
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Memory Layout (256 bytes — stack segment)</div>
+        </div>
+        <div class="window-body">
+
+            <div class="stack-arrow">
+                High addresses ←————————————————————————————————→ Low addresses
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span>← Stack grows this way (new variables allocated here)</span>
+            </div>
+
+            <fieldset>
+                <legend>Legend</legend>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-swatch var-swatch"></div> Variable bytes</div>
+                    <div class="legend-item"><div class="legend-swatch padding-swatch"></div> Alignment padding (compiler-inserted)</div>
+                    <div class="legend-item"><div class="legend-swatch free-swatch"></div> Unused / unallocated</div>
+                </div>
+            </fieldset>
+
+            <fieldset style="margin-top:8px;">
+                <legend>Symbol Table</legend>
+                <div id="symbolTable" class="symbol-table">
+                    <div style="text-align:center;width:100%;color:#666;">No variables allocated</div>
+                </div>
+            </fieldset>
+
+            <fieldset style="margin-top:8px;">
+                <legend>Memory Grid (256 bytes · addresses decrease left→right)</legend>
+                <div class="memory-grid" id="memoryGrid"></div>
+            </fieldset>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  Type metadata — size and NATURAL ALIGNMENT (ABI rules, x86-64)
+// ═══════════════════════════════════════════════════════════════════
+const TYPE_META = {
+    'char':           { size: 1, align: 1, signed: true,  int: true,  float: false },
+    'short':          { size: 2, align: 2, signed: true,  int: true,  float: false },
+    'int':            { size: 4, align: 4, signed: true,  int: true,  float: false },
+    'long long':      { size: 8, align: 8, signed: true,  int: true,  float: false },
+    'unsigned char':  { size: 1, align: 1, signed: false, int: true,  float: false },
+    'unsigned short': { size: 2, align: 2, signed: false, int: true,  float: false },
+    'unsigned int':   { size: 4, align: 4, signed: false, int: true,  float: false },
+    'float':          { size: 4, align: 4, signed: true,  int: false, float: true  },
+    'double':         { size: 8, align: 8, signed: true,  int: false, float: true  },
+    'bool':           { size: 1, align: 1, signed: false, int: false, float: false },
+    'pointer':        { size: 8, align: 8, signed: false, int: true,  float: false },
+};
+
+const BASE_ADDR = 0x1000;
+const MEM_SIZE  = 256;
+
+// Stack pointer starts at the top (highest offset = highest address)
+// New variables are allocated by decrementing SP (growing downward)
+// Memory index 0   → address 0x1000 (LOWEST)
+// Memory index 255 → address 0x10FF (HIGHEST)
+
+class MemoryManager {
+    constructor() {
+        this.memory    = new Array(MEM_SIZE).fill(null);
+        this.variables = [];
+        this.codeLines = [];
+        this.colorIdx  = 0;
+        // SP starts at MEM_SIZE (past the end); allocation moves it downward
+        this.sp        = MEM_SIZE;
+        this.colorPalette = [
+            '#ff8fab','#4ecdc4','#ffa07a','#9b8fd4','#56b4e9',
+            '#2ecc71','#f1c40f','#e74c3c','#1abc9c','#e67e22'
+        ];
+        this.editMode        = false;
+        this.editingVariable = null;
+        this.initMemoryGrid();
+        this.randomizeMemory();
+    }
+
+    // ── Initialize grid cells (RTL grid: cell-255 = leftmost = highest addr) ──
+    initMemoryGrid() {
+        const grid = document.getElementById('memoryGrid');
+        grid.innerHTML = '';
+        for (let i = MEM_SIZE - 1; i >= 0; i--) {
+            // We render from highest offset to lowest so RTL grid looks right
+            const cell = document.createElement('div');
+            cell.className = 'memory-cell';
+            cell.id = `cell-${i}`;
+            cell.addEventListener('click', () => this.onCellClick(i));
+
+            const content = document.createElement('div');
+            content.className = 'memory-cell-content';
+            content.id = `content-${i}`;
+
+            const addr = document.createElement('div');
+            addr.className = 'memory-cell-address';
+            addr.id = `addr-${i}`;
+            addr.textContent = `0x${(BASE_ADDR + i).toString(16).toUpperCase().padStart(4,'0')}`;
+
+            cell.appendChild(content);
+            cell.appendChild(addr);
+            grid.appendChild(cell);
+        }
+    }
+
+    randomizeMemory() {
+        for (let i = 0; i < MEM_SIZE; i++) {
+            const b = Math.floor(Math.random() * 256);
+            this.memory[i] = { byte: b, varName: null, isPadding: false };
+            this.updateCell(i);
+        }
+    }
+
+    updateCell(i) {
+        const m = this.memory[i];
+        const cell    = document.getElementById(`cell-${i}`);
+        const content = document.getElementById(`content-${i}`);
+        if (!cell || !content) return;
+
+        cell.classList.remove('occupied','padding');
+        cell.style.backgroundColor = '';
+        cell.style.borderColor     = '';
+
+        if (m.isPadding) {
+            cell.classList.add('padding');
+            content.textContent   = '//';
+            content.style.color   = '#aaa';
+            content.style.fontSize = '10px';
+        } else if (m.varName) {
+            const v = this.variables.find(v => v.name === m.varName);
+            const color = v ? v.color : '#ccc';
+            cell.classList.add('occupied');
+            cell.style.backgroundColor = color;
+            cell.style.borderColor     = color;
+            content.textContent   = m.byte.toString(16).toUpperCase().padStart(2,'0');
+            content.style.color   = '#000';
+            content.style.fontSize = '11px';
+        } else {
+            content.textContent   = m.byte.toString(16).toUpperCase().padStart(2,'0');
+            content.style.color   = '#bbb';
+            content.style.fontSize = '11px';
+        }
+    }
+
+    onCellClick(i) {
+        const m = this.memory[i];
+        if (!m || !m.varName || m.isPadding) return;
+        const v = this.variables.find(v => v.name === m.varName);
+        if (!v) return;
+        if (v.isArray) {
+            const byteOffsetInVar = i - v.offset;
+            const arrayIndex = Math.floor(byteOffsetInVar / TYPE_META[v.type].size);
+            this.enterEditMode(v.name, arrayIndex);
+        } else {
+            this.enterEditMode(v.name);
+        }
+    }
+
+    // ── Alignment-aware stack allocation ──
+    // Stack grows downward. We decrement SP by (alignment padding + size).
+    // Returns: { offset, paddingOffset, paddingCount }
+    allocateOnStack(size, align) {
+        // Move SP down to fit `size` bytes
+        let newSP = this.sp - size;
+        // Align downward: round newSP down to nearest `align` multiple
+        let aligned = Math.floor(newSP / align) * align;
+        // Padding is the gap between `aligned + size` and `this.sp`
+        // These bytes sit at addresses ABOVE the variable (closer to old SP)
+        let paddingStart  = aligned + size;
+        let paddingCount  = this.sp - paddingStart; // bytes wasted
+
+        // Check we have room
+        if (aligned < 0) return null;
+
+        // Make sure we don't overlap existing variables
+        for (let i = aligned; i < this.sp; i++) {
+            if (this.memory[i] && this.memory[i].varName !== null) return null;
+        }
+
+        return { offset: aligned, paddingOffset: paddingStart, paddingCount };
+    }
+
+    allocate(type, varName, value, isArray = false, arraySize = 1) {
+        if (this.variables.find(v => v.name === varName))
+            throw new Error(`Variable '${varName}' already declared!`);
+
+        const meta      = TYPE_META[type];
+        const elemSize  = meta.size;
+        const align     = meta.align;
+        const totalSize = elemSize * arraySize;
+
+        const slot = this.allocateOnStack(totalSize, align);
+        if (!slot) throw new Error('Out of stack space!');
+
+        const { offset, paddingOffset, paddingCount } = slot;
+
+        // Mark padding bytes
+        for (let i = paddingOffset; i < paddingOffset + paddingCount; i++) {
+            this.memory[i] = { byte: 0xCC, varName: `__pad__${varName}`, isPadding: true };
+            this.updateCell(i);
+        }
+
+        // Encode value bytes
+        const bytes = this.encodeValue(type, value, arraySize, offset);
+
+        // Write variable bytes
+        for (let i = 0; i < totalSize; i++) {
+            this.memory[offset + i] = { byte: bytes[i], varName, isPadding: false };
+            this.updateCell(offset + i);
+        }
+
+        // Decrement SP
+        this.sp = offset;
+
+        const color = this.colorPalette[this.colorIdx++ % this.colorPalette.length];
+        const v = {
+            name: varName, type, isArray, arraySize,
+            offset, size: totalSize, elementSize: elemSize,
+            align, paddingBytes: paddingCount,
+            address: BASE_ADDR + offset,
+            bytes, value: value || 'uninitialized',
+            color
+        };
+        this.variables.push(v);
+
+        this.addCodeLine(type, varName, value, isArray, arraySize);
+        this.refreshAll();
+        return v;
+    }
+
+    deallocate(varName) {
+        const idx = this.variables.findIndex(v => v.name === varName);
+        if (idx === -1) return;
+        const v = this.variables[idx];
+
+        // Remove variable bytes
+        for (let i = v.offset; i < v.offset + v.size; i++) {
+            const b = Math.floor(Math.random() * 256); // "freed" memory has garbage
+            this.memory[i] = { byte: b, varName: null, isPadding: false };
+            this.updateCell(i);
+        }
+        // Remove padding bytes above this variable
+        const padStart = v.offset + v.size;
+        for (let i = padStart; i < padStart + v.paddingBytes; i++) {
+            const b = Math.floor(Math.random() * 256);
+            this.memory[i] = { byte: b, varName: null, isPadding: false };
+            this.updateCell(i);
+        }
+
+        this.variables.splice(idx, 1);
+        // Recalculate SP as the lowest occupied address (simplified model)
+        this.recalcSP();
+        this.refreshAll();
+    }
+
+    recalcSP() {
+        // SP = lowest allocated address (smallest offset in use)
+        let minOccupied = MEM_SIZE;
+        for (let i = 0; i < MEM_SIZE; i++) {
+            if (this.memory[i].varName && !this.memory[i].isPadding) {
+                const vn = this.memory[i].varName;
+                const v  = this.variables.find(x => x.name === vn);
+                if (v) minOccupied = Math.min(minOccupied, v.offset);
+            }
+        }
+        this.sp = minOccupied;
+        if (this.variables.length === 0) this.sp = MEM_SIZE;
+    }
+
+    clearAll() {
+        this.variables = [];
+        this.codeLines = [];
+        this.colorIdx  = 0;
+        this.sp        = MEM_SIZE;
+        this.randomizeMemory();
+        this.refreshAll();
+        this.cancelEdit();
+    }
+
+    // ── Value encoding (little-endian, BigInt for 64-bit) ──
+    encodeValue(type, value, arraySize, memOffset) {
+        if (!value || value === '' || value === 'uninitialized') {
+            // Uninitialized: preserve existing garbage bytes
+            const bytes = [];
+            for (let i = 0; i < TYPE_META[type].size * arraySize; i++) {
+                bytes.push(this.memory[memOffset + i]?.byte ?? Math.floor(Math.random()*256));
+            }
+            return bytes;
+        }
+
+        // Parse value list
+        let rawVals;
+        const stripped = value.replace(/[{}']/g, '').trim();
+        rawVals = stripped.split(',').map(s => s.trim()).filter(s => s !== '');
+
+        const bytes = [];
+        const elemSize = TYPE_META[type].size;
+        for (let i = 0; i < arraySize; i++) {
+            if (i < rawVals.length && rawVals[i] !== '') {
+                bytes.push(...this.singleEncode(type, rawVals[i]));
+            } else {
+                // Use existing memory for uninitialized elements
+                for (let j = 0; j < elemSize; j++) {
+                    bytes.push(this.memory[memOffset + i*elemSize + j]?.byte ?? 0);
+                }
+            }
+        }
+        return bytes;
+    }
+
+    singleEncode(type, raw) {
+        raw = String(raw).trim().replace(/'/g,'');
+        switch (type) {
+            case 'char': case 'unsigned char':
+                if (raw.length === 1 && isNaN(raw)) return [raw.charCodeAt(0) & 0xFF];
+                return [parseInt(raw) & 0xFF];
+            case 'bool':
+                return [(raw === 'true' || raw === '1') ? 1 : 0];
+            case 'short': case 'unsigned short': {
+                const v = parseInt(raw) || 0;
+                return [v & 0xFF, (v >> 8) & 0xFF];
+            }
+            case 'int': case 'unsigned int': {
+                const v = parseInt(raw) || 0;
+                return [v & 0xFF, (v>>8)&0xFF, (v>>16)&0xFF, (v>>24)&0xFF];
+            }
+            // ★ FIX: use BigInt for 64-bit types to avoid 32-bit shift truncation
+            case 'long long': {
+                const v = BigInt(parseInt(raw) || 0);
+                const bytes = [];
+                for (let i = 0; i < 8; i++) bytes.push(Number((v >> BigInt(i*8)) & 0xFFn));
+                return bytes;
+            }
+            case 'pointer': {
+                // Simulate a pointer value (address)
+                const v = BigInt(parseInt(raw) || 0x7fff5fbff000);
+                const bytes = [];
+                for (let i = 0; i < 8; i++) bytes.push(Number((v >> BigInt(i*8)) & 0xFFn));
+                return bytes;
+            }
+            case 'float': {
+                const arr = new Uint8Array(new Float32Array([parseFloat(raw)||0]).buffer);
+                return [...arr];
+            }
+            case 'double': {
+                const arr = new Uint8Array(new Float64Array([parseFloat(raw)||0]).buffer);
+                return [...arr];
+            }
+        }
+        return [0];
+    }
+
+    decodeValue(type, bytes) {
+        switch (type) {
+            case 'char':          return `'${String.fromCharCode(bytes[0])}'`;
+            case 'unsigned char': return bytes[0].toString();
+            case 'bool':          return bytes[0] ? 'true' : 'false';
+            case 'short': {
+                let v = bytes[0] | (bytes[1] << 8);
+                // Sign-extend 16-bit
+                if (v >= 0x8000) v -= 0x10000;
+                return v.toString();
+            }
+            case 'unsigned short': return (bytes[0] | (bytes[1] << 8)).toString();
+            case 'int':           return (bytes[0]|(bytes[1]<<8)|(bytes[2]<<16)|(bytes[3]<<24)).toString();
+            case 'unsigned int':  return ((bytes[0]|(bytes[1]<<8)|(bytes[2]<<16)|(bytes[3]<<24))>>>0).toString();
+            // ★ FIX: BigInt for 64-bit reconstruction
+            case 'long long': {
+                let v = 0n;
+                for (let i = 0; i < 8; i++) v |= BigInt(bytes[i]) << BigInt(i*8);
+                // Sign-extend to 64-bit signed
+                if (v >= (1n << 63n)) v -= (1n << 64n);
+                return v.toString();
+            }
+            case 'pointer': {
+                let v = 0n;
+                for (let i = 0; i < 8; i++) v |= BigInt(bytes[i]) << BigInt(i*8);
+                return '0x' + v.toString(16).toUpperCase().padStart(16,'0');
+            }
+            case 'float': {
+                const f = new Float32Array(new Uint8Array(bytes.slice(0,4)).buffer);
+                return f[0].toPrecision(7);
+            }
+            case 'double': {
+                const d = new Float64Array(new Uint8Array(bytes.slice(0,8)).buffer);
+                return d[0].toPrecision(15);
+            }
+        }
+        return '?';
+    }
+
+    // ── Edit mode ──
+    enterEditMode(varName, arrayIndex = null) {
+        const v = this.variables.find(v => v.name === varName);
+        if (!v) return;
+        this.editMode        = true;
+        this.editingVariable = varName;
+
+        document.getElementById('dataType').value    = v.type;
+        document.getElementById('varName').value     = v.name;
+        document.getElementById('varName').disabled  = true;
+        document.getElementById('dataType').disabled = true;
+
+        if (v.isArray) {
+            document.getElementById('isArray').checked    = true;
+            document.getElementById('isArray').disabled   = true;
+            document.getElementById('arraySizeGroup').style.display = 'block';
+            document.getElementById('arraySize').value    = v.arraySize;
+            document.getElementById('arraySize').disabled = true;
+            document.getElementById('arrayIndexGroup').style.display = 'block';
+            const sel = document.getElementById('arrayIndex');
+            sel.innerHTML = '';
+            for (let i = 0; i < v.arraySize; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.textContent = `[${i}]`;
+                if (arrayIndex !== null && i === arrayIndex) opt.selected = true;
+                sel.appendChild(opt);
+            }
+            const ai = arrayIndex ?? 0;
+            const eb = v.bytes.slice(ai * TYPE_META[v.type].size, (ai+1) * TYPE_META[v.type].size);
+            document.getElementById('varValue').value = this.decodeValue(v.type, eb);
+        } else {
+            document.getElementById('varValue').value = this.decodeValue(v.type, v.bytes);
+        }
+
+        document.getElementById('submitBtn').textContent         = 'Update Variable';
+        document.getElementById('cancelEditBtn').style.display   = 'block';
+        document.getElementById('variableForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    cancelEdit() {
+        this.editMode = false; this.editingVariable = null;
+        const f = document.getElementById('variableForm');
+        f.reset();
+        ['varName','dataType','isArray','arraySize'].forEach(id =>
+            document.getElementById(id).disabled = false);
+        document.getElementById('arraySizeGroup').style.display  = 'none';
+        document.getElementById('arrayIndexGroup').style.display = 'none';
+        document.getElementById('arraySize').required = false;
+        document.getElementById('submitBtn').textContent        = 'Allocate Memory';
+        document.getElementById('cancelEditBtn').style.display  = 'none';
+    }
+
+    updateVariable(varName, newValue, arrayIndex = null) {
+        const v = this.variables.find(v => v.name === varName);
+        if (!v) return;
+        const meta = TYPE_META[v.type];
+
+        if (v.isArray && arrayIndex !== null) {
+            const newBytes = this.singleEncode(v.type, newValue);
+            for (let i = 0; i < meta.size; i++) {
+                const memOff = v.offset + arrayIndex * meta.size + i;
+                v.bytes[arrayIndex * meta.size + i] = newBytes[i];
+                this.memory[memOff].byte = newBytes[i];
+                this.updateCell(memOff);
+            }
+        } else {
+            const newBytes = this.encodeValue(v.type, newValue, v.arraySize, v.offset);
+            v.bytes = newBytes;
+            v.value = newValue || 'uninitialized';
+            for (let i = 0; i < v.size; i++) {
+                this.memory[v.offset + i].byte = newBytes[i];
+                this.updateCell(v.offset + i);
+            }
+        }
+        this.refreshAll();
+        this.cancelEdit();
+    }
+
+    // ── UI refresh helpers ──
+    addCodeLine(type, varName, value, isArray, arraySize) {
+        let line = `<span class="type">${type}</span> <span class="variable">${varName}</span>`;
+        if (isArray) line += `[<span class="value">${arraySize}</span>]`;
+        if (value) {
+            let dv = value;
+            if (isArray && !value.includes('{')) dv = `{${value}}`;
+            line += ` = <span class="value">${dv}</span>`;
+        }
+        line += ';';
+        this.codeLines.push(line);
+    }
+
+    refreshAll() {
+        this.updateCodeDisplay();
+        this.updateSymbolTable();
+        this.updateVariableTable();
+    }
+
+    updateCodeDisplay() {
+        const el = document.getElementById('codeDisplay');
+        if (this.codeLines.length === 0) {
+            el.innerHTML = '<span class="comment">// Declare variables on the left to see code here...</span>';
+            return;
+        }
+        let html = '<span class="comment">// Generated C++ (x86-64, little-endian)</span>\n';
+        html += '<span class="keyword">#include</span> <span class="value">&lt;iostream&gt;</span>\n';
+        html += '<span class="keyword">#include</span> <span class="value">&lt;cstdint&gt;</span>\n\n';
+        html += '<span class="type">int</span> <span class="variable">main</span>() {\n';
+        this.codeLines.forEach(l => { html += `    ${l}\n`; });
+        html += '\n    <span class="keyword">return</span> <span class="value">0</span>;\n}';
+        el.innerHTML = html;
+    }
+
+    updateSymbolTable() {
+        const el = document.getElementById('symbolTable');
+        if (this.variables.length === 0) {
+            el.innerHTML = '<div style="text-align:center;width:100%;color:#666;">No variables allocated</div>';
+            return;
+        }
+        el.innerHTML = this.variables.map(v => {
+            const nm = v.isArray ? `${v.name}[${v.arraySize}]` : v.name;
+            const tp = v.isArray ? `${v.type}[]` : v.type;
+            const alignTxt = `align(${v.align})`;
+            const padTxt   = v.paddingBytes > 0 ? ` +${v.paddingBytes}B pad` : '';
+            return `
+                <div class="symbol-item">
+                    <div class="symbol-color" style="background:${v.color};"></div>
+                    <div class="symbol-info">
+                        <div class="symbol-name">${nm}</div>
+                        <div class="symbol-type">${tp} @ 0x${v.address.toString(16).toUpperCase()} · ${alignTxt}${padTxt}</div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    updateVariableTable() {
+        const tbody = document.getElementById('variableTable');
+        if (this.variables.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666;">No variables declared yet</td></tr>';
+            document.getElementById('paddingStats').textContent = '';
+            return;
+        }
+
+        tbody.innerHTML = this.variables.map(v => {
+            const nm  = v.isArray ? `${v.name}[${v.arraySize}]` : v.name;
+            const tp  = v.isArray ? `${v.type}[]` : v.type;
+            const sz  = v.isArray ? `${v.size}B (${v.arraySize}×${TYPE_META[v.type].size})` : `${v.size}B`;
+            const byteHex = v.bytes.map(b => b.toString(16).toUpperCase().padStart(2,'0')).join(' ');
+            const decodedVal = v.isArray
+                ? v.bytes.reduce((acc, _, idx) => {
+                    if (idx % TYPE_META[v.type].size === 0) {
+                        const eb = v.bytes.slice(idx, idx + TYPE_META[v.type].size);
+                        acc.push(this.decodeValue(v.type, eb));
+                    }
+                    return acc;
+                }, []).join(', ')
+                : this.decodeValue(v.type, v.bytes);
+
+            const alignOk = v.address % v.align === 0
+                ? `<span style="color:green;">✔ ${v.align}-byte aligned</span>`
+                : `<span style="color:red;">✘ MISALIGNED!</span>`;
+
+            return `
+                <tr class="clickable-row" onclick="mm.enterEditMode('${v.name}')" style="cursor:pointer;">
+                    <td><span style="color:${v.color};">■</span> <span class="var-name">${nm}</span></td>
+                    <td><span class="type-badge">${tp}</span></td>
+                    <td><span class="mem-addr">0x${v.address.toString(16).toUpperCase().padStart(4,'0')}</span></td>
+                    <td>${alignOk} <span class="align-badge">align(${v.align})</span>${v.paddingBytes > 0 ? `<br><span style="color:#888;font-size:10px;">+${v.paddingBytes}B padding above</span>` : ''}</td>
+                    <td>${sz}</td>
+                    <td>${decodedVal}</td>
+                    <td style="font-family:'Courier New',monospace;font-size:10px;">${byteHex}</td>
+                    <td><button onclick="event.stopPropagation();mm.deallocate('${v.name}')">Free</button></td>
+                </tr>`;
+        }).join('');
+
+        // Padding stats
+        const totalPad  = this.variables.reduce((s, v) => s + v.paddingBytes, 0);
+        const totalData = this.variables.reduce((s, v) => s + v.size, 0);
+        const pct = totalData + totalPad > 0
+            ? ((totalPad / (totalData + totalPad)) * 100).toFixed(1) : '0.0';
+        document.getElementById('paddingStats').textContent =
+            `Stack used: ${totalData + totalPad} bytes · Data: ${totalData}B · Alignment padding: ${totalPad}B (${pct}% waste)`;
+    }
+
+    showError(msg) {
+        const el = document.getElementById('errorMessage');
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3500);
+    }
+}
+
+// ═══════════════════════
+//  Bootstrap
+// ═══════════════════════
+const mm = new MemoryManager();
+
+// Form wiring
+document.getElementById('isArray').addEventListener('change', e => {
+    document.getElementById('arraySizeGroup').style.display = e.target.checked ? 'block' : 'none';
+    document.getElementById('arraySize').required = e.target.checked;
+    if (!e.target.checked) document.getElementById('arraySize').value = '';
+});
+
+document.getElementById('arrayIndex').addEventListener('change', e => {
+    if (!mm.editMode || !mm.editingVariable) return;
+    const v   = mm.variables.find(v => v.name === mm.editingVariable);
+    if (!v || !v.isArray) return;
+    const ai  = parseInt(e.target.value);
+    const eb  = v.bytes.slice(ai * TYPE_META[v.type].size, (ai+1) * TYPE_META[v.type].size);
+    document.getElementById('varValue').value = mm.decodeValue(v.type, eb);
+});
+
+document.getElementById('variableForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const type    = document.getElementById('dataType').value;
+    const varName = document.getElementById('varName').value.trim();
+    const value   = document.getElementById('varValue').value.trim();
+    const isArray = document.getElementById('isArray').checked;
+
+    if (!type)    { mm.showError('Please select a data type!'); return; }
+    if (!varName) { mm.showError('Please enter a variable name!'); return; }
+
+    if (mm.editMode) {
+        const ai = isArray ? parseInt(document.getElementById('arrayIndex').value) : null;
+        try { mm.updateVariable(varName, value, ai); }
+        catch(err) { mm.showError(err.message); }
+        return;
+    }
+
+    let arraySize = 1;
+    if (isArray) {
+        arraySize = parseInt(document.getElementById('arraySize').value);
+        if (isNaN(arraySize) || arraySize < 1 || arraySize > 20) {
+            mm.showError('Array size must be 1–20!'); return;
+        }
+    }
+
+    try {
+        mm.allocate(type, varName, value, isArray, arraySize);
+        document.getElementById('variableForm').reset();
+        document.getElementById('arraySizeGroup').style.display  = 'none';
+        document.getElementById('arrayIndexGroup').style.display = 'none';
+    } catch(err) { mm.showError(err.message); }
+});
+
+// Demo variables (staggered to animate nicely)
+// Intentionally mix types to show alignment padding
+setTimeout(() => {
+    try {
+        mm.allocate('char', 'grade', "'A'");
+        setTimeout(() => {
+            mm.allocate('int', 'score', '42');
+            setTimeout(() => {
+                mm.allocate('double', 'pi', '3.14159265358979');
+                setTimeout(() => {
+                    mm.allocate('short', 'flags', '0x00FF');
+                    setTimeout(() => {
+                        mm.allocate('int', 'scores', '85,90,78,92', true, 4);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
+    } catch(err) { console.error(err); }
+}, 400);
+</script>
+</body>
+</html>
