@@ -61,14 +61,14 @@
     <div class="section-badge"><span class="dot"></span>Learning Flow</div>
     <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
     <div class="toc-grid">
-      <div class="toc-item"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🟦 Pembukaan &amp; Koneksi</div><div class="toc-time">15 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">🟦 Struktur Dasar</div><div class="toc-time">20 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🟦 Pola 1: Traversal</div><div class="toc-time">25 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🟦 Pola 2: Akumulasi</div><div class="toc-time">30 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">🟦 Pola 3: Maks &amp; Min</div><div class="toc-time">25 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🟦 Pola 4: Pencarian</div><div class="toc-time">20 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🟦 Mini Project</div><div class="toc-time">20 min</div></div></div>
-      <div class="toc-item"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🟦 Refleksi</div><div class="toc-time">10 min</div></div></div>
+      <div class="toc-item" data-slide="3"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🚀 Pembukaan &amp; Koneksi</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item" data-slide="6"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">📝 Struktur Dasar</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item" data-slide="9"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Pola 1: Traversal</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item" data-slide="12"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">➕ Pola 2: Akumulasi</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item" data-slide="15"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">🔝 Pola 3: Maks &amp; Min</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item" data-slide="18"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🔍 Pola 4: Pencarian</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item" data-slide="19"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏗 Mini Project</div><div class="toc-time">20 min</div></div></div>
+      <div class="toc-item" data-slide="20"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🏁 Refleksi</div><div class="toc-time">10 min</div></div></div>
     </div>
   </div>
 
@@ -78,7 +78,7 @@
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="slide-num">03 / 21</div>
     <div class="section-badge"><span class="dot"></span>Bagian 1 · Pembukaan &amp; Koneksi · 15 menit</div>
-    <div class="slide-title">Array 1 Dimensi:<br>Dari <span class="highlight">Variabel Banyak</span><br>ke Struktur Data</div>
+    <div class="slide-title">🚀 Array 1 Dimensi:<br>Dari <span class="highlight">Variabel Banyak</span><br>ke Struktur Data</div>
     <div class="slide-body">
       <p>Array bukan hanya “kumpulan variabel”.</p>
       <p>Ini adalah <strong>struktur data pertama</strong> yang benar-benar terorganisasi.</p>
@@ -464,11 +464,23 @@ cin &gt;&gt; n;
   const total = slides.length;
 
   function navigate(dir) {
-    const next = current + dir;
-    if (next < 0 || next >= total) return;
-    slides[current].className = dir > 0 ? 'slide prev' : 'slide';
-    current = next;
-    slides[current].className = 'slide active';
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
     updateUI();
   }
 
@@ -482,6 +494,13 @@ cin &gt;&gt; n;
 
   document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
   document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const slideIdx = parseInt(item.getAttribute('data-slide'));
+      goToSlide(slideIdx);
+    });
+  });
 
   // Touch support
   let touchStartX = 0;
