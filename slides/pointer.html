@@ -44,14 +44,14 @@
     <div class="section-badge"><span class="dot"></span>Learning Flow</div>
     <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
     <div class="toc-grid">
-      <div class="toc-item"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🔁 Memory Mindset</div><div class="toc-time">15 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">🧠 Pointer Dasar</div><div class="toc-time">35 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Pass by Address</div><div class="toc-time">25 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🔢 Pointer & Array</div><div class="toc-time">20 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">➕ Pointer Arithmetic</div><div class="toc-time">15 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🪞 Double Pointer</div><div class="toc-time">15 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏗 Preview Heap</div><div class="toc-time">10 menit</div></div></div>
-      <div class="toc-item"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🧩 Big Picture</div><div class="toc-time">10 menit</div></div></div>
+      <div class="toc-item" data-slide="2"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🔁 Memory Mindset</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item" data-slide="4"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">🧠 Pointer Dasar</div><div class="toc-time">35 menit</div></div></div>
+      <div class="toc-item" data-slide="7"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Pass by Address</div><div class="toc-time">25 menit</div></div></div>
+      <div class="toc-item" data-slide="8"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🔢 Pointer &amp; Array</div><div class="toc-time">20 menit</div></div></div>
+      <div class="toc-item" data-slide="9"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">➕ Pointer Arithmetic</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item" data-slide="10"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🪞 Double Pointer</div><div class="toc-time">15 menit</div></div></div>
+      <div class="toc-item" data-slide="11"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏗 Stack vs Heap</div><div class="toc-time">10 menit</div></div></div>
+      <div class="toc-item" data-slide="12"><div class="toc-num">8</div><div class="toc-info"><div class="toc-name">🏁 Ringkasan</div><div class="toc-time">10 menit</div></div></div>
     </div>
   </div>
 
@@ -294,11 +294,23 @@ int **pp = &amp;p;</code></pre>
   const total = slides.length;
 
   function navigate(dir) {
-    const next = current + dir;
-    if (next < 0 || next >= total) return;
-    slides[current].className = dir > 0 ? 'slide prev' : 'slide';
-    current = next;
-    slides[current].className = 'slide active';
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
     updateUI();
   }
 
@@ -312,6 +324,13 @@ int **pp = &amp;p;</code></pre>
 
   document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
   document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const slideIdx = parseInt(item.getAttribute('data-slide'));
+      goToSlide(slideIdx);
+    });
+  });
 
   // Touch support
   let touchStartX = 0;

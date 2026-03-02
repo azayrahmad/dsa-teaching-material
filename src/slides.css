@@ -484,10 +484,15 @@ td:first-child { color: var(--accent2); font-weight: 700; }
   border: 1px solid var(--border);
   border-radius: 3px;
   background: var(--surface);
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
-.toc-item:hover { border-color: var(--accent); background: rgba(240,192,64,0.05); }
+.toc-item:hover {
+  border-color: var(--accent);
+  background: rgba(240,192,64,0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 .toc-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.2rem;
