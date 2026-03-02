@@ -98,7 +98,7 @@
         <div class="kp-item"><span class="icon">?</span><span>Apa hubungan pointer dan array?</span></div>
         <div class="kp-item"><span class="icon">?</span><span>Mengapa <code>arr</code> bisa dianggap sebagai alamat?</span></div>
       </div>
-      <pre style="margin-top:20px;"><span class="type">int</span> arr[5]; <span class="comment">// arr adalah alamat elemen pertama</span></pre>
+      <pre style="margin-top:20px;"><code class="language-cpp">int arr[5]; // arr adalah alamat elemen pertama</code></pre>
       <div class="mem-grid" style="margin-top:28px;">
         <div class="mem-cell active-cell"><div class="addr">0x100</div><div class="val">arr[0]</div></div>
         <div class="mem-cell"><div class="addr">0x104</div><div class="val">arr[1]</div></div>
@@ -145,8 +145,8 @@
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Struktur Dasar · 20 menit</div>
     <div class="slide-title">📝 Deklarasi &amp; <span class="highlight">Inisialisasi</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> nilai[5];
-<span class="type">int</span> angka[5] = {10, 20, 30, 40, 50};</pre>
+      <pre><code class="language-cpp">int nilai[5];
+int angka[5] = {10, 20, 30, 40, 50};</code></pre>
       <div class="mem-grid" style="margin-top:28px;">
         <div class="mem-cell active-cell"><div class="addr">index 0</div><div class="val">10</div></div>
         <div class="mem-cell"><div class="addr">index 1</div><div class="val">20</div></div>
@@ -172,8 +172,8 @@
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Akses Elemen</div>
     <div class="slide-title">🔍 Mengakses <span class="highlight">Elemen</span></div>
     <div class="slide-body">
-      <pre>cout &lt;&lt; angka[0];   <span class="comment">// Output: 10</span>
-angka[2] = 100;     <span class="comment">// Mengubah 30 menjadi 100</span></pre>
+      <pre><code class="language-cpp">cout &lt;&lt; angka[0];   // Output: 10
+angka[2] = 100;     // Mengubah 30 menjadi 100</code></pre>
       <div class="mem-grid" style="margin-top:28px;">
         <div class="mem-cell active-cell"><div class="addr">index 0</div><div class="val" contenteditable="true">10</div></div>
         <div class="mem-cell"><div class="addr">index 1</div><div class="val" contenteditable="true">20</div></div>
@@ -196,8 +196,8 @@ angka[2] = 100;     <span class="comment">// Mengubah 30 menjadi 100</span></pre
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Kesalahan Umum</div>
     <div class="slide-title">⚠️ Kesalahan <span class="highlight">Umum</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> data[3] = {1, 2, 3};
-cout &lt;&lt; data[3];  <span class="comment">// Apa yang terjadi?</span></pre>
+      <pre><code class="language-cpp">int data[3] = {1, 2, 3};
+cout &lt;&lt; data[3];  // Apa yang terjadi?</code></pre>
       <div class="tip-box" style="margin-top:20px;">
         <div class="tip-label">DISKUSI</div>
         <ul>
@@ -230,9 +230,9 @@ cout &lt;&lt; data[3];  <span class="comment">// Apa yang terjadi?</span></pre>
     <div class="section-badge"><span class="dot"></span>Bagian 3 · Pola Traversal</div>
     <div class="slide-title">🛠 Pola <span class="highlight">Traversal Dasar</span></div>
     <div class="slide-body">
-      <pre><span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; 5; i++){
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 5; i++){
     cout &lt;&lt; angka[i] &lt;&lt; endl;
-}</pre>
+}</code></pre>
       <div class="kp" style="margin-top:20px;">
         <div class="kp-item"><span class="icon">1</span><span>Inisialisasi (<code>i = 0</code>)</span></div>
         <div class="kp-item"><span class="icon">2</span><span>Kondisi (<code>i &lt; ukuran</code>)</span></div>
@@ -249,12 +249,12 @@ cout &lt;&lt; data[3];  <span class="comment">// Apa yang terjadi?</span></pre>
     <div class="section-badge"><span class="dot"></span>Bagian 3 · Input Dinamis</div>
     <div class="slide-title">📥 Input <span class="highlight">Dinamis</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> n;
-cout &lt;&lt; <span class="string">"Jumlah data: "</span>;
+      <pre><code class="language-cpp">int n;
+cout &lt;&lt; "Jumlah data: ";
 cin &gt;&gt; n;
 
-<span class="keyword">const</span> <span class="type">int</span> MAX = 100;
-<span class="type">int</span> data[MAX]; <span class="comment">// Menggunakan batas tetap</span></pre>
+const int MAX = 100;
+int data[MAX]; // Menggunakan batas tetap</code></pre>
       <p style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
         Catatan: Standar C++ menyarankan ukuran array ditentukan saat kompilasi.
       </p>
@@ -269,11 +269,11 @@ cin &gt;&gt; n;
     <div class="section-badge"><span class="dot"></span>Bagian 4 · Pola 2: Akumulasi · 30 menit</div>
     <div class="slide-title">➕ Menghitung <span class="highlight">Total</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> total = 0;
+      <pre><code class="language-cpp">int total = 0;
 
-<span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; i++){
+for(int i = 0; i &lt; n; i++){
     total += data[i];
-}</pre>
+}</code></pre>
       <div class="kp" style="margin-top:20px;">
         <div class="kp-item"><span class="icon">▸</span><span>Gunakan variabel <strong>akumulator</strong> (<code>total</code>).</span></div>
         <div class="kp-item"><span class="icon">▸</span><span>Pola umum untuk banyak algoritma.</span></div>
@@ -289,7 +289,7 @@ cin &gt;&gt; n;
     <div class="section-badge"><span class="dot"></span>Bagian 4 · Rata-rata</div>
     <div class="slide-title">📊 Menghitung <span class="highlight">Rata-rata</span></div>
     <div class="slide-body">
-      <pre><span class="type">float</span> rata = (<span class="type">float</span>)total / n;</pre>
+      <pre><code class="language-cpp">float rata = (float)total / n;</code></pre>
       <div class="tip-box" style="margin-top:30px;">
         <div class="tip-label">DISKUSI</div>
         Kenapa kita perlu melakukan <strong>casting</strong> ke <code>(float)</code>?
@@ -339,13 +339,13 @@ cin &gt;&gt; n;
     <div class="section-badge"><span class="dot"></span>Bagian 5 · Implementasi Maks</div>
     <div class="slide-title">🏆 Implementasi <span class="highlight">Maksimum</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> maks = data[0];
+      <pre><code class="language-cpp">int maks = data[0];
 
-<span class="keyword">for</span>(<span class="type">int</span> i = 1; i &lt; n; i++){
-    <span class="keyword">if</span>(data[i] &gt; maks){
+for(int i = 1; i &lt; n; i++){
+    if(data[i] &gt; maks){
         maks = data[i];
     }
-}</pre>
+}</code></pre>
       <div class="quote" style="margin-top:20px;">Mengapa kita mulai loop dari <code>index 1</code>?</div>
     </div>
   </div>
@@ -375,15 +375,15 @@ cin &gt;&gt; n;
     <div class="section-badge"><span class="dot"></span>Bagian 6 · Pola 4: Pencarian · 20 menit</div>
     <div class="slide-title">🔍 Linear <span class="highlight">Search</span></div>
     <div class="slide-body">
-      <pre><span class="type">int</span> cari = 75;
-<span class="type">bool</span> ditemukan = <span class="keyword">false</span>;
+      <pre><code class="language-cpp">int cari = 75;
+bool ditemukan = false;
 
-<span class="keyword">for</span>(<span class="type">int</span> i = 0; i &lt; n; i++){
-    <span class="keyword">if</span>(data[i] == cari){
-        ditemukan = <span class="keyword">true</span>;
-        <span class="keyword">break</span>;
+for(int i = 0; i &lt; n; i++){
+    if(data[i] == cari){
+        ditemukan = true;
+        break;
     }
-}</pre>
+}</code></pre>
       <div class="tip-box" style="margin-top:20px;">
         <div class="tip-label">DISKUSI</div>
         <ul>
