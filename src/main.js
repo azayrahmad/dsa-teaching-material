@@ -34,9 +34,12 @@ const translations = {
 let currentLang = localStorage.getItem('lang') || 'id';
 let currentTheme = localStorage.getItem('theme') || 'dark';
 
+import { initHighlighting } from './highlight.js';
+
 export function initApp() {
   applyTheme(currentTheme);
   applyLanguage(currentLang);
+  initHighlighting();
 
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {

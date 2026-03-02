@@ -179,16 +179,92 @@ pre {
   border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: clamp(0.85rem, 1.2vw, 1rem);
-  color: var(--accent2);
+  color: var(--text);
   margin: 20px 0;
   white-space: pre;
   overflow-x: auto;
   max-width: 700px;
+  position: relative;
 }
-pre .comment { color: #4a5060; }
-pre .keyword { color: var(--accent3); }
-pre .type { color: var(--accent4); }
-pre .string { color: var(--accent); }
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: 'JetBrains Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+}
+
+/* Prism overrides */
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #4a5060; }
+.token.punctuation { color: var(--text-muted); }
+.token.namespace { opacity: .7; }
+.token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted { color: var(--accent4); }
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: var(--accent); }
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: var(--accent2); }
+.token.atrule, .token.attr-value, .token.keyword { color: var(--accent3); }
+.token.function, .token.class-name { color: var(--accent2); }
+.token.regex, .token.important, .token.variable { color: var(--accent); }
+
+/* Copy Button */
+.copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+pre:hover .copy-btn {
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.copy-btn.copied {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
+.copy-tooltip {
+  position: absolute;
+  bottom: 125%;
+  right: 0;
+  background: var(--surface2);
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.2s;
+}
+
+.copy-btn:hover .copy-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Table */
 table {
