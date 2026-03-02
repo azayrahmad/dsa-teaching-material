@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C++ Memory Visualizer — Improved</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/style.css">
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <style>
         body {
-            margin: 0;
+            margin: 20px;
             background: teal;
             font-family: 'MS Sans Serif', Arial, sans-serif;
         }
@@ -217,19 +215,7 @@
     </style>
 </head>
 <body>
-<nav class="top-nav">
-  <div class="nav-links">
-    <a href="./index.html" data-i18n="home">Beranda</a>
-    <span style="color: var(--border)">/</span>
-    <span style="color: var(--accent)">Memory Visualizer</span>
-  </div>
-  <div class="controls">
-    <button class="control-btn" id="lang-toggle">ID / EN</button>
-    <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
-  </div>
-</nav>
-
-<div class="container" style="padding: 20px;">
+<div class="container">
 
     <!-- Title -->
     <div class="window">
@@ -1032,10 +1018,6 @@ setTimeout(() => {
         }, 500);
     } catch(err) { console.error(err); }
 }, 400);
-</script>
-<script type="module">
-  import { initApp } from './src/main.js';
-  initApp();
 </script>
 </body>
 </html>
