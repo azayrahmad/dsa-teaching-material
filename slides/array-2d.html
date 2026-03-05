@@ -113,6 +113,8 @@
           <tr><td>Mhs 1</td><td>85</td><td>90</td><td>80</td></tr>
           <tr><td>Mhs 2</td><td>70</td><td>75</td><td>85</td></tr>
           <tr><td>Mhs 3</td><td>95</td><td>88</td><td>92</td></tr>
+          <tr><td>Mhs 4</td><td>80</td><td>82</td><td>88</td></tr>
+          <tr><td>Mhs 5</td><td>75</td><td>78</td><td>80</td></tr>
         </tbody>
       </table>
       <div class="quote">Bagaimana cara menyimpan data tabular seperti ini secara efisien dalam program?</div>
@@ -127,12 +129,35 @@
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Konsep Dasar</div>
     <div class="slide-title">💡 Solusi: <span class="highlight">Array 2 Dimensi</span></div>
     <div class="slide-body">
-      <pre><code class="language-cpp">int nilai[5][3];</code></pre>
-      <div class="kp">
-        <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
-        <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
+      <div class="cols">
+        <div class="col">
+          <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+          <div class="kp">
+            <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
+            <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
+          </div>
+          <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
+        </div>
+        <div class="col">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
+            <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val">70</div></div>
+            <div class="mem-cell"><div class="addr">1,1</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">1,2</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
+            <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
+            <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
+            <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
+            <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
+          </div>
+        </div>
       </div>
-      <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
     </div>
   </div>
 
@@ -143,11 +168,11 @@
     <div class="slide-num">06 / 20</div>
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Visualisasi</div>
     <div class="slide-title">🖥 Visualisasi <span class="highlight">Logis vs Memori</span></div>
-    <div class="slide-body">
-      <div class="cols">
-        <div class="col">
-          <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Logis</strong> (Tabel 3&times;3):</p>
-          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px; margin-bottom: 20px;">
+    <div class="slide-body" style="max-width: 1000px;">
+      <div class="cols" style="gap: 30px;">
+        <div class="col" style="flex: 0 0 200px;">
+          <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Logis</strong> (Tabel 5&times;3):</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
             <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
             <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
             <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
@@ -157,20 +182,32 @@
             <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
             <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
             <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
+            <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
+            <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
+            <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
           </div>
         </div>
         <div class="col">
           <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Memori</strong> (Linear):</p>
-          <div class="mem-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-            <div class="mem-cell"><div class="addr">0x100</div><div class="val" style="font-size: 0.8rem;">[0][0]</div><div class="varlabel">85</div></div>
-            <div class="mem-cell"><div class="addr">0x104</div><div class="val" style="font-size: 0.8rem;">[0][1]</div><div class="varlabel">90</div></div>
-            <div class="mem-cell"><div class="addr">0x108</div><div class="val" style="font-size: 0.8rem;">[0][2]</div><div class="varlabel">80</div></div>
-            <div class="mem-cell"><div class="addr">0x10C</div><div class="val" style="font-size: 0.8rem;">[1][0]</div><div class="varlabel">70</div></div>
-            <div class="mem-cell"><div class="addr">0x110</div><div class="val" style="font-size: 0.8rem;">[1][1]</div><div class="varlabel">75</div></div>
-            <div class="mem-cell"><div class="addr">0x114</div><div class="val" style="font-size: 0.8rem;">[1][2]</div><div class="varlabel">85</div></div>
-            <div class="mem-cell"><div class="addr">0x118</div><div class="val" style="font-size: 0.8rem;">[2][0]</div><div class="varlabel">95</div></div>
-            <div class="mem-cell"><div class="addr">0x11C</div><div class="val" style="font-size: 0.8rem;">[2][1]</div><div class="varlabel">88</div></div>
-            <div class="mem-cell"><div class="addr">0x120</div><div class="val" style="font-size: 0.8rem;">[2][2]</div><div class="varlabel">92</div></div>
+          <div class="mem-grid" style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0; border: 1px solid var(--border); width: fit-content; max-width: 100%;">
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x100</div><div class="val" style="font-size: 0.9rem;">85</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x104</div><div class="val" style="font-size: 0.9rem;">90</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x108</div><div class="val" style="font-size: 0.9rem;">80</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x10C</div><div class="val" style="font-size: 0.9rem;">70</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x110</div><div class="val" style="font-size: 0.9rem;">75</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x114</div><div class="val" style="font-size: 0.9rem;">85</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x118</div><div class="val" style="font-size: 0.9rem;">95</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x11C</div><div class="val" style="font-size: 0.9rem;">88</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x120</div><div class="val" style="font-size: 0.9rem;">92</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x124</div><div class="val" style="font-size: 0.9rem;">80</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x128</div><div class="val" style="font-size: 0.9rem;">82</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x12C</div><div class="val" style="font-size: 0.9rem;">88</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x130</div><div class="val" style="font-size: 0.9rem;">75</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x134</div><div class="val" style="font-size: 0.9rem;">78</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none;"><div class="addr">0x138</div><div class="val" style="font-size: 0.9rem;">80</div></div>
           </div>
         </div>
       </div>
