@@ -129,28 +129,34 @@
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Konsep Dasar</div>
     <div class="slide-title">💡 Solusi: <span class="highlight">Array 2 Dimensi</span></div>
     <div class="slide-body">
-      <pre><code class="language-cpp">int nilai[5][3];</code></pre>
-      <div class="kp">
-        <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
-        <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
-      </div>
-      <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
-      <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px; margin-top: 20px;">
-        <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
-        <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
-        <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
-        <div class="mem-cell"><div class="addr">1,0</div><div class="val">70</div></div>
-        <div class="mem-cell"><div class="addr">1,1</div><div class="val">75</div></div>
-        <div class="mem-cell"><div class="addr">1,2</div><div class="val">85</div></div>
-        <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
-        <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
-        <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
-        <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
-        <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
-        <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
-        <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
-        <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
-        <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
+      <div class="cols">
+        <div class="col">
+          <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+          <div class="kp">
+            <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
+            <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
+          </div>
+          <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
+        </div>
+        <div class="col">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
+            <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val">70</div></div>
+            <div class="mem-cell"><div class="addr">1,1</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">1,2</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
+            <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
+            <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
+            <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
+            <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -162,9 +168,9 @@
     <div class="slide-num">06 / 20</div>
     <div class="section-badge"><span class="dot"></span>Bagian 2 · Visualisasi</div>
     <div class="slide-title">🖥 Visualisasi <span class="highlight">Logis vs Memori</span></div>
-    <div class="slide-body">
-      <div class="cols" style="flex-direction: column; gap: 30px;">
-        <div class="col">
+    <div class="slide-body" style="max-width: 1000px;">
+      <div class="cols" style="gap: 30px;">
+        <div class="col" style="flex: 0 0 200px;">
           <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Logis</strong> (Tabel 5&times;3):</p>
           <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
             <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
