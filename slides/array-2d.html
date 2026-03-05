@@ -139,7 +139,7 @@
           <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
         </div>
         <div class="col">
-          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 0;">
             <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
             <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
             <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
@@ -172,7 +172,7 @@
       <div class="cols" style="gap: 30px;">
         <div class="col" style="flex: 0 0 200px;">
           <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Logis</strong> (Tabel 5&times;3):</p>
-          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 4px;">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 0;">
             <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
             <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
             <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
@@ -246,7 +246,7 @@
     <div class="slide-body">
       <pre><code class="language-cpp">cout &lt;&lt; matriks[0][1];  // Output: 2
 matriks[1][2] = 10;     // Mengubah 6 menjadi 10</code></pre>
-      <div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; margin-top: 20px;">
+      <div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 0; margin-top: 20px;">
         <div class="mem-cell active-cell"><div class="addr">[0][0]</div><div class="val" contenteditable="true">1</div></div>
         <div class="mem-cell active-cell"><div class="addr">[0][1]</div><div class="val" contenteditable="true">2</div></div>
         <div class="mem-cell active-cell"><div class="addr">[0][2]</div><div class="val" contenteditable="true">3</div></div>
@@ -431,17 +431,17 @@ for(int i = 0; i &lt; 3; i++){
     }
 }</code></pre>
       <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px; font-size: 0.8rem;">
-        <div style="display: grid; grid-template-columns: repeat(2, 40px); gap: 4px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
           <div class="mem-cell"><div class="val" contenteditable="true">1</div></div><div class="mem-cell"><div class="val" contenteditable="true">2</div></div>
           <div class="mem-cell"><div class="val" contenteditable="true">3</div></div><div class="mem-cell"><div class="val" contenteditable="true">4</div></div>
         </div>
         <span>+</span>
-        <div style="display: grid; grid-template-columns: repeat(2, 40px); gap: 4px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
           <div class="mem-cell"><div class="val" contenteditable="true">5</div></div><div class="mem-cell"><div class="val" contenteditable="true">6</div></div>
           <div class="mem-cell"><div class="val" contenteditable="true">7</div></div><div class="mem-cell"><div class="val" contenteditable="true">8</div></div>
         </div>
         <span>=</span>
-        <div style="display: grid; grid-template-columns: repeat(2, 40px); gap: 4px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
           <div class="mem-cell active-cell"><div class="val" contenteditable="true">6</div></div><div class="mem-cell active-cell"><div class="val" contenteditable="true">8</div></div>
           <div class="mem-cell active-cell"><div class="val" contenteditable="true">10</div></div><div class="mem-cell active-cell"><div class="val" contenteditable="true">12</div></div>
         </div>
@@ -465,7 +465,7 @@ for(int i = 0; i &lt; 3; i++){
       <div style="display: flex; gap: 40px; align-items: center; margin-top: 15px; font-size: 0.8rem;">
         <div>
           <p>Matriks Asal:</p>
-          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 4px;">
+          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
             <div class="mem-cell"><div class="addr">0,0</div><div class="val" contenteditable="true">1</div></div><div class="mem-cell"><div class="addr">0,1</div><div class="val" contenteditable="true">2</div></div>
             <div class="mem-cell"><div class="addr">1,0</div><div class="val" contenteditable="true">3</div></div><div class="mem-cell"><div class="addr">1,1</div><div class="val" contenteditable="true">4</div></div>
           </div>
@@ -473,7 +473,7 @@ for(int i = 0; i &lt; 3; i++){
         <span>⮕</span>
         <div>
           <p>Transpos:</p>
-          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 4px;">
+          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
             <div class="mem-cell active-cell"><div class="addr">0,0</div><div class="val" contenteditable="true">1</div></div><div class="mem-cell active-cell"><div class="addr">0,1</div><div class="val" contenteditable="true">3</div></div>
             <div class="mem-cell active-cell"><div class="addr">1,0</div><div class="val" contenteditable="true">2</div></div><div class="mem-cell active-cell"><div class="addr">1,1</div><div class="val" contenteditable="true">4</div></div>
           </div>
@@ -660,6 +660,7 @@ for(int i = 0; i &lt; 3; i++){
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement('div');
         cell.className = 'mem-cell';
+
 
         const addr = document.createElement('div');
         addr.className = 'addr';

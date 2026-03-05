@@ -376,6 +376,11 @@ td:first-child { color: var(--accent2); font-weight: 700; }
 .mem-cell.pointer-cell .val { color: var(--accent3); font-size: 0.9rem; }
 .mem-cell.active-cell { border-color: var(--accent); }
 
+/* 2D Array Specific Overrides */
+.slide[id^="slide-"] [style*="display: grid"] .mem-cell {
+  min-width: 0;
+}
+
 /* Nav */
 .nav-slides-container {
   position: fixed;
@@ -569,7 +574,7 @@ td:first-child { color: var(--accent2); font-weight: 700; }
 
 .interactive-grid {
   display: grid;
-  gap: 4px;
+  gap: 0;
 }
 
 .console-box {
