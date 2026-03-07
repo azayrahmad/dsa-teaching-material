@@ -377,7 +377,8 @@ td:first-child { color: var(--accent2); font-weight: 700; }
 .mem-cell.active-cell { border-color: var(--accent); }
 
 /* 2D Array Specific Overrides */
-.slide[id^="slide-"] [style*="display: grid"] .mem-cell {
+.slide[id^="slide-"] [style*="display: grid"] .mem-cell,
+.interactive-grid .mem-cell {
   min-width: 0;
 }
 
