@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 4 – ARRAY 2 DIMENSI – MATRIKS & DATA TABULAR</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/array.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Pertemuan lalu kita bekerja dengan array 1 dimensi. Hari ini kita akan naik satu tingkat. Kita akan menyimpan data dalam bentuk tabel. Ini sangat umum di dunia nyata: nilai mahasiswa, penjualan, jadwal, dll.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 04</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Array 2D</div>
+    <div class="slide-title">ARRAY 2 DIMENSI:<br><span class="highlight">Matriks &amp;</span><br>Data Tabular</div>
+    <div class="subtitle">160 menit · 20 Bagian Materi</div>
+    <div class="desc">Representasi data dalam bentuk tabel. Dari satu baris ke baris dan kolom yang terorganisasi.</div>
+  </div>
+
+  <!-- SLIDE 1: TUJUAN -->
+  <div class="slide" id="slide-1" data-notes="Membahas target pembelajaran: konsep baris-kolom, deklarasi, traversal, dan operasi matriks.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pertemuan</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Memahami konsep baris dan kolom pada Array 2D.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Deklarasi, inisialisasi, dan akses elemen matriks.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Implementasi Traversal 2D menggunakan Nested Loop.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Operasi dasar matriks (Penjumlahan &amp; Transpos).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: FLOW -->
+  <div class="slide" id="slide-2" data-notes="Menjelaskan pembagian waktu 160 menit ke dalam 7 bagian utama.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Learning Flow</div>
+    <div class="slide-title">🧭 Struktur <span class="highlight">Besar</span></div>
+    <div class="toc-grid">
+      <div class="toc-item" data-slide="3"><div class="toc-num">1</div><div class="toc-info"><div class="toc-name">🚀 Review &amp; Motivasi</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item" data-slide="5"><div class="toc-num">2</div><div class="toc-info"><div class="toc-name">📝 Konsep Dasar</div><div class="toc-time">25 min</div></div></div>
+      <div class="toc-item" data-slide="9"><div class="toc-num">3</div><div class="toc-info"><div class="toc-name">🔄 Traversal &amp; Contoh</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item" data-slide="11"><div class="toc-num">4</div><div class="toc-info"><div class="toc-name">🛠 Studi Kasus</div><div class="toc-time">30 min</div></div></div>
+      <div class="toc-item" data-slide="15"><div class="toc-num">5</div><div class="toc-info"><div class="toc-name">➕ Operasi Matriks</div><div class="toc-time">15 min</div></div></div>
+      <div class="toc-item" data-slide="17"><div class="toc-num">6</div><div class="toc-info"><div class="toc-name">🏗 Praktikum</div><div class="toc-time">40 min</div></div></div>
+      <div class="toc-item" data-slide="18"><div class="toc-num">7</div><div class="toc-info"><div class="toc-name">🏁 Refleksi</div><div class="toc-time">20 min</div></div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: REVIEW -->
+  <div class="slide" id="slide-3" data-notes="Tanya mahasiswa: Jika saya punya 5 mahasiswa dan 3 mata kuliah, cukupkah array 1D? Apa masalahnya jika pakai 3 array terpisah? Arahkan bahwa kita butuh struktur lebih rapi.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Review &amp; Motivasi</div>
+    <div class="slide-title">🧠 Review <span class="highlight">Array 1D</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Disimpan berurutan di memori.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Diakses dengan satu indeks.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Cocok untuk data berbentuk list.</span></div>
+      </div>
+      <pre><code class="language-cpp">int nilai[5];</code></pre>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">DISKUSI</div>
+        Jika ada 5 mahasiswa dan 3 mata kuliah, apakah Array 1D cukup? Apa masalahnya jika pakai 3 array terpisah?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: MASALAH -->
+  <div class="slide" id="slide-4" data-notes="Biarkan mahasiswa berpikir. Biasanya mereka akan menyebut: 3 array terpisah, 5 array terpisah. Tunjukkan bahwa ini tidak efisien dan membingungkan.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 1 · Masalah Nyata</div>
+    <div class="slide-title">📊 Sistem <span class="highlight">Nilai Mahasiswa</span></div>
+    <div class="slide-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Mahasiswa</th>
+            <th>Algoritma</th>
+            <th>Matematika</th>
+            <th>Inggris</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Mhs 1</td><td>85</td><td>90</td><td>80</td></tr>
+          <tr><td>Mhs 2</td><td>70</td><td>75</td><td>85</td></tr>
+          <tr><td>Mhs 3</td><td>95</td><td>88</td><td>92</td></tr>
+          <tr><td>Mhs 4</td><td>80</td><td>82</td><td>88</td></tr>
+          <tr><td>Mhs 5</td><td>75</td><td>78</td><td>80</td></tr>
+        </tbody>
+      </table>
+      <div class="quote">Bagaimana cara menyimpan data tabular seperti ini secara efisien dalam program?</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SOLUSI -->
+  <div class="slide" id="slide-5" data-notes="Indeks pertama → baris. Indeks kedua → kolom. nilai[2][1] artinya mahasiswa ke-3 mata kuliah ke-2.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Konsep Dasar</div>
+    <div class="slide-title">💡 Solusi: <span class="highlight">Array 2 Dimensi</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+          <div class="kp">
+            <div class="kp-item"><span class="icon">1</span><span><strong>Indeks pertama (5):</strong> Jumlah Baris (Mahasiswa)</span></div>
+            <div class="kp-item"><span class="icon">2</span><span><strong>Indeks kedua (3):</strong> Jumlah Kolom (Mata Kuliah)</span></div>
+          </div>
+          <p style="margin-top:20px;"><code>nilai[2][1]</code> berarti mahasiswa ke-3, mata kuliah ke-2 (karena indeks mulai dari 0).</p>
+        </div>
+        <div class="col">
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 0;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
+            <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val">70</div></div>
+            <div class="mem-cell"><div class="addr">1,1</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">1,2</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
+            <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
+            <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
+            <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
+            <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: VISUALISASI -->
+  <div class="slide" id="slide-6" data-notes="Tekankan konsep baris & kolom. Walaupun terlihat seperti tabel, di memori tetap linear. Ini penting untuk pemahaman lanjutan.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Visualisasi</div>
+    <div class="slide-title">🖥 Visualisasi <span class="highlight">Logis vs Memori</span></div>
+    <div class="slide-body" style="max-width: 1000px;">
+      <div class="cols" style="gap: 30px;">
+        <div class="col" style="flex: 0 0 200px;">
+          <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Logis</strong> (Tabel 5&times;3):</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 60px); gap: 0;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">0,1</div><div class="val">90</div></div>
+            <div class="mem-cell"><div class="addr">0,2</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val">70</div></div>
+            <div class="mem-cell"><div class="addr">1,1</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">1,2</div><div class="val">85</div></div>
+            <div class="mem-cell"><div class="addr">2,0</div><div class="val">95</div></div>
+            <div class="mem-cell"><div class="addr">2,1</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">2,2</div><div class="val">92</div></div>
+            <div class="mem-cell"><div class="addr">3,0</div><div class="val">80</div></div>
+            <div class="mem-cell"><div class="addr">3,1</div><div class="val">82</div></div>
+            <div class="mem-cell"><div class="addr">3,2</div><div class="val">88</div></div>
+            <div class="mem-cell"><div class="addr">4,0</div><div class="val">75</div></div>
+            <div class="mem-cell"><div class="addr">4,1</div><div class="val">78</div></div>
+            <div class="mem-cell"><div class="addr">4,2</div><div class="val">80</div></div>
+          </div>
+        </div>
+        <div class="col">
+          <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>Visualisasi Memori</strong> (Linear):</p>
+          <div class="mem-grid" style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0; border: 1px solid var(--border); width: fit-content; max-width: 100%;">
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x100</div><div class="val" style="font-size: 0.9rem;">85</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x104</div><div class="val" style="font-size: 0.9rem;">90</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x108</div><div class="val" style="font-size: 0.9rem;">80</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x10C</div><div class="val" style="font-size: 0.9rem;">70</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x110</div><div class="val" style="font-size: 0.9rem;">75</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x114</div><div class="val" style="font-size: 0.9rem;">85</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x118</div><div class="val" style="font-size: 0.9rem;">95</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x11C</div><div class="val" style="font-size: 0.9rem;">88</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x120</div><div class="val" style="font-size: 0.9rem;">92</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x124</div><div class="val" style="font-size: 0.9rem;">80</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x128</div><div class="val" style="font-size: 0.9rem;">82</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x12C</div><div class="val" style="font-size: 0.9rem;">88</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x130</div><div class="val" style="font-size: 0.9rem;">75</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none; border-right: 1px solid var(--border);"><div class="addr">0x134</div><div class="val" style="font-size: 0.9rem;">78</div></div>
+            <div class="mem-cell" style="min-width: 60px; border: none;"><div class="addr">0x138</div><div class="val" style="font-size: 0.9rem;">80</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="quote" style="margin-top: 20px; font-size: 0.9rem;">
+        Meskipun kita melihatnya sebagai tabel, di memori data tetap disimpan <strong>linear berurutan</strong> (Row-Major Order).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: DEKLARASI -->
+  <div class="slide" id="slide-7" data-notes="Total elemen = 2 × 3 = 6. Disimpan berurutan di memori.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Struktur Dasar</div>
+    <div class="slide-title">📝 Deklarasi &amp; <span class="highlight">Inisialisasi</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">int matriks[2][3] = {
+    {1, 2, 3}, // Baris 0
+    {4, 5, 6}  // Baris 1
+};</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span>Total elemen = 2 &times; 3 = 6.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Setiap baris dibungkus kurung kurawal <code>{}</code>.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: AKSES -->
+  <div class="slide" id="slide-8" data-notes="Index mulai dari 0. Kesalahan umum: tertukar baris and kolom.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 2 · Akses Elemen</div>
+    <div class="slide-title">🔍 Mengakses <span class="highlight">Elemen</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">cout &lt;&lt; matriks[0][1];  // Output: 2
+matriks[1][2] = 10;     // Mengubah 6 menjadi 10</code></pre>
+      <div style="display: grid; grid-template-columns: repeat(3, 80px); gap: 0; margin-top: 20px;">
+        <div class="mem-cell active-cell"><div class="addr">[0][0]</div><div class="val" contenteditable="true">1</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[0][1]</div><div class="val" contenteditable="true">2</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[0][2]</div><div class="val" contenteditable="true">3</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][0]</div><div class="val" contenteditable="true">4</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][1]</div><div class="val" contenteditable="true">5</div></div>
+        <div class="mem-cell active-cell"><div class="addr">[1][2]</div><div class="val" contenteditable="true">6</div></div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label">HATI-HATI</div>
+        Kesalahan umum: Tertukar antara indeks baris dan kolom.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: TRAVERSAL -->
+  <div class="slide" id="slide-9" data-notes="Loop luar → baris. Loop dalam → kolom. Ini pola penting yang harus dihafal.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Traversal &amp; Contoh</div>
+    <div class="slide-title">🔄 Traversal 2D:<br><span class="highlight">Nested Loop</span></div>
+    <div class="slide-body" style="max-width: 1100px;">
+      <div class="cols">
+        <div class="col">
+          <pre><code class="language-cpp">for(int i = 0; i &lt; baris; i++){
+    for(int j = 0; j &lt; kolom; j++){
+        cout &lt;&lt; matriks[i][j] &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+}</code></pre>
+          <div class="kp">
+            <div class="kp-item"><span class="icon">1</span><span>Loop luar (<code>i</code>) mengontrol baris mana yang sedang diakses.</span></div>
+            <div class="kp-item"><span class="icon">2</span><span>Loop dalam (<code>j</code>) mengunjungi setiap kolom pada baris tersebut.</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="interactive-box">
+            <div class="form-row">
+              <div class="input-group">
+                <label>Baris</label>
+                <input type="number" id="grid-rows" min="1" max="5" value="5">
+              </div>
+              <div class="input-group">
+                <label>Kolom</label>
+                <input type="number" id="grid-cols" min="1" max="5" value="3">
+              </div>
+              <button id="update-grid" class="btn-update">Update</button>
+            </div>
+
+            <div class="visualizer-row">
+              <div id="mem-grid-interactive" class="interactive-grid">
+                <!-- Grid generated by JS -->
+              </div>
+              <div class="console-box">
+                <div class="console-header">Terminal Output</div>
+                <div id="console-content" class="console-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: TEMPLATE -->
+  <div class="slide" id="slide-10" data-notes="Ini template yang akan sering digunakan.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 3 · Template Umum</div>
+    <div class="slide-title">🛠 Template <span class="highlight">Umum Traversal</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; jumlahBaris; i++){
+    for(int j = 0; j &lt; jumlahKolom; j++){
+        // Proses elemen matriks[i][j]
+    }
+}</code></pre>
+      <div class="quote">Pola ini adalah fondasi untuk hampir semua manipulasi data 2D.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: STUDI KASUS 1 -->
+  <div class="slide" id="slide-11" data-notes="Tugas: Input nilai, Hitung rata-rata tiap mahasiswa.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Studi Kasus</div>
+    <div class="slide-title">🛠 Studi Kasus 1:<br><span class="highlight">Sistem Nilai</span></div>
+    <div class="slide-body">
+      <p><strong>Kebutuhan:</strong></p>
+      <ul>
+        <li>Data: 5 Mahasiswa, 3 Mata Kuliah.</li>
+        <li>Tugas:
+          <ol>
+            <li>Input nilai dari keyboard.</li>
+            <li>Hitung rata-rata nilai tiap mahasiswa.</li>
+            <li>Hitung rata-rata nilai tiap mata kuliah.</li>
+          </ol>
+        </li>
+      </ul>
+      <pre><code class="language-cpp">int nilai[5][3];</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: INPUT DATA -->
+  <div class="slide" id="slide-12" data-notes="Perhatikan struktur loop. Jelaskan i = mahasiswa, j = mata kuliah.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Input Data</div>
+    <div class="slide-title">📥 Input <span class="highlight">Data 2D</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 5; i++){
+    for(int j = 0; j &lt; 3; j++){
+        cout &lt;&lt; "Nilai mhs " &lt;&lt; i+1
+             &lt;&lt; " matkul " &lt;&lt; j+1 &lt;&lt; ": ";
+        cin &gt;&gt; nilai[i][j];
+    }
+}</code></pre>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><code>i+1</code> dan <code>j+1</code> hanya untuk tampilan (user-friendly).</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span>Penyimpanan tetap di <code>[i][j]</code> (mulai dari 0).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: RATA-RATA MHS -->
+  <div class="slide" id="slide-13" data-notes="Total di-reset setiap baris. Ini konsep penting.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pengolahan Baris</div>
+    <div class="slide-title">📊 Rata-rata <span class="highlight">Tiap Mahasiswa</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 5; i++){
+    int jumlah = 0;
+    for(int j = 0; j &lt; 3; j++){
+        jumlah += nilai[i][j];
+    }
+    cout &lt;&lt; "Rata-rata mhs " &lt;&lt; i+1
+         &lt;&lt; ": " &lt;&lt; (float)jumlah / 3 &lt;&lt; endl;
+}</code></pre>
+      <div class="tip-box">
+        <div class="tip-label">KONSEP PENTING</div>
+        Variabel <code>jumlah</code> harus di-reset menjadi 0 setiap kali ganti baris (mahasiswa baru).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: RATA-RATA MATKUL -->
+  <div class="slide" id="slide-14" data-notes="Bandingkan dengan slide sebelumnya. Sekarang loop dibalik.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 4 · Pengolahan Kolom</div>
+    <div class="slide-title">📉 Rata-rata <span class="highlight">Tiap Mata Kuliah</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int j = 0; j &lt; 3; j++){ // Loop Kolom di luar
+    int jumlah = 0;
+    for(int i = 0; i &lt; 5; i++){ // Loop Baris di dalam
+        jumlah += nilai[i][j];
+    }
+    cout &lt;&lt; "Rata-rata matkul " &lt;&lt; j+1
+         &lt;&lt; ": " &lt;&lt; (float)jumlah / 5 &lt;&lt; endl;
+}</code></pre>
+      <div class="quote">Bandingkan dengan slide sebelumnya. Di sini kita menukar urutan loop untuk memproses data per kolom.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: PENJUMLAHAN -->
+  <div class="slide" id="slide-15" data-notes="Elemen dijumlahkan sesuai posisi. Ukuran harus sama.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Operasi Matriks</div>
+    <div class="slide-title">➕ Penjumlahan <span class="highlight">Dua Matriks</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">// Syarat: Ukuran A dan B harus sama
+for(int i = 0; i &lt; 3; i++){
+    for(int j = 0; j &lt; 3; j++){
+        C[i][j] = A[i][j] + B[i][j];
+    }
+}</code></pre>
+      <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px; font-size: 0.8rem;">
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
+          <div class="mem-cell"><div class="val" contenteditable="true">1</div></div><div class="mem-cell"><div class="val" contenteditable="true">2</div></div>
+          <div class="mem-cell"><div class="val" contenteditable="true">3</div></div><div class="mem-cell"><div class="val" contenteditable="true">4</div></div>
+        </div>
+        <span>+</span>
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
+          <div class="mem-cell"><div class="val" contenteditable="true">5</div></div><div class="mem-cell"><div class="val" contenteditable="true">6</div></div>
+          <div class="mem-cell"><div class="val" contenteditable="true">7</div></div><div class="mem-cell"><div class="val" contenteditable="true">8</div></div>
+        </div>
+        <span>=</span>
+        <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
+          <div class="mem-cell active-cell"><div class="val" contenteditable="true">6</div></div><div class="mem-cell active-cell"><div class="val" contenteditable="true">8</div></div>
+          <div class="mem-cell active-cell"><div class="val" contenteditable="true">10</div></div><div class="mem-cell active-cell"><div class="val" contenteditable="true">12</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: TRANSPOSE -->
+  <div class="slide" id="slide-16" data-notes="Baris menjadi kolom. Konsep pertukaran indeks.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 5 · Operasi Matriks</div>
+    <div class="slide-title">🔃 Transpos <span class="highlight">Matriks</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; 3; i++){
+    for(int j = 0; j &lt; 3; j++){
+        matriksTranspos[j][i] = matriks[i][j];
+    }
+}</code></pre>
+      <div style="display: flex; gap: 40px; align-items: center; margin-top: 15px; font-size: 0.8rem;">
+        <div>
+          <p>Matriks Asal:</p>
+          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
+            <div class="mem-cell"><div class="addr">0,0</div><div class="val" contenteditable="true">1</div></div><div class="mem-cell"><div class="addr">0,1</div><div class="val" contenteditable="true">2</div></div>
+            <div class="mem-cell"><div class="addr">1,0</div><div class="val" contenteditable="true">3</div></div><div class="mem-cell"><div class="addr">1,1</div><div class="val" contenteditable="true">4</div></div>
+          </div>
+        </div>
+        <span>⮕</span>
+        <div>
+          <p>Transpos:</p>
+          <div style="display: grid; grid-template-columns: repeat(2, 50px); gap: 0;">
+            <div class="mem-cell active-cell"><div class="addr">0,0</div><div class="val" contenteditable="true">1</div></div><div class="mem-cell active-cell"><div class="addr">0,1</div><div class="val" contenteditable="true">3</div></div>
+            <div class="mem-cell active-cell"><div class="addr">1,0</div><div class="val" contenteditable="true">2</div></div><div class="mem-cell active-cell"><div class="addr">1,1</div><div class="val" contenteditable="true">4</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: LATIHAN -->
+  <div class="slide" id="slide-17" data-notes="Tugas: 1. Input matriks 3x3, 2. Tampilkan: Total tiap baris, Total tiap kolom, Elemen terbesar.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 6 · Praktikum</div>
+    <div class="slide-title">🏗 Tantangan <span class="highlight">Terstruktur</span></div>
+    <div class="slide-body">
+      <p>Buatlah program untuk mengolah Matriks 3&times;3:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Input semua elemen matriks.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Tampilkan total nilai tiap baris.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Tampilkan total nilai tiap kolom.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Cari dan tampilkan elemen terbesar dalam matriks tersebut.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: DISKUSI -->
+  <div class="slide" id="slide-18" data-notes="Pertanyaan: Apa perbedaan pola 1D dan 2D? Mengapa kita butuh nested loop? Kapan 2D lebih tepat digunakan?">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Bagian 7 · Refleksi</div>
+    <div class="slide-title">🏁 <span class="highlight">Diskusi</span> Reflektif</div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">?</span><span>Apa perbedaan mendasar pola Traversal 1D dan 2D?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Mengapa kita membutuhkan nested loop untuk Array 2D?</span></div>
+        <div class="kp-item"><span class="icon">?</span><span>Kapan penggunaan Array 2D lebih tepat dibanding Array 1D?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: RANGKUMAN -->
+  <div class="slide" id="slide-19" data-notes="Hari ini kita belajar: Konsep array 2 dimensi, Nested loop, Operasi baris & kolom, Penjumlahan matriks, Transpose.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Kesimpulan</div>
+    <div class="slide-title">💡 Rangkuman <span class="highlight">Hari Ini</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span>Array 2D menyimpan data dalam baris dan kolom.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Nested loop adalah kunci akses data tabular.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Operasi baris vs kolom ditentukan oleh urutan loop.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Penjumlahan dan transpos adalah operasi dasar matriks.</span></div>
+      </div>
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="tip-label">NEXT STEP</div>
+        Bagaimana jika kita ingin menyimpan data dengan tipe berbeda (Nama, NIM, IPK) dalam satu struktur?
+        <br>➡ <strong>Pertemuan 5: Struct</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: PENUTUP -->
+  <div class="slide" id="slide-20" data-notes="Pesan penting: Array 2D adalah dasar dari: Pengolahan citra, Data spreadsheet, Game board, Data science.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 20</div>
+    <div class="section-badge"><span class="dot"></span>Penutup</div>
+    <div class="slide-title">🚀 <span class="highlight">Dunia Nyata</span> Array 2D</div>
+    <div class="slide-body">
+      <p>Konsep yang Anda pelajari hari ini adalah dasar dari:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Pengolahan Citra:</strong> Gambar adalah matriks piksel.</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Game:</strong> Board games (Catur, Tic-Tac-Toe).</span></div>
+        <div class="kp-item"><span class="icon">▸</span><span><strong>Data Science:</strong> Spreadsheet dan Tabel Database.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 21</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const slideIdx = parseInt(item.getAttribute('data-slide'));
+      goToSlide(slideIdx);
+    });
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  updateUI();
+
+  // Slide 9 Interactive Grid
+  const gridContainer = document.getElementById('mem-grid-interactive');
+  const rowInput = document.getElementById('grid-rows');
+  const colInput = document.getElementById('grid-cols');
+  const updateBtn = document.getElementById('update-grid');
+  const consoleContent = document.getElementById('console-content');
+  let selectedValues = [];
+
+  function generateGrid() {
+    let rows = parseInt(rowInput.value) || 1;
+    let cols = parseInt(colInput.value) || 1;
+
+    // Clamp values and update inputs
+    rows = Math.min(Math.max(rows, 1), 5);
+    cols = Math.min(Math.max(cols, 1), 5);
+    rowInput.value = rows;
+    colInput.value = cols;
+
+    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 60px)`;
+    gridContainer.innerHTML = '';
+    consoleContent.textContent = '';
+    selectedValues = [];
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'mem-cell';
+
+
+        const addr = document.createElement('div');
+        addr.className = 'addr';
+        addr.textContent = `${i},${j}`;
+
+        const val = document.createElement('div');
+        val.className = 'val';
+        val.contentEditable = 'true';
+        val.textContent = Math.floor(Math.random() * 100);
+
+        cell.appendChild(addr);
+        cell.appendChild(val);
+
+        val.addEventListener('click', (e) => {
+          e.stopPropagation();
+          cell.classList.add('active-cell');
+          selectedValues.push(val.textContent);
+          consoleContent.textContent = selectedValues.join(', ');
+        });
+
+        val.addEventListener('input', () => {
+          consoleContent.textContent = '';
+          selectedValues = [];
+          document.querySelectorAll('#mem-grid-interactive .mem-cell').forEach(c => c.classList.remove('active-cell'));
+        });
+
+        gridContainer.appendChild(cell);
+      }
+    }
+  }
+
+  if (updateBtn) {
+    updateBtn.addEventListener('click', generateGrid);
+    generateGrid();
+  }
+</script>
+</body>
+</html>
