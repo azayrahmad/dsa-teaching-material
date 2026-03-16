@@ -1,71 +1,52 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <iomanip>
 
 using namespace std;
 
 /**
- * Mini Project: Sistem Data Karyawan
- * Fitur: Input, Cari Gaji Tertinggi, Hitung Rata-rata Gaji
+ * Mini Project: Sistem Data Karyawan (SKELETON)
+ *
+ * TUGAS:
+ * 1. Definisikan enum Jabatan (STAF, MANAGER, DIREKTUR).
+ * 2. Definisikan struct Karyawan dengan field: id, nama, gaji, dan jabatan.
+ * 3. Implementasikan input untuk 3 karyawan.
+ * 4. Hitung rata-rata gaji.
+ * 5. Cari dan tampilkan karyawan dengan gaji tertinggi.
  */
 
-enum Jabatan { STAF, MANAGER, DIREKTUR };
+// TODO 1: Definisikan enum Jabatan di sini
 
-struct Karyawan {
-    int id;
-    string nama;
-    double gaji;
-    Jabatan jabatan;
-};
 
-string getNamaJabatan(Jabatan j) {
-    switch (j) {
-        case STAF: return "Staf";
-        case MANAGER: return "Manager";
-        case DIREKTUR: return "Direktur";
-        default: return "Tidak Diketahui";
-    }
+// TODO 2: Definisikan struct Karyawan di sini
+
+
+// Helper untuk menampilkan nama jabatan
+string getNamaJabatan(/* parameter enum */) {
+    // TODO: Implementasikan switch-case untuk mengembalikan string jabatan
+    return "";
 }
 
 int main() {
     const int JUMLAH = 3;
-    Karyawan daftar[JUMLAH];
-    double totalGaji = 0;
+    // TODO 3: Buat array of struct untuk menyimpan data karyawan
 
     cout << "=== Input Data Karyawan ===" << endl;
     for (int i = 0; i < JUMLAH; i++) {
         cout << "\nKaryawan ke-" << i + 1 << endl;
-        cout << "ID (Angka)   : "; cin >> daftar[i].id;
-        cout << "Nama         : "; cin.ignore(); getline(cin, daftar[i].nama);
-        cout << "Gaji         : "; cin >> daftar[i].gaji;
-
-        int pilihanJabatan;
-        cout << "Jabatan (0:Staf, 1:Manager, 2:Direktur): ";
-        cin >> pilihanJabatan;
-        daftar[i].jabatan = static_cast<Jabatan>(pilihanJabatan);
-
-        totalGaji += daftar[i].gaji;
+        // TODO 4: Implementasikan input data (ID, Nama, Gaji, Jabatan)
+        // Gunakan static_cast untuk mengkonversi input angka ke enum Jabatan
     }
 
-    // Cari gaji tertinggi
-    int indexGajiTertinggi = 0;
-    for (int i = 1; i < JUMLAH; i++) {
-        if (daftar[i].gaji > daftar[indexGajiTertinggi].gaji) {
-            indexGajiTertinggi = i;
-        }
-    }
+    // TODO 5: Hitung rata-rata gaji perusahaan
 
-    double rataGaji = totalGaji / JUMLAH;
+
+    // TODO 6: Cari index karyawan dengan gaji tertinggi
+
 
     cout << "\n=== Laporan Karyawan ===" << endl;
     cout << fixed << setprecision(2);
-    cout << "Rata-rata Gaji: Rp" << rataGaji << endl;
-
-    cout << "\nKaryawan dengan Gaji Tertinggi:" << endl;
-    cout << "Nama   : " << daftar[indexGajiTertinggi].nama << endl;
-    cout << "Gaji   : Rp" << daftar[indexGajiTertinggi].gaji << endl;
-    cout << "Jabatan: " << getNamaJabatan(daftar[indexGajiTertinggi].jabatan) << endl;
+    // TODO 7: Tampilkan hasil rata-rata dan data karyawan gaji tertinggi
 
     return 0;
 }
