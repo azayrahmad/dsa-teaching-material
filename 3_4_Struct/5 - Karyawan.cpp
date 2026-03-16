@@ -11,6 +11,8 @@ using namespace std;
  * 1. Definisikan enum Jabatan (STAF, MANAGER, DIREKTUR).
  * 2. Definisikan struct Karyawan dengan field: id, nama, gaji, dan jabatan.
  * 3. Implementasikan input untuk 3 karyawan.
+ *    - Gunakan getline() untuk input nama.
+ *    - Gunakan static_cast untuk mengisi jabatan.
  * 4. Hitung rata-rata gaji.
  * 5. Cari dan tampilkan karyawan dengan gaji tertinggi.
  */
@@ -35,7 +37,14 @@ int main() {
     for (int i = 0; i < JUMLAH; i++) {
         cout << "\nKaryawan ke-" << i + 1 << endl;
         // TODO 4: Implementasikan input data (ID, Nama, Gaji, Jabatan)
-        // Note: Jabatan diinputkan sebagai angka (0, 1, atau 2)
+
+        // PETUNJUK INPUT NAMA:
+        // cin.ignore();
+        // getline(cin, variable_nama);
+
+        // PETUNJUK INPUT ENUM:
+        // int pilihan; cin >> pilihan;
+        // variable_jabatan = static_cast<Jabatan>(pilihan);
     }
 
     // TODO 5: Hitung rata-rata gaji perusahaan

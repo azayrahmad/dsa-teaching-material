@@ -23,7 +23,11 @@ int main() {
     for (int i = 0; i < JUMLAH; i++) {
         cout << "\nMahasiswa ke-" << i + 1 << endl;
         cout << "NIM      : "; cin >> daftar[i].nim;
-        cout << "Nama     : "; cin >> daftar[i].nama; // Menggunakan cin >> (Satu kata)
+
+        cout << "Nama     : ";
+        cin.ignore(); // Membersihkan buffer setelah input NIM
+        getline(cin, daftar[i].nama); // Membaca nama lengkap (ber-spasi)
+
         cout << "IPK      : "; cin >> daftar[i].ipk;
         cout << "Semester : "; cin >> daftar[i].semester;
     }
