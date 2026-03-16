@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -24,7 +23,7 @@ int main() {
     for (int i = 0; i < JUMLAH; i++) {
         cout << "\nMahasiswa ke-" << i + 1 << endl;
         cout << "NIM      : "; cin >> daftar[i].nim;
-        cout << "Nama     : "; cin.ignore(); getline(cin, daftar[i].nama);
+        cout << "Nama     : "; cin >> daftar[i].nama; // Menggunakan cin >> (Satu kata)
         cout << "IPK      : "; cin >> daftar[i].ipk;
         cout << "Semester : "; cin >> daftar[i].semester;
     }

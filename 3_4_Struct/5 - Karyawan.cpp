@@ -35,7 +35,7 @@ int main() {
     for (int i = 0; i < JUMLAH; i++) {
         cout << "\nKaryawan ke-" << i + 1 << endl;
         // TODO 4: Implementasikan input data (ID, Nama, Gaji, Jabatan)
-        // Gunakan static_cast untuk mengkonversi input angka ke enum Jabatan
+        // Note: Jabatan diinputkan sebagai angka (0, 1, atau 2)
     }
 
     // TODO 5: Hitung rata-rata gaji perusahaan
