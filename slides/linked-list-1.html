@@ -18,8 +18,8 @@
     border: 2px solid var(--accent);
     background: var(--surface);
     border-radius: 4px;
-    overflow: hidden;
     position: relative;
+    z-index: 2;
   }
   .node-data {
     padding: 10px 15px;
@@ -27,30 +27,87 @@
     min-width: 60px;
     text-align: center;
     color: var(--text);
+    position: relative;
+    z-index: 1;
   }
-  .node-next {
+  .node-next, .node-prev {
     padding: 10px 10px;
-    min-width: 50px;
+    width: 50px;
+    height: 44px;
     text-align: center;
-    color: var(--accent2);
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
   }
   .node-next::after {
-    content: '●';
-    color: var(--accent2);
-    font-size: 1.2rem;
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    z-index: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
-  .arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 15px;
-    color: var(--accent2);
-    font-size: 2rem;
-    font-weight: bold;
-    user-select: none;
+  .node-prev::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    z-index: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .node-next .arrow, .node-prev .arrow {
+    position: absolute;
+    width: 75px;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .node-next .arrow {
+    left: 25px;
+    background: var(--accent2);
+  }
+  .node-prev .arrow {
+    right: 25px; /* Center of 50px box */
+    background: var(--accent3);
+    transform: translateY(-50%) rotate(180deg);
+    transform-origin: right center;
+  }
+  .node-next .arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--accent2);
+  }
+  .node-prev .arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--accent3);
   }
   .null-label {
     font-family: 'JetBrains Mono', monospace;
@@ -64,8 +121,9 @@
   .ll-row {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 35px;
     margin: 20px 0;
+    flex-wrap: wrap;
   }
 
   .array-container {
@@ -289,13 +347,10 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi Dasar</div>
     <div class="slide-title">🔗 Anatomi <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div class="ll-row">
-        <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
+      <div class="ll-row" style="gap: 50px;">
+        <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
         <div class="null-label">NULL</div>
       </div>
       <p style="margin-top: 30px;">Setiap kotak disebut <strong>Node</strong>. Garis panah mewakili <strong>Pointer</strong> yang menyimpan alamat memori node berikutnya.</p>
@@ -416,9 +471,8 @@ head->next = NULL;</code></pre>
         <div class="col">
           <div class="node" style="position: relative; margin-top: 40px;">
             <div class="pointer-label" style="top: -50px; bottom: auto; transform: translateX(-50%) rotate(180deg); color: var(--accent);">head</div>
-            <div class="node-box"><div class="node-data">10</div><div class="node-next"></div></div>
-            <div class="arrow">⮕</div>
-            <div class="null-label">NULL</div>
+            <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
+            <div style="margin-left: 50px;" class="null-label">NULL</div>
           </div>
         </div>
       </div>
@@ -487,22 +541,19 @@ node3->next = NULL;  // n3 adalah akhir (ekor)</code></pre>
     <div class="section-badge"><span class="dot"></span>Visualisasi Koneksi</div>
     <div class="slide-title">🚂 Kereta <span class="highlight">Node</span></div>
     <div class="slide-body">
-      <div class="ll-row">
+      <div class="ll-row" style="gap: 50px;">
         <div style="text-align:center;">
           <div style="font-size:0.7rem; color:var(--accent);">node1</div>
-          <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"></div></div></div>
+          <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
         </div>
-        <div class="arrow">⮕</div>
         <div style="text-align:center;">
           <div style="font-size:0.7rem; color:var(--accent);">node2</div>
-          <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"></div></div></div>
+          <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
         </div>
-        <div class="arrow">⮕</div>
         <div style="text-align:center;">
           <div style="font-size:0.7rem; color:var(--accent);">node3</div>
-          <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"></div></div></div>
+          <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
         </div>
-        <div class="arrow">⮕</div>
         <div class="null-label">NULL</div>
       </div>
     </div>
@@ -553,13 +604,10 @@ while(current != NULL) {
     <div class="section-badge"><span class="dot"></span>Visualisasi Traversal</div>
     <div class="slide-title">👣 Langkah demi <span class="highlight">Langkah</span></div>
     <div class="slide-body">
-      <div class="ll-row" id="traversal-demo" style="position: relative; padding-bottom: 50px;">
-        <div class="node" data-idx="0"><div class="node-box"><div class="node-data">10</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node" data-idx="1"><div class="node-box"><div class="node-data">20</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node" data-idx="2"><div class="node-box"><div class="node-data">30</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
+      <div class="ll-row" id="traversal-demo" style="position: relative; padding-bottom: 50px; gap: 50px;">
+        <div class="node" data-idx="0"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" data-idx="1"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" data-idx="2"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
         <div class="null-label" data-idx="3">NULL</div>
         <div class="pointer-label" id="current-pointer">current</div>
       </div>
@@ -623,13 +671,10 @@ while(cur != NULL) {
     <div class="section-badge"><span class="dot"></span>Jenis 1</div>
     <div class="slide-title">➡️ Singly <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div class="ll-row">
-        <div class="node"><div class="node-box"><div class="node-data">A</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node"><div class="node-box"><div class="node-data">B</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
-        <div class="node"><div class="node-box"><div class="node-data">C</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
+      <div class="ll-row" style="gap: 50px;">
+        <div class="node"><div class="node-box"><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">C</div><div class="node-next"><div class="arrow"></div></div></div></div>
         <div class="null-label">NULL</div>
       </div>
       <p style="margin-top: 20px;">Jenis yang paling sederhana. Setiap node hanya punya <code>next</code>.</p>
@@ -644,15 +689,11 @@ while(cur != NULL) {
     <div class="section-badge"><span class="dot"></span>Jenis 2</div>
     <div class="slide-title">↔️ Doubly <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div class="ll-row">
+      <div class="ll-row" style="gap: 50px;">
         <div class="null-label">NULL</div>
-        <div class="arrow">⬅</div>
-        <div class="node"><div class="node-box" style="border-left: 2px solid var(--accent2);"><div class="node-next" style="border-right: 2px solid var(--accent); opacity: 0.5;"></div><div class="node-data">A</div><div class="node-next"></div></div></div>
-        <div class="arrow">⇆</div>
-        <div class="node"><div class="node-box" style="border-left: 2px solid var(--accent2);"><div class="node-next" style="border-right: 2px solid var(--accent); opacity: 0.5;"></div><div class="node-data">B</div><div class="node-next"></div></div></div>
-        <div class="arrow">⇆</div>
-        <div class="node"><div class="node-box" style="border-left: 2px solid var(--accent2);"><div class="node-next" style="border-right: 2px solid var(--accent); opacity: 0.5;"></div><div class="node-data">C</div><div class="node-next"></div></div></div>
-        <div class="arrow">⮕</div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">C</div><div class="node-next"><div class="arrow"></div></div></div></div>
         <div class="null-label">NULL</div>
       </div>
       <p style="margin-top: 20px;">Setiap node punya dua pointer: <code>next</code> (maju) dan <code>prev</code> (mundur).</p>
@@ -667,15 +708,13 @@ while(cur != NULL) {
     <div class="section-badge"><span class="dot"></span>Jenis 3</div>
     <div class="slide-title">🔄 Circular <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div style="position: relative; width: 400px; height: 150px; margin: 20px auto;">
-        <div class="node" style="position: absolute; left: 0; top: 50px;"><div class="node-box"><div class="node-data">A</div><div class="node-next"></div></div></div>
-        <div class="arrow" style="position: absolute; left: 110px; top: 60px;">⮕</div>
-        <div class="node" style="position: absolute; left: 150px; top: 50px;"><div class="node-box"><div class="node-data">B</div><div class="node-next"></div></div></div>
-        <div class="arrow" style="position: absolute; left: 260px; top: 60px;">⮕</div>
-        <div class="node" style="position: absolute; left: 300px; top: 50px;"><div class="node-box"><div class="node-data">C</div><div class="node-next"></div></div></div>
+      <div style="position: relative; width: 450px; height: 150px; margin: 20px auto;">
+        <div class="node" style="position: absolute; left: 0; top: 50px;"><div class="node-box"><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" style="position: absolute; left: 160px; top: 50px;"><div class="node-box"><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" style="position: absolute; left: 320px; top: 50px;"><div class="node-box"><div class="node-data">C</div><div class="node-next"></div></div></div>
         <!-- Circular arrow -->
         <svg style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;">
-          <path d="M 370 50 Q 200 -20 30 50" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+          <path d="M 395 50 Q 200 -20 30 50" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
           <defs>
             <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
               <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent2)" />
