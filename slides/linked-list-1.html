@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 6 – Linked List (Dasar)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+<style>
+  .node {
+    display: flex;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .node-box {
+    display: flex;
+    border: 2px solid var(--accent);
+    background: var(--surface);
+    border-radius: 4px;
+    position: relative;
+    z-index: 2;
+  }
+  .node-data {
+    padding: 10px 15px;
+    border-right: 2px solid var(--accent);
+    min-width: 60px;
+    text-align: center;
+    color: var(--text);
+    position: relative;
+    z-index: 1;
+  }
+  .node-next, .node-prev {
+    padding: 10px 10px;
+    width: 50px;
+    height: 44px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+  }
+  .node-next::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    z-index: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .node-prev::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    z-index: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .node-next .arrow, .node-prev .arrow {
+    position: absolute;
+    width: 75px;
+    height: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .node-next .arrow {
+    left: 25px;
+    background: var(--accent2);
+  }
+  .node-prev .arrow {
+    right: 25px; /* Center of 50px box */
+    background: var(--accent3);
+    transform: translateY(-50%) rotate(180deg);
+    transform-origin: right center;
+  }
+  .node-next .arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--accent2);
+  }
+  .node-prev .arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--accent3);
+  }
+  .null-label {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+    font-weight: bold;
+    padding: 10px;
+    border: 2px dashed var(--accent4);
+    border-radius: 4px;
+  }
+
+  .ll-row {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .array-container {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+    perspective: 1000px;
+  }
+  .array-cell {
+    width: 80px;
+    height: 80px;
+    border: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .array-cell .idx {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    position: absolute;
+    top: 4px;
+  }
+  .array-cell .val {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .array-cell.highlight {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+  }
+  .array-cell.shifting {
+    transform: translateX(88px);
+    background: rgba(var(--accent3-rgb), 0.1);
+    border-color: var(--accent3);
+  }
+  .array-cell.new-item {
+    background: rgba(var(--accent2-rgb), 0.2);
+    border-color: var(--accent2);
+    border-style: dashed;
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  .array-cell.new-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pointer-label {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s ease;
+  }
+  .pointer-label::before {
+    content: '↑';
+    font-size: 1.2rem;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 15px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .comparison-table th {
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+  }
+
+  .node-mem {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 10px;
+    margin: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .node-mem .addr {
+    font-size: 0.7rem;
+    color: var(--accent2);
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/linked-list.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Sampaikan bahwa ini adalah awal dari struktur data dinamis. Hubungkan dengan materi sebelumnya (struct).">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 06</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Linked List</div>
+    <div class="slide-title">LINKED LIST<br><span class="highlight">(DASAR)</span></div>
+    <div class="subtitle">160 menit · 32 Bagian Materi</div>
+    <div class="desc">Memasuki dunia struktur data dinamis. Bagaimana data saling terhubung tanpa harus bersebelahan?</div>
+  </div>
+
+  <!-- SLIDE 1: TUJUAN -->
+  <div class="slide" id="slide-1" data-notes="Tekankan bahwa fokus hari ini adalah konsep dasar.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pembelajaran</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Menjelaskan konsep linked list sebagai alternatif array.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Memahami struktur Node (Data & Pointer).</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Mengimplementasikan linked list sederhana di C++.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Melakukan traversal (mengunjungi) setiap elemen list.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: REVIEW -->
+  <div class="slide" id="slide-2" data-notes="Struct akan digunakan sebagai node.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Review Materi</div>
+    <div class="slide-title">🧠 Ingat <span class="highlight">Struct?</span></div>
+    <div class="slide-body">
+      <p>Materi sebelumnya sangat krusial karena Linked List dibangun menggunakan <strong>Struct</strong>.</p>
+      <pre><code class="language-cpp">struct Mahasiswa {
+    string nama;
+    int nim;
+    float ipk;
+};</code></pre>
+      <p style="margin-top: 15px;">Kita akan membuat tipe data baru yang memiliki pointer ke dirinya sendiri.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PERMASALAHAN ARRAY -->
+  <div class="slide" id="slide-3" data-notes="Berikan contoh insert di tengah array.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Masalah Array</div>
+    <div class="slide-title">📉 Keterbatasan <span class="highlight">Array</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Ukuran Tetap:</strong> Harus ditentukan di awal (statis).</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Insert/Delete Mahal:</strong> Perlu menggeser (shifting) elemen lain.</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Memori Berurutan:</strong> Harus menemukan blok memori kosong yang cukup besar.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: ILUSTRASI SHIFTING -->
+  <div class="slide" id="slide-4" data-notes="Tunjukkan bahwa ini tidak efisien.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Ilustrasi Masalah</div>
+    <div class="slide-title">🏃‍♂️ Masalah <span class="highlight">Shifting Elemen</span></div>
+    <div class="slide-body">
+      <p>Misal ingin menyisipkan "Eka" di antara "Budi" dan "Citra":</p>
+      <div class="array-container" id="array-shifting-demo">
+        <div class="array-cell"><div class="idx">0</div><div class="val">Ali</div></div>
+        <div class="array-cell"><div class="idx">1</div><div class="val">Budi</div></div>
+        <div class="array-cell"><div class="idx">2</div><div class="val">Citra</div></div>
+        <div class="array-cell"><div class="idx">3</div><div class="val">Dewi</div></div>
+      </div>
+      <button class="btn btn-primary" id="btn-shift-demo" style="margin-top: 20px;">Simulasikan Insert "Eka"</button>
+      <p id="shift-status" style="margin-top: 15px; color: var(--accent3); height: 1.5em;"></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SOLUSI: LINKED LIST -->
+  <div class="slide" id="slide-5" data-notes="Tekankan konsep dynamic memory.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Solusi</div>
+    <div class="slide-title">💡 Solusi: <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <p>Linked List adalah struktur data <strong>dinamis</strong> di mana elemen-elemennya terhubung melalui pointer.</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span><strong>Fleksibel:</strong> Ukuran bisa bertambah/berkurang saat runtime.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span><strong>Non-Contiguous:</strong> Elemen tidak harus bersebelahan di memori.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span><strong>Efisien:</strong> Insert/Delete hanya perlu mengubah pointer.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: VISUAL LINKED LIST -->
+  <div class="slide" id="slide-6" data-notes="Jelaskan node dan pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi Dasar</div>
+    <div class="slide-title">🔗 Anatomi <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <div class="ll-row" style="gap: 50px;">
+        <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="null-label">NULL</div>
+      </div>
+      <p style="margin-top: 30px;">Setiap kotak disebut <strong>Node</strong>. Garis panah mewakili <strong>Pointer</strong> yang menyimpan alamat memori node berikutnya.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: APA ITU NODE -->
+  <div class="slide" id="slide-7" data-notes="Node adalah unit dasar linked list.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Konsep Node</div>
+    <div class="slide-title">📦 Apa itu <span class="highlight">Node?</span></div>
+    <div class="slide-body">
+      <p>Node adalah unit terkecil dalam Linked List yang menyimpan dua hal:</p>
+      <div class="cols">
+        <div class="col">
+          <div class="kp">
+            <div class="kp-item"><span class="icon">1</span><span><strong>Data:</strong> Nilai yang ingin disimpan (int, string, struct, dll).</span></div>
+            <div class="kp-item"><span class="icon">2</span><span><strong>Next:</strong> Alamat (pointer) ke node selanjutnya.</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="node" style="justify-content: center;">
+            <div class="node-box" style="flex-direction: column; width: 120px;">
+              <div class="node-data" style="border-right: none; border-bottom: 2px solid var(--accent); padding: 20px;">DATA</div>
+              <div class="node-next" style="padding: 20px;">NEXT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: STRUKTUR NODE -->
+  <div class="slide" id="slide-8" data-notes="Tekankan pointer ke node berikutnya.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Implementasi C++</div>
+    <div class="slide-title">🏗 Struktur <span class="highlight">Node</span></div>
+    <div class="slide-body">
+      <p>Di C++, kita mendefinisikan node menggunakan <code>struct</code> yang merujuk pada dirinya sendiri:</p>
+      <pre><code class="language-cpp">struct Node {
+    int data;     // Bagian Data
+    Node* next;   // Bagian Pointer (ke node lain)
+};</code></pre>
+      <div class="tip-box">
+        <div class="tip-label">PENTING</div>
+        <code>Node* next</code> berarti variabel tersebut menyimpan <strong>alamat memori</strong> dari variabel bertipe <code>Node</code> lainnya.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: VISUALISASI NODE -->
+  <div class="slide" id="slide-9" data-notes="Gunakan diagram memori.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi Memori</div>
+    <div class="slide-title">🖼 Node di <span class="highlight">Memori</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <pre><code class="language-cpp">Node n1;
+n1.data = 10;
+n1.next = 0x200; // Alamat lain</code></pre>
+        </div>
+        <div class="col">
+          <div class="node-mem">
+            <div class="addr">0x100 (Alamat n1)</div>
+            <div style="display: flex; border: 1px solid var(--accent);">
+              <div style="flex: 1; padding: 10px; border-right: 1px solid var(--accent);">10</div>
+              <div style="flex: 1; padding: 10px; color: var(--accent3);">0x200</div>
+            </div>
+            <div style="font-size: 0.7rem; display: flex; justify-content: space-around; margin-top: 5px;">
+              <span>data</span><span>next</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: MEMBUAT NODE PERTAMA -->
+  <div class="slide" id="slide-10" data-notes="Jelaskan penggunaan new.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Membuat Node</div>
+    <div class="slide-title">🌱 Membuat <span class="highlight">Node Pertama</span></div>
+    <div class="slide-body">
+      <p>Gunakan keyword <code>new</code> untuk mengalokasikan node di <strong>Heap Memory</strong>.</p>
+      <pre><code class="language-cpp">// 1. Deklarasi pointer head
+Node* head = new Node;
+
+// 2. Isi data
+head->data = 10;
+
+// 3. Set next ke NULL (karena belum ada node lain)
+head->next = NULL;</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: APA ITU HEAD -->
+  <div class="slide" id="slide-11" data-notes="Semua traversal dimulai dari head.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Konsep Head</div>
+    <div class="slide-title">👑 Apa itu <span class="highlight">Head?</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <p><strong>Head</strong> adalah pointer spesial yang selalu menunjuk ke <strong>node pertama</strong> dalam list.</p>
+          <div class="quote">Jika kita kehilangan alamat Head, kita kehilangan akses ke seluruh Linked List!</div>
+        </div>
+        <div class="col">
+          <div class="node" style="position: relative; margin-top: 40px;">
+            <div class="pointer-label" style="top: -50px; bottom: auto; transform: translateX(-50%) rotate(180deg); color: var(--accent);">head</div>
+            <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
+            <div style="margin-left: 50px;" class="null-label">NULL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: MEMBUAT BANYAK NODE -->
+  <div class="slide" id="slide-12" data-notes="Node dibuat di heap.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Membuat Banyak Node</div>
+    <div class="slide-title">🏗 Membuat <span class="highlight">Beberapa Node</span></div>
+    <div class="slide-body">
+      <p>Kita bisa membuat banyak node secara terpisah sebelum menghubungkannya.</p>
+      <pre><code class="language-cpp">Node* node1 = new Node;
+Node* node2 = new Node;
+Node* node3 = new Node;</code></pre>
+      <p>Saat ini, ketiga node tersebut berada di memori tapi <strong>belum saling kenal</strong>.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: MENGISI DATA -->
+  <div class="slide" id="slide-13" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Input Data</div>
+    <div class="slide-title">✏️ Mengisi <span class="highlight">Data</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">node1->data = 10;
+node2->data = 20;
+node3->data = 30;
+
+// Semua next masih 'sampah' atau NULL
+node1->next = NULL;
+node2->next = NULL;
+node3->next = NULL;</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: MENGHUBUNGKAN NODE -->
+  <div class="slide" id="slide-14" data-notes="Ini inti dari linked list.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Menghubungkan</div>
+    <div class="slide-title">🔗 Menghubungkan <span class="highlight">Antar Node</span></div>
+    <div class="slide-body">
+      <p>Inilah "Sihir" dari Linked List. Kita hubungkan <code>next</code> dari satu node ke alamat node lainnya.</p>
+      <pre><code class="language-cpp">node1->next = node2; // n1 nyambung ke n2
+node2->next = node3; // n2 nyambung ke n3
+node3->next = NULL;  // n3 adalah akhir (ekor)</code></pre>
+      <div class="tip-box">
+        <div class="tip-label">ANALOGI</div>
+        Ini seperti permainan "Kereta-keretaan" di mana setiap anak memegang pundak teman di depannya.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: VISUALISASI KONEKSI -->
+  <div class="slide" id="slide-15" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi Koneksi</div>
+    <div class="slide-title">🚂 Kereta <span class="highlight">Node</span></div>
+    <div class="slide-body">
+      <div class="ll-row" style="gap: 50px;">
+        <div style="text-align:center;">
+          <div style="font-size:0.7rem; color:var(--accent);">node1</div>
+          <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:0.7rem; color:var(--accent);">node2</div>
+          <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:0.7rem; color:var(--accent);">node3</div>
+          <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        </div>
+        <div class="null-label">NULL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: TRAVERSAL -->
+  <div class="slide" id="slide-16" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Traversal</div>
+    <div class="slide-title">🚶‍♂️ Apa itu <span class="highlight">Traversal?</span></div>
+    <div class="slide-body">
+      <p><strong>Traversal</strong> adalah proses mengunjungi setiap node dalam Linked List satu per satu, biasanya dimulai dari Head sampai bertemu NULL.</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔍</span><span>Digunakan untuk menampilkan data.</span></div>
+        <div class="kp-item"><span class="icon">🔍</span><span>Digunakan untuk mencari data.</span></div>
+        <div class="kp-item"><span class="icon">🔍</span><span>Digunakan untuk menghitung jumlah node.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: KODE TRAVERSAL -->
+  <div class="slide" id="slide-17" data-notes="Jelaskan loop pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Kode Traversal</div>
+    <div class="slide-title">💻 Implementasi <span class="highlight">Looping</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">Node* current = node1; // Mulai dari awal
+
+while(current != NULL) {
+    cout &lt;&lt; current-&gt;data &lt;&lt; " ";
+    current = current-&gt;next; // Pindah ke node selanjutnya
+}</code></pre>
+      <div class="quote">
+        <code>current = current->next</code> adalah kunci untuk melangkah maju dalam Linked List.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: STEP BY STEP TRAVERSAL -->
+  <div class="slide" id="slide-18" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi Traversal</div>
+    <div class="slide-title">👣 Langkah demi <span class="highlight">Langkah</span></div>
+    <div class="slide-body">
+      <div class="ll-row" id="traversal-demo" style="position: relative; padding-bottom: 50px; gap: 50px;">
+        <div class="node" data-idx="0"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" data-idx="1"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" data-idx="2"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="null-label" data-idx="3">NULL</div>
+        <div class="pointer-label" id="current-pointer">current</div>
+      </div>
+      <div style="margin-top: 20px;">
+        <button class="btn btn-primary" id="btn-next-step">Langkah Selanjutnya</button>
+        <button class="btn" id="btn-reset-traversal">Reset</button>
+      </div>
+      <p id="traversal-status" style="margin-top: 15px; color: var(--accent2);">current menunjuk ke node1 (data: 10)</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: LATIHAN PREDIKSI -->
+  <div class="slide" id="slide-19" data-notes="Ajak mahasiswa berpikir aktif.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Aktivitas Kelas</div>
+    <div class="slide-title">🤔 Prediksi <span class="highlight">Output</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">Node* a = new Node {5, NULL};
+Node* b = new Node {15, NULL};
+Node* c = new Node {25, NULL};
+
+a->next = c;
+c->next = b;
+
+Node* cur = a;
+while(cur != NULL) {
+    cout &lt;&lt; cur-&gt;data &lt;&lt; " ";
+    cur = cur-&gt;next;
+}</code></pre>
+      <div class="tip-box" style="margin-top: 20px;">
+        <div class="tip-label">PERTANYAAN</div>
+        Apa urutan angka yang muncul di layar?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: JENIS LINKED LIST -->
+  <div class="slide" id="slide-20" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Varian</div>
+    <div class="slide-title">🌈 Jenis-jenis <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <p>Berdasarkan cara pointer menghubungkan node:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span><strong>Singly Linked List:</strong> Satu arah (maju saja).</span></div>
+        <div class="kp-item"><span class="icon">2</span><span><strong>Doubly Linked List:</strong> Dua arah (maju dan mundur).</span></div>
+        <div class="kp-item"><span class="icon">3</span><span><strong>Circular Linked List:</strong> Melingkar (node terakhir kembali ke awal).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: SINGLY LINKED LIST -->
+  <div class="slide" id="slide-21" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">21 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Jenis 1</div>
+    <div class="slide-title">➡️ Singly <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <div class="ll-row" style="gap: 50px;">
+        <div class="node"><div class="node-box"><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-data">C</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="null-label">NULL</div>
+      </div>
+      <p style="margin-top: 20px;">Jenis yang paling sederhana. Setiap node hanya punya <code>next</code>.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: DOUBLY LINKED LIST -->
+  <div class="slide" id="slide-22" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">22 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Jenis 2</div>
+    <div class="slide-title">↔️ Doubly <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <div class="ll-row" style="gap: 50px;">
+        <div class="null-label">NULL</div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node"><div class="node-box"><div class="node-prev"><div class="arrow"></div></div><div class="node-data">C</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="null-label">NULL</div>
+      </div>
+      <p style="margin-top: 20px;">Setiap node punya dua pointer: <code>next</code> (maju) dan <code>prev</code> (mundur).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: CIRCULAR LINKED LIST -->
+  <div class="slide" id="slide-23" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">23 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Jenis 3</div>
+    <div class="slide-title">🔄 Circular <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <div style="position: relative; width: 450px; height: 150px; margin: 20px auto;">
+        <div class="node" style="position: absolute; left: 0; top: 50px;"><div class="node-box"><div class="node-data">A</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" style="position: absolute; left: 160px; top: 50px;"><div class="node-box"><div class="node-data">B</div><div class="node-next"><div class="arrow"></div></div></div></div>
+        <div class="node" style="position: absolute; left: 320px; top: 50px;"><div class="node-box"><div class="node-data">C</div><div class="node-next"></div></div></div>
+        <!-- Circular arrow -->
+        <svg style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;">
+          <path d="M 395 50 Q 200 -20 30 50" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent2)" />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      <p style="margin-top: 20px; text-align: center;">Node terakhir menunjuk kembali ke node pertama.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 24: PERBANDINGAN -->
+  <div class="slide" id="slide-24" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">24 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Perbandingan</div>
+    <div class="slide-title">⚖️ Array vs <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <table class="comparison-table">
+        <tr>
+          <th>Fitur</th>
+          <th>Array</th>
+          <th>Linked List</th>
+        </tr>
+        <tr>
+          <td>Akses Data</td>
+          <td>Cepat (via Index)</td>
+          <td>Lambat (harus traversal)</td>
+        </tr>
+        <tr>
+          <td>Penyisipan</td>
+          <td>Lambat (shifting)</td>
+          <td>Cepat (ubah pointer)</td>
+        </tr>
+        <tr>
+          <td>Ukuran</td>
+          <td>Statis (tetap)</td>
+          <td>Dinamis (berubah)</td>
+        </tr>
+        <tr>
+          <td>Memori</td>
+          <td>Hemat</td>
+          <td>Lebih banyak (perlu pointer)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 25: KAPAN MENGGUNAKAN -->
+  <div class="slide" id="slide-25" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">25 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Use Case</div>
+    <div class="slide-title">🛠 Kapan Pakai <span class="highlight">Linked List?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span>Saat jumlah data tidak diketahui di awal.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Saat banyak melakukan operasi Insert/Delete di tengah.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span>Saat ingin menghemat memori jika data sangat jarang (Sparse Data).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 26: MINI PRAKTIKUM -->
+  <div class="slide" id="slide-26" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">26 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Praktikum</div>
+    <div class="slide-title">💻 Mini <span class="highlight">Praktikum</span></div>
+    <div class="slide-body">
+      <p><strong>Tugas:</strong> Buatlah Linked List yang menyimpan 5 angka (bebas), lalu tampilkan hasilnya menggunakan traversal!</p>
+      <div style="margin-top: 30px; text-align: center;">
+        <a href="../6_7_LinkedList/6 - lecture.cpp" download class="btn btn-primary">
+          📥 Unduh Contoh Kode (.cpp)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 27: CHECKLIST PRAKTIKUM -->
+  <div class="slide" id="slide-27" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">27 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Checklist</div>
+    <div class="slide-title">✅ Langkah <span class="highlight">Kerja</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Definisikan <code>struct Node</code>.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Buat 5 node menggunakan <code>new</code>.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Hubungkan antar node melalui pointer <code>next</code>.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Gunakan loop <code>while</code> untuk menampilkan isi data.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 28: DISKUSI -->
+  <div class="slide" id="slide-28" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">28 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Diskusi</div>
+    <div class="slide-title">💬 Mari <span class="highlight">Berdiskusi</span></div>
+    <div class="slide-body">
+      <div class="quote">"Apa kelebihan utama Linked List dibanding Array dalam sistem yang mengelola data jutaan mahasiswa?"</div>
+      <p style="margin-top: 20px;">Pikirkan tentang efisiensi memori dan kemudahan pendaftaran mahasiswa baru.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 29: KESIMPULAN -->
+  <div class="slide" id="slide-29" data-notes="Traversal penting.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">29 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Kesimpulan</div>
+    <div class="slide-title">📌 Poin <span class="highlight">Utama</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔹</span><span>Linked list adalah struktur data dinamis.</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Node terdiri dari Data dan Pointer (Next).</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Traversal adalah cara utama untuk mengakses seluruh isi list.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 30: PREVIEW BERIKUTNYA -->
+  <div class="slide" id="slide-30" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">30 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Coming Up</div>
+    <div class="slide-title">🚀 Pertemuan <span class="highlight">Berikutnya</span></div>
+    <div class="slide-body">
+      <p>Kita akan mempelajari Operasi Lanjut pada Linked List:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">➜</span><span><strong>Insertion:</strong> Menambah di awal, akhir, dan tengah.</span></div>
+        <div class="kp-item"><span class="icon">➜</span><span><strong>Deletion:</strong> Menghapus node tertentu.</span></div>
+        <div class="kp-item"><span class="icon">➜</span><span><strong>Searching:</strong> Mencari data di dalam list.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 31: PENUTUP -->
+  <div class="slide" id="slide-31" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">31 / 32</div>
+    <div class="section-badge"><span class="dot"></span>Finish</div>
+    <div class="slide-title">🙏 Terima <span class="highlight">Kasih</span></div>
+    <div class="slide-body">
+      <p>Ada pertanyaan sebelum kita akhiri?</p>
+      <div class="quote" style="margin-top: 40px; color: var(--text);">"The best way to understand Linked List is to draw it."</div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 32</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.querySelectorAll('.toc-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const slideIdx = parseInt(item.getAttribute('data-slide'));
+      goToSlide(slideIdx);
+    });
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      navigate(diff > 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  // Slide 4: Shifting Demo Logic
+  const btnShift = document.getElementById('btn-shift-demo');
+  if (btnShift) {
+    let state = 0;
+    btnShift.addEventListener('click', () => {
+      const container = document.getElementById('array-shifting-demo');
+      const status = document.getElementById('shift-status');
+      const cells = container.querySelectorAll('.array-cell');
+
+      if (state === 0) {
+        cells[2].classList.add('shifting');
+        cells[3].classList.add('shifting');
+        status.textContent = "Menggeser 'Citra' dan 'Dewi' ke kanan...";
+        state = 1;
+      } else if (state === 1) {
+        const newCell = document.createElement('div');
+        newCell.className = 'array-cell highlight new-item';
+        newCell.style.position = 'absolute';
+        newCell.style.left = '176px';
+        newCell.innerHTML = '<div class="idx">2</div><div class="val">Eka</div>';
+        container.appendChild(newCell);
+        setTimeout(() => newCell.classList.add('visible'), 50);
+        status.textContent = "Memasukkan 'Eka' di index 2.";
+        state = 2;
+        btnShift.textContent = "Reset Simulasi";
+      } else {
+        container.innerHTML = `
+          <div class="array-cell"><div class="idx">0</div><div class="val">Ali</div></div>
+          <div class="array-cell"><div class="idx">1</div><div class="val">Budi</div></div>
+          <div class="array-cell"><div class="idx">2</div><div class="val">Citra</div></div>
+          <div class="array-cell"><div class="idx">3</div><div class="val">Dewi</div></div>
+        `;
+        status.textContent = "";
+        state = 0;
+        btnShift.textContent = "Simulasikan Insert \"Eka\"";
+      }
+    });
+  }
+
+  // Slide 18: Traversal Demo Logic
+  const btnNextStep = document.getElementById('btn-next-step');
+  const btnResetLL = document.getElementById('btn-reset-traversal');
+  if (btnNextStep && btnResetLL) {
+    let step = 0;
+    const nodes = document.querySelectorAll('#traversal-demo .node, #traversal-demo .null-label');
+    const pointer = document.getElementById('current-pointer');
+    const status = document.getElementById('traversal-status');
+
+    function updatePointer() {
+      const nodes = document.querySelectorAll('#traversal-demo .node, #traversal-demo .null-label');
+      const pointer = document.getElementById('current-pointer');
+      const container = document.getElementById('traversal-demo');
+      if (step < nodes.length && pointer && container) {
+        const target = nodes[step];
+        const rect = target.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        pointer.style.left = (rect.left - containerRect.left + rect.width/2) + 'px';
+        pointer.style.opacity = '1';
+
+        if (target.classList.contains('null-label')) {
+          status.textContent = "current == NULL. Traversal selesai!";
+          btnNextStep.disabled = true;
+        } else {
+          const val = target.querySelector('.node-data').textContent;
+          status.textContent = `current menunjuk ke node${step+1} (data: ${val})`;
+        }
+      }
+    }
+
+    btnNextStep.addEventListener('click', () => {
+      step++;
+      updatePointer();
+    });
+
+    btnResetLL.addEventListener('click', () => {
+      step = 0;
+      btnNextStep.disabled = false;
+      updatePointer();
+    });
+
+    // Initialize pointer position on first visit to slide
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.target.classList.contains('active') && mutation.target.id === 'slide-18') {
+          setTimeout(() => {
+            const nodes = document.querySelectorAll('#traversal-demo .node, #traversal-demo .null-label');
+            const pointer = document.getElementById('current-pointer');
+            const container = document.getElementById('traversal-demo');
+            if (nodes[0] && pointer && container) {
+              const rect = nodes[0].getBoundingClientRect();
+              const containerRect = container.getBoundingClientRect();
+              pointer.style.left = (rect.left - containerRect.left + rect.width/2) + 'px';
+              pointer.style.opacity = '1';
+            }
+          }, 100);
+        }
+      });
+    });
+    observer.observe(document.getElementById('slide-18'), { attributes: true, attributeFilter: ['class'] });
+  }
+
+  updateUI();
+</script>
+</body>
+</html>
