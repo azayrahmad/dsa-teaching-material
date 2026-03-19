@@ -14,6 +14,8 @@ export default defineConfig({
         array_2d_slides: resolve(__dirname, 'slides/array-2d.html'),
         struct_topic: resolve(__dirname, 'topics/struct.html'),
         struct_slides: resolve(__dirname, 'slides/struct.html'),
+        linked_list_topic: resolve(__dirname, 'topics/linked-list.html'),
+        linked_list_slides: resolve(__dirname, 'slides/linked-list-1.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
