@@ -86,12 +86,10 @@
   }
   .node-prev .arrow {
     top: 65%;
-  }
-  .node-prev .arrow {
-    right: 25px; /* Center of 50px box */
+    left: 25px;
     background: var(--accent3);
     transform: translateY(-50%) rotate(180deg);
-    transform-origin: right center;
+    transform-origin: left center;
   }
   .node-next .arrow::after {
     content: '';
@@ -134,6 +132,9 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     padding: 20px 0;
+  }
+  .ll-row.doubly .arrow {
+    width: 100px;
   }
 
   .array-container {
