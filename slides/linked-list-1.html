@@ -358,11 +358,12 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi Dasar</div>
     <div class="slide-title">🔗 Anatomi <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div class="ll-row" style="gap: 50px;">
-        <div class="node"><div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div></div>
-        <div class="node"><div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div></div>
-        <div class="node"><div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div></div>
-        <div class="null-label">NULL</div>
+      <div class="ll-row" id="ll-interactive-demo" style="gap: 50px; min-height: 100px;">
+        <!-- Nodes will be added here -->
+      </div>
+      <div style="margin-top: 20px;">
+        <button class="btn btn-primary" id="btn-add-node">ADD +</button>
+        <button class="btn" id="btn-reset-ll">Reset</button>
       </div>
       <p style="margin-top: 30px;">Setiap kotak disebut <strong>Node</strong>. Garis panah mewakili <strong>Pointer</strong> yang menyimpan alamat memori node berikutnya.</p>
     </div>
@@ -959,6 +960,84 @@ while(cur != NULL) {
     if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
     if (e.key === 'ArrowLeft') navigate(-1);
   });
+
+  // Slide 6: Interactive Linked List Demo Logic
+  const btnAddNode = document.getElementById('btn-add-node');
+  const btnResetLLSlide6 = document.getElementById('btn-reset-ll');
+  const llContainer = document.getElementById('ll-interactive-demo');
+
+  if (btnAddNode && btnResetLLSlide6 && llContainer) {
+    let nodeCount = 0;
+    const values = [10, 20, 30];
+
+    btnAddNode.addEventListener('click', async () => {
+      if (nodeCount >= values.length) return;
+
+      const val = values[nodeCount];
+      nodeCount++;
+      btnAddNode.disabled = true;
+      btnResetLLSlide6.disabled = true;
+
+      const nodeWrap = document.createElement('div');
+      nodeWrap.className = 'node';
+      nodeWrap.style.opacity = '0';
+      nodeWrap.style.transition = 'opacity 0.5s ease';
+      nodeWrap.innerHTML = `
+        <div class="node-box">
+          <div class="node-data">${val}</div>
+          <div class="node-next"><div class="arrow" style="width: 0; transition: width 0.5s ease;"></div></div>
+        </div>
+      `;
+
+      const existingNull = llContainer.querySelector('.null-label');
+
+      // 1. Node appears
+      if (existingNull) {
+        llContainer.insertBefore(nodeWrap, existingNull);
+      } else {
+        llContainer.appendChild(nodeWrap);
+      }
+
+      await new Promise(r => setTimeout(r, 50));
+      nodeWrap.style.opacity = '1';
+      await new Promise(r => setTimeout(r, 500));
+
+      // 2. NULL appears (only for first node)
+      if (!existingNull) {
+        const nullLabel = document.createElement('div');
+        nullLabel.className = 'null-label';
+        nullLabel.textContent = 'NULL';
+        nullLabel.style.opacity = '0';
+        nullLabel.style.transition = 'opacity 0.5s ease';
+        llContainer.appendChild(nullLabel);
+
+        await new Promise(r => setTimeout(r, 50));
+        nullLabel.style.opacity = '1';
+        await new Promise(r => setTimeout(r, 500));
+      } else {
+        // Redirection is automatic via flex layout, just wait for visual clarity
+        await new Promise(r => setTimeout(r, 500));
+      }
+
+      // 3. Arrow grows from the NEW node
+      const arrow = nodeWrap.querySelector('.arrow');
+      if (arrow) {
+        arrow.style.width = '75px';
+        await new Promise(r => setTimeout(r, 500));
+      }
+
+      if (nodeCount < values.length) {
+        btnAddNode.disabled = false;
+      }
+      btnResetLLSlide6.disabled = false;
+    });
+
+    btnResetLLSlide6.addEventListener('click', () => {
+      llContainer.innerHTML = '';
+      nodeCount = 0;
+      btnAddNode.disabled = false;
+    });
+  }
 
   // Slide 4: Shifting Demo Logic
   const btnShift = document.getElementById('btn-shift-demo');
