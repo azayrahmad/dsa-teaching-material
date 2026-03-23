@@ -204,6 +204,14 @@
     content: '↑';
     font-size: 1.2rem;
   }
+  .pointer-label.down {
+    bottom: auto;
+    top: -50px;
+  }
+  .pointer-label.down::before {
+    content: '↓';
+    order: 2;
+  }
 
   .comparison-table {
     width: 100%;
@@ -231,6 +239,10 @@
     font-size: 0.7rem;
     color: var(--accent2);
     margin-bottom: 5px;
+  }
+  #node-concept .node-next::after,
+  #node-concept .node-next .arrow {
+    display: none !important;
   }
 </style>
 </head>
@@ -386,9 +398,9 @@
         </div>
         <div class="col">
           <div class="node" style="justify-content: center;">
-            <div class="node-box" style="flex-direction: column; width: 120px;">
-              <div class="node-data" style="border-right: none; border-bottom: 2px solid var(--accent); padding: 20px;">DATA</div>
-              <div class="node-next" style="padding: 20px;">NEXT</div>
+            <div class="node-box" id="node-concept">
+              <div class="node-data" style="padding: 10px 20px; min-width: 100px;">DATA</div>
+              <div class="node-next" style="padding: 10px 20px; width: 100px;">NEXT</div>
             </div>
           </div>
         </div>
@@ -480,10 +492,12 @@ head->next = NULL;</code></pre>
           <div class="quote">Jika kita kehilangan alamat Head, kita kehilangan akses ke seluruh Linked List!</div>
         </div>
         <div class="col">
-          <div class="node" style="position: relative; margin-top: 40px;">
-            <div class="pointer-label" style="top: -50px; bottom: auto; transform: translateX(-50%) rotate(180deg); color: var(--accent);">head</div>
-            <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
-            <div style="margin-left: 50px;" class="null-label">NULL</div>
+          <div style="display: flex; align-items: center; gap: 50px; margin-top: 40px;">
+            <div class="node" style="position: relative;">
+              <div class="pointer-label down" style="color: var(--accent);">head</div>
+              <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
+            </div>
+            <div class="null-label">NULL</div>
           </div>
         </div>
       </div>
