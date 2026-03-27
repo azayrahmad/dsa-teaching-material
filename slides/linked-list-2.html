@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 7 – Linked List Lanjutan</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+<style>
+  .node {
+    display: flex;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+  }
+  .node-box {
+    display: flex;
+    border: 2px solid var(--accent);
+    background: var(--surface);
+    border-radius: 4px;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .node-box:hover {
+    transform: scale(1.05);
+    border-color: var(--accent2);
+  }
+  .node-data {
+    padding: 10px 15px;
+    min-width: 60px;
+    text-align: center;
+    color: var(--text);
+  }
+  .node-next {
+    padding: 10px 10px;
+    width: 50px;
+    height: 44px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 2px solid var(--accent);
+    position: relative;
+  }
+  .node-next::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--accent2);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .arrow {
+    position: absolute;
+    height: 2px;
+    background: var(--accent2);
+    z-index: 1;
+    top: 50%;
+    left: 100%;
+    width: 50px;
+    transform: translateY(-50%);
+  }
+  .arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid var(--accent2);
+  }
+
+  .null-label {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+    font-weight: bold;
+    padding: 10px;
+    border: 2px dashed var(--accent4);
+    border-radius: 4px;
+  }
+
+  .ll-playground {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 40px 0;
+    min-height: 160px;
+    padding: 60px 20px 20px 20px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  .insert-zone {
+    width: 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    position: relative;
+    z-index: 5;
+  }
+  .insert-zone:hover {
+    opacity: 1;
+  }
+  .insert-zone::before {
+    content: '+';
+    width: 24px;
+    height: 24px;
+    background: var(--accent2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .pointer-label {
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .pointer-label::after {
+    content: '↓';
+    font-size: 1.2rem;
+  }
+
+  .delete-overlay {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent4);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: none;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .node-box:hover .delete-overlay {
+    display: block;
+  }
+
+  .empty-msg {
+    color: var(--text-muted);
+    font-style: italic;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Analysis Slide Styles */
+  .analysis-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  .step-list {
+    list-style: none;
+    padding: 0;
+  }
+  .step-list li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-list .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/linked-list.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 1: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Hari ini kita akan masuk ke bagian paling penting dari linked list: manipulasi data menggunakan pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 07</div>
+    <div class="section-badge"><span class="dot"></span>Struktur Data – Linked List</div>
+    <div class="slide-title">LINKED LIST<br><span class="highlight">(LANJUTAN)</span></div>
+    <div class="subtitle">160 menit · Manipulasi Pointer</div>
+    <div class="desc">Menguasai operasi insert dan delete. Kunci utama dalam membangun struktur data yang dinamis.</div>
+  </div>
+
+  <!-- SLIDE 2: REVIEW PERTEMUAN 6 -->
+  <div class="slide" id="slide-1" data-notes="Pastikan mahasiswa masih ingat bahwa linked list terdiri dari node yang saling terhubung.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Review</div>
+    <div class="slide-title">⏪ Review <span class="highlight">Pertemuan 6</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">❓</span><span><strong>Apa itu Linked List?</strong> Koleksi node dinamis.</span></div>
+        <div class="kp-item"><span class="icon">📦</span><span><strong>Struktur Node:</strong> Memiliki Data dan Pointer Next.</span></div>
+        <div class="kp-item"><span class="icon">🔗</span><span><strong>Pointer next:</strong> Menyimpan alamat node berikutnya.</span></div>
+        <div class="kp-item"><span class="icon">🚶‍♂️</span><span><strong>Traversal:</strong> Mengunjungi setiap node dari Head ke NULL.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: STRUKTUR NODE -->
+  <div class="slide" id="slide-2" data-notes="Tekankan bahwa setiap node punya data dan pointer ke node berikutnya.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Struktur</div>
+    <div class="slide-title">🏗 Struktur <span class="highlight">Node</span></div>
+    <div class="slide-body">
+      <p>Definisi dasar sebuah node dalam Singly Linked List:</p>
+      <pre><code class="language-cpp">struct Node {
+    int data;
+    Node* next;
+};</code></pre>
+      <div class="tip-box">
+        <div class="tip-label">INGAT</div>
+        <code>Node*</code> adalah tipe data pointer yang menunjuk ke objek bertipe <code>Node</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: VISUAL LINKED LIST -->
+  <div class="slide" id="slide-3" data-notes="Gunakan visual untuk menunjukkan alur pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">🖼 Visual <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <div style="display: flex; align-items: center; gap: 50px; margin-top: 40px; justify-content: center;">
+        <div class="node">
+          <div class="pointer-label">HEAD</div>
+          <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
+        </div>
+        <div class="node">
+          <div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div>
+        </div>
+        <div class="node">
+          <div class="node-box"><div class="node-data">30</div><div class="node-next"></div></div>
+          <div class="arrow" style="width: 50px;"></div>
+        </div>
+        <div class="null-label">NULL</div>
+      </div>
+      <p style="margin-top: 40px; text-align: center;">Pointer <code>next</code> menghubungkan satu node ke node berikutnya.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: TUJUAN HARI INI -->
+  <div class="slide" id="slide-4" data-notes="Fokus utama bukan coding, tapi memahami perubahan pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Tujuan</div>
+    <div class="slide-title">🎯 Tujuan <span class="highlight">Hari Ini</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">➕</span><span><strong>Insert node:</strong> Menambah data baru di berbagai posisi.</span></div>
+        <div class="kp-item"><span class="icon">➖</span><span><strong>Delete node:</strong> Menghapus data dari list.</span></div>
+        <div class="kp-item"><span class="icon">🧠</span><span><strong>Logika Pointer:</strong> Memahami urutan perubahan pointer agar data tidak hilang.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: OPERASI LINKED LIST -->
+  <div class="slide" id="slide-5" data-notes="Hari ini kita fokus pada insert dan delete.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Operasi</div>
+    <div class="slide-title">🛠 Operasi <span class="highlight">Linked List</span></div>
+    <div class="slide-body">
+      <p>Operasi dasar yang sering dilakukan:</p>
+      <div class="cols">
+        <div class="col">
+          <div class="kp">
+            <div class="kp-item" style="border-left-color: var(--accent2);"><span class="icon">📍</span><span>Insert (Depan, Belakang, Tengah)</span></div>
+            <div class="kp-item" style="border-left-color: var(--accent4);"><span class="icon">🗑</span><span>Delete (Depan, Belakang, Tengah)</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="kp">
+            <div class="kp-item"><span class="icon">🔍</span><span>Search (Pencarian Data)</span></div>
+            <div class="kp-item"><span class="icon">🚶‍♂️</span><span>Traversal (Penelusuran)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: INSERT DI DEPAN -->
+  <div class="slide" id="slide-6" data-notes="Urutan sangat penting. Jika salah, data bisa hilang.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insert</div>
+    <div class="slide-title">🆕 Insert <span class="highlight">di Depan</span></div>
+    <div class="slide-body">
+      <p>Langkah-langkah menyisipkan node di posisi paling awal:</p>
+      <ol class="step-list">
+        <li><span class="dot"></span> <strong>Buat node baru:</strong> Alokasikan memori dan isi datanya.</li>
+        <li><span class="dot"></span> <strong>Hubungkan ke List:</strong> Set <code>next</code> node baru ke <code>head</code> saat ini.</li>
+        <li><span class="dot"></span> <strong>Update Head:</strong> Pindahkan <code>head</code> ke node baru tersebut.</li>
+      </ol>
+      <div class="tip-box" style="background: rgba(var(--accent4-rgb), 0.1); border-color: var(--accent4);">
+        ⚠️ Jangan update <code>head</code> sebelum langkah 2, atau Anda akan kehilangan sisa list!
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: KODE INSERT DEPAN -->
+  <div class="slide" id="slide-7" data-notes="Perhatikan penggunaan reference pada head.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode</div>
+    <div class="slide-title">💻 Kode <span class="highlight">Insert Depan</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">void insertDepan(Node*& head, int nilai) {
+    Node* baru = new Node; // 1. Buat node
+    baru->data = nilai;
+    baru->next = head;     // 2. Sambungkan ke head lama
+    head = baru;           // 3. Head sekarang di node baru
+}</code></pre>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+        *Simbol <code>&</code> pada <code>Node*& head</code> berarti kita mengirim pointer secara <strong>reference</strong> agar perubahan di dalam fungsi permanen.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: INSERT DI BELAKANG -->
+  <div class="slide" id="slide-8" data-notes="Butuh looping sampai next == NULL.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insert</div>
+    <div class="slide-title">🔚 Insert <span class="highlight">di Belakang</span></div>
+    <div class="slide-body">
+      <p>Langkah-langkah menyisipkan node di posisi terakhir:</p>
+      <ol class="step-list">
+        <li><span class="dot"></span> <strong>Buat node baru:</strong> Set <code>next</code>-nya ke <code>NULL</code>.</li>
+        <li><span class="dot"></span> <strong>Cek List:</strong> Jika kosong, jadikan node baru sebagai <code>head</code>.</li>
+        <li><span class="dot"></span> <strong>Traversal:</strong> Cari node terakhir (yang <code>next</code>-nya <code>NULL</code>).</li>
+        <li><span class="dot"></span> <strong>Hubungkan:</strong> Ubah <code>next</code> node terakhir ke node baru.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: KODE INSERT BELAKANG -->
+  <div class="slide" id="slide-9" data-notes="Jangan lupa handle kondisi list kosong.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode</div>
+    <div class="slide-title">💻 Kode <span class="highlight">Insert Belakang</span></div>
+    <div class="slide-body">
+      <pre style="font-size: 0.8rem;"><code class="language-cpp">void insertBelakang(Node*& head, int nilai) {
+    Node* baru = new Node;
+    baru->data = nilai;
+    baru->next = NULL;
+
+    if (head == NULL) { // Jika list kosong
+        head = baru;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next != NULL) { // Cari ekor
+        temp = temp->next;
+    }
+    temp->next = baru; // Sambungkan
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: INSERT SETELAH NODE -->
+  <div class="slide" id="slide-10" data-notes="Ini operasi paling rawan error pointer.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insert</div>
+    <div class="slide-title">📍 Insert <span class="highlight">Setelah Node</span></div>
+    <div class="slide-body">
+      <p>Menyisipkan di tengah-tengah list:</p>
+      <ol class="step-list">
+        <li><span class="dot"></span> <strong>Cari target:</strong> Temukan node yang akan menjadi "sebelum" node baru.</li>
+        <li><span class="dot"></span> <strong>Set next baru:</strong> <code>baru->next = target->next;</code></li>
+        <li><span class="dot"></span> <strong>Update target:</strong> <code>target->next = baru;</code></li>
+      </ol>
+      <div class="quote">Urutan 2 dan 3 tidak boleh tertukar!</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: DELETE DEPAN -->
+  <div class="slide" id="slide-11" data-notes="Pastikan tidak memory leak.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Delete</div>
+    <div class="slide-title">🗑 Delete <span class="highlight">di Depan</span></div>
+    <div class="slide-body">
+      <p>Langkah-langkah menghapus node pertama:</p>
+      <ol class="step-list">
+        <li><span class="dot"></span> <strong>Simpan head:</strong> Gunakan pointer <code>temp</code> untuk menunjuk ke <code>head</code>.</li>
+        <li><span class="dot"></span> <strong>Geser head:</strong> Pindahkan <code>head</code> ke <code>head->next</code>.</li>
+        <li><span class="dot"></span> <strong>Hapus:</strong> Gunakan keyword <code>delete</code> pada <code>temp</code>.</li>
+      </ol>
+      <p style="margin-top: 20px;">Menghapus pointer saja tidak cukup, kita harus membebaskan memori yang digunakan.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: KODE DELETE DEPAN -->
+  <div class="slide" id="slide-12" data-notes="">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode</div>
+    <div class="slide-title">💻 Kode <span class="highlight">Delete Depan</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">void deleteDepan(Node*& head) {
+    if (head == NULL) return; // List kosong
+
+    Node* temp = head;    // 1. Simpan alamat lama
+    head = head->next;    // 2. Loncat ke node ke-2
+    delete temp;          // 3. Bebaskan memori
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: DELETE NODE TERTENTU -->
+  <div class="slide" id="slide-13" data-notes="Butuh dua pointer: prev dan curr.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Delete</div>
+    <div class="slide-title">🎯 Delete <span class="highlight">Node Tertentu</span></div>
+    <div class="slide-body">
+      <p>Menghapus node di tengah atau belakang:</p>
+      <ol class="step-list">
+        <li><span class="dot"></span> <strong>Cari node:</strong> Gunakan <code>curr</code> untuk mencari node yang dihapus.</li>
+        <li><span class="dot"></span> <strong>Lacak Prev:</strong> Simpan node sebelumnya di <code>prev</code>.</li>
+        <li><span class="dot"></span> <strong>Hubungkan:</strong> Set <code>prev->next = curr->next;</code></li>
+        <li><span class="dot"></span> <strong>Hapus:</strong> <code>delete curr;</code></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: VISUAL PLAYGROUND -->
+  <div class="slide" id="slide-14" data-notes="Tunjukkan bagaimana pointer dilewati.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Playground</div>
+    <div class="slide-title">🕹 Simulasi <span class="highlight">Interaktif</span></div>
+    <div class="slide-body">
+      <p>Coba sendiri operasi insert dan delete dengan interaksi di bawah:</p>
+
+      <div class="ll-playground" id="playground">
+        <div class="empty-msg">List Kosong. Klik tanda + untuk menambah.</div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          * Hover di antara node untuk <b>Insert</b><br>
+          * Klik pada node untuk <b>Delete</b>
+        </div>
+        <button class="btn" id="btn-reset-pg">Reset List</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: KESALAHAN UMUM -->
+  <div class="slide" id="slide-15" data-notes="Ini yang paling sering bikin bug.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Common Mistakes</div>
+    <div class="slide-title">⚠️ Kesalahan <span class="highlight">Umum</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">💔</span><span><strong>Lupa update pointer:</strong> Mengakibatkan list terputus.</span></div>
+        <div class="kp-item"><span class="icon">🚫</span><span><strong>Tidak handle NULL:</strong> Mengakses <code>->next</code> pada pointer NULL (Crash).</span></div>
+        <div class="kp-item"><span class="icon">💧</span><span><strong>Memory leak:</strong> Menghapus pointer tapi lupa men-<code>delete</code> objek di heap.</span></div>
+        <div class="kp-item"><span class="icon">🔄</span><span><strong>Salah urutan:</strong> Menghilangkan akses ke sisa list sebelum menyambungkannya.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: LATIHAN ANALISIS -->
+  <div class="slide" id="slide-16" data-notes="Dorong mahasiswa berpikir tanpa coding.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Latihan</div>
+    <div class="slide-title">🤔 Latihan <span class="highlight">Analisis</span></div>
+    <div class="slide-body">
+      <p>Jika kita memiliki list kosong, apa hasil akhir dari operasi berikut?</p>
+      <div class="analysis-box">
+        <ol style="font-family: 'JetBrains Mono', monospace; line-height: 1.8;">
+          <li>insertDepan(10)</li>
+          <li>insertDepan(5)</li>
+          <li>deleteDepan()</li>
+        </ol>
+      </div>
+      <button class="btn btn-primary" id="btn-show-answer" style="margin-top: 20px;">Cek Jawaban</button>
+      <div id="answer-box" style="margin-top: 20px; display: none; color: var(--accent2); font-weight: bold; font-size: 1.5rem;">
+        Hasil: [ 10 ]
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: JAWABAN & PENJELASAN -->
+  <div class="slide" id="slide-17" data-notes="Pastikan mereka memahami alurnya.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Penjelasan</div>
+    <div class="slide-title">💡 Penjelasan <span class="highlight">Jawaban</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span>1. <code>insertDepan(10)</code> &rarr; List: [10]</span></div>
+        <div class="kp-item"><span>2. <code>insertDepan(5)</code> &rarr; List: [5, 10] (5 jadi head baru)</span></div>
+        <div class="kp-item"><span>3. <code>deleteDepan()</code> &rarr; List: [10] (5 dihapus)</span></div>
+      </div>
+      <p style="margin-top: 20px;">Jadi, nilai yang tersisa di dalam list adalah <strong>10</strong>.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: MINI PROJECT -->
+  <div class="slide" id="slide-18" data-notes="Ini akan jadi latihan praktikum.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Project</div>
+    <div class="slide-title">📂 Mini <span class="highlight">Project</span></div>
+    <div class="slide-body">
+      <p>Buatlah program C++ dengan sistem menu interaktif:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Opsi 1: Insert Node (Depan/Belakang).</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Opsi 2: Delete Node (Depan).</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Opsi 3: Tampilkan List (Traversal).</span></div>
+        <div class="kp-item"><span class="icon">0</span><span>Opsi 0: Keluar.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: RINGKASAN -->
+  <div class="slide" id="slide-19" data-notes="Tekankan konsep, bukan hafalan.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Summary</div>
+    <div class="slide-title">📌 Ringkasan <span class="highlight">Materi</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✔</span><span>Linked list sangat fleksibel dalam penambahan/penghapusan data.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span><strong>Pointer adalah kunci:</strong> Selalu hubungkan node baru ke sisa list sebelum memutus pointer lama.</span></div>
+        <div class="kp-item"><span class="icon">✔</span><span><strong>Urutan operasi:</strong> Menentukan keberhasilan manipulasi list.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: PREVIEW UTS -->
+  <div class="slide" id="slide-20" data-notes="Persiapkan mindset mahasiswa.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Exam Prep</div>
+    <div class="slide-title">📝 Preview <span class="highlight">UTS</span></div>
+    <div class="slide-body">
+      <p>Topik yang kemungkinan besar muncul terkait Linked List:</p>
+      <div class="kp">
+        <div class="kp-item"><span><strong>Trace Pointer:</strong> Menentukan isi list setelah sekumpulan operasi.</span></div>
+        <div class="kp-item"><span><strong>Analisis Struktur:</strong> Memilih jenis linked list yang tepat untuk masalah tertentu.</span></div>
+        <div class="kp-item"><span><strong>Logika Algoritma:</strong> Bukan sekadar menghafal kode, tapi memahami alurnya.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: PENUTUP -->
+  <div class="slide" id="slide-21" data-notes="Berikan closing yang memorable.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Closing</div>
+    <div class="slide-title">👋 Sampai <span class="highlight">Jumpa!</span></div>
+    <div class="slide-body">
+      <div class="quote" style="font-size: 2rem; margin-top: 60px;">
+        "Kalau pointer salah, data hilang."
+      </div>
+      <p style="text-align: center; margin-top: 40px; color: var(--text-muted);">Gunakan playground di Slide 15 untuk melatih intuisi pointer Anda!</p>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 22</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  initApp();
+
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  function navigate(dir) {
+    goToSlide(current + dir);
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= total) return;
+
+    slides.forEach((slide, i) => {
+      if (i < index) {
+        slide.className = 'slide prev';
+      } else if (i === index) {
+        slide.className = 'slide active';
+      } else {
+        slide.className = 'slide';
+      }
+    });
+
+    current = index;
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
+    const progressEl = document.getElementById('progress');
+    if (progressEl) {
+      progressEl.style.width = ((current+1)/total*100) + '%';
+    }
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+  });
+
+  // Slide 15: Interactive Playground Logic
+  const playground = document.getElementById('playground');
+  const btnResetPG = document.getElementById('btn-reset-pg');
+  let listData = [];
+
+  function renderList() {
+    playground.innerHTML = '';
+
+    if (listData.length === 0) {
+      playground.innerHTML = '<div class="empty-msg">List Kosong. Klik tanda + untuk menambah.</div>';
+      const startZone = document.createElement('div');
+      startZone.className = 'insert-zone';
+      startZone.title = 'Insert at head';
+      startZone.style.opacity = '1';
+      startZone.onclick = () => addNode(0);
+      playground.appendChild(startZone);
+      return;
+    }
+
+    // Front Insert Zone
+    const frontZone = document.createElement('div');
+    frontZone.className = 'insert-zone';
+    frontZone.onclick = () => addNode(0);
+    playground.appendChild(frontZone);
+
+    listData.forEach((val, idx) => {
+      const nodeEl = document.createElement('div');
+      nodeEl.className = 'node';
+      nodeEl.innerHTML = `
+        <div class="node-box">
+          <div class="delete-overlay">Klik untuk Hapus</div>
+          <div class="node-data">${val}</div>
+          <div class="node-next">${idx < listData.length - 1 ? '<div class="arrow"></div>' : ''}</div>
+        </div>
+      `;
+      if (idx === 0) {
+        const headLabel = document.createElement('div');
+        headLabel.className = 'pointer-label';
+        headLabel.textContent = 'HEAD';
+        nodeEl.appendChild(headLabel);
+      }
+
+      nodeEl.querySelector('.node-data').onclick = (e) => {
+        e.stopPropagation();
+        removeNode(idx);
+      };
+
+      playground.appendChild(nodeEl);
+
+      // Between or End Insert Zone
+      const zone = document.createElement('div');
+      zone.className = 'insert-zone';
+      zone.onclick = () => addNode(idx + 1);
+      playground.appendChild(zone);
+    });
+
+    const nullEl = document.createElement('div');
+    nullEl.className = 'null-label';
+    nullEl.textContent = 'NULL';
+    playground.appendChild(nullEl);
+  }
+
+  function addNode(index) {
+    const val = Math.floor(Math.random() * 90) + 10;
+    listData.splice(index, 0, val);
+    renderList();
+  }
+
+  function removeNode(index) {
+    listData.splice(index, 1);
+    renderList();
+  }
+
+  btnResetPG.onclick = () => {
+    listData = [];
+    renderList();
+  };
+
+  // Slide 17: Answer Logic
+  const btnShowAnswer = document.getElementById('btn-show-answer');
+  const answerBox = document.getElementById('answer-box');
+  if (btnShowAnswer && answerBox) {
+    btnShowAnswer.onclick = () => {
+      answerBox.style.display = answerBox.style.display === 'none' ? 'block' : 'none';
+      btnShowAnswer.textContent = answerBox.style.display === 'none' ? 'Cek Jawaban' : 'Sembunyikan Jawaban';
+    };
+  }
+
+  // Initial Render
+  renderList();
+  updateUI();
+</script>
+</body>
+</html>

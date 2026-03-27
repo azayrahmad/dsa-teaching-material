@@ -2,47 +2,38 @@
 
 using namespace std;
 
-//Deklarasi node
-struct node{
-	string data;//data node
-	struct node * next; //pointer ke node selanjutnya
+struct Node {
+    int data;
+    Node* next;
 };
 
-int main(){
-	//Inisialisasi linked list
-	node * kepala = NULL;
-	node * ekor = NULL;
-	string antrian;
+void insertDepan(Node*& head, int nilai) {
+    Node* baru = new Node;
+    baru->data = nilai;
+    baru->next = head;
+    head = baru;
+}
 
-	while(1 == 1){
-		cout << "Masukkan antrian: ";
-		cin >> antrian;
+void tampilkan(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << " -> ";
+        temp = temp->next;
+    }
+    cout << "NULL" << endl;
+}
 
-		//Deklarasi node
-		node * baru = new node;
-		baru -> data = antrian;
-		baru -> next = NULL;
+/**
+ * LATIHAN:
+ * 1. Implementasikan fungsi insertBelakang(Node*& head, int nilai)
+ * 2. Implementasikan fungsi deleteDepan(Node*& head)
+ */
 
-		//tambahkan di belakang
-		if(kepala == NULL){
-			kepala = baru;
-			ekor = baru;
+int main() {
+    Node* head = NULL;
 
-		} else {
-			ekor -> next = baru;
-			ekor = baru;
-		}
+    // Masukkan kode latihan di sini
+    cout << "Selamat mengerjakan latihan Linked List Lanjutan!" << endl;
 
-		cout << "Antrian saat ini:" << endl;
-			//Cetak
-			node * cetak = kepala;
-			while(cetak != NULL){
-				cout << cetak -> data;
-				if (cetak -> next != NULL)
-					cout << " - ";
-				cetak = cetak -> next;
-			}
-
-			cout << endl;
-	}
+    return 0;
 }
