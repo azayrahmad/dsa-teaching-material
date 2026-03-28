@@ -47,24 +47,26 @@
   }
   .node-next::after {
     content: '';
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
     background: var(--accent2);
     border-radius: 50%;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    z-index: 11; /* Above arrow */
   }
   .arrow {
     position: absolute;
     height: 2px;
     background: var(--accent2);
-    z-index: 1;
+    z-index: 10; /* Top of everything else */
     top: 50%;
-    left: 100%;
-    width: 50px;
+    left: 25px; /* Start from center of node-next */
+    width: 65px; /* Reaches next node across 40px insert-zone */
     transform: translateY(-50%);
+    pointer-events: none;
   }
   .arrow::after {
     content: '';
@@ -268,7 +270,7 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
     <div class="slide-title">🖼 Visual <span class="highlight">Linked List</span></div>
     <div class="slide-body">
-      <div style="display: flex; align-items: center; gap: 50px; margin-top: 40px; justify-content: center;">
+      <div style="display: flex; align-items: center; gap: 40px; margin-top: 40px; justify-content: center;">
         <div class="node">
           <div class="pointer-label">HEAD</div>
           <div class="node-box"><div class="node-data">10</div><div class="node-next"><div class="arrow"></div></div></div>
@@ -277,8 +279,7 @@
           <div class="node-box"><div class="node-data">20</div><div class="node-next"><div class="arrow"></div></div></div>
         </div>
         <div class="node">
-          <div class="node-box"><div class="node-data">30</div><div class="node-next"></div></div>
-          <div class="arrow" style="width: 50px;"></div>
+          <div class="node-box"><div class="node-data">30</div><div class="node-next"><div class="arrow"></div></div></div>
         </div>
         <div class="null-label">NULL</div>
       </div>
@@ -701,7 +702,7 @@
         <div class="node-box">
           <div class="delete-overlay">Klik untuk Hapus</div>
           <div class="node-data">${val}</div>
-          <div class="node-next">${idx < listData.length - 1 ? '<div class="arrow"></div>' : ''}</div>
+          <div class="node-next"><div class="arrow"></div></div>
         </div>
       `;
       if (idx === 0) {
