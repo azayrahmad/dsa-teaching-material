@@ -174,6 +174,35 @@
     text-align: center;
   }
 
+  .pg-status {
+    height: 1.5em;
+    color: var(--accent2);
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .node.anim-new {
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.5s ease;
+  }
+  .node.anim-new.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .node.anim-fade {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s ease;
+  }
+
+  .arrow.anim-link {
+    width: 0;
+    transition: width 0.5s ease;
+  }
+
   /* Analysis Slide Styles */
   .analysis-box {
     background: var(--surface);
@@ -485,6 +514,7 @@
     <div class="slide-body">
       <p>Coba sendiri operasi insert dan delete dengan interaksi di bawah:</p>
 
+      <div class="pg-status" id="pg-status"></div>
       <div class="ll-playground" id="playground">
         <div class="empty-msg">List Kosong. Klik tanda + untuk menambah.</div>
       </div>
@@ -673,7 +703,9 @@
   // Slide 15: Interactive Playground Logic
   const playground = document.getElementById('playground');
   const btnResetPG = document.getElementById('btn-reset-pg');
+  const pgStatus = document.getElementById('pg-status');
   let listData = [];
+  let isAnimating = false;
 
   function renderList() {
     playground.innerHTML = '';
@@ -732,19 +764,101 @@
     playground.appendChild(nullEl);
   }
 
-  function addNode(index) {
+  async function addNode(index) {
+    if (isAnimating) return;
+    isAnimating = true;
     const val = Math.floor(Math.random() * 90) + 10;
+
+    // 1. Show steps in status
+    pgStatus.textContent = "Langkah 1: Alokasi node baru (next = NULL)";
+
+    // Create new node element (temporarily outside regular flow)
+    const newNodeWrap = document.createElement('div');
+    newNodeWrap.className = 'node anim-new';
+    newNodeWrap.innerHTML = `
+      <div class="node-box" style="border-color: var(--accent2);">
+        <div class="node-data">${val}</div>
+        <div class="node-next"><div class="arrow anim-link" style="width: 0;"></div></div>
+      </div>
+    `;
+
+    // Temporarily insert into playground to show creation
+    const zones = playground.querySelectorAll('.insert-zone');
+    const targetZone = zones[index];
+    playground.insertBefore(newNodeWrap, targetZone);
+
+    await new Promise(r => setTimeout(r, 100));
+    newNodeWrap.classList.add('visible');
+    await new Promise(r => setTimeout(r, 1000));
+
+    // 2. Point next to current node at that position
+    pgStatus.textContent = "Langkah 2: Hubungkan next ke sisa list";
+    const newArrow = newNodeWrap.querySelector('.arrow');
+    newArrow.style.width = '65px';
+    await new Promise(r => setTimeout(r, 1000));
+
+    // 3. Update previous node
+    if (index === 0) {
+      pgStatus.textContent = "Langkah 3: Update HEAD ke node baru";
+    } else {
+      pgStatus.textContent = "Langkah 3: Hubungkan prev->next ke node baru";
+      const nodes = playground.querySelectorAll('.node');
+      // index is where we inserted newNodeWrap. prev is at index - 1
+      const prevNode = nodes[index - 1];
+      const prevArrow = prevNode.querySelector('.arrow');
+      if (prevArrow) {
+        prevArrow.style.transition = 'none';
+        prevArrow.style.width = '0';
+        await new Promise(r => setTimeout(r, 50));
+        prevArrow.style.transition = 'width 0.5s ease';
+        prevArrow.style.width = '65px';
+      }
+    }
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    // Finalize
     listData.splice(index, 0, val);
+    pgStatus.textContent = "Node berhasil disisipkan!";
     renderList();
+    isAnimating = false;
+    setTimeout(() => { if (!isAnimating) pgStatus.textContent = ""; }, 2000);
   }
 
-  function removeNode(index) {
+  async function removeNode(index) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const nodes = playground.querySelectorAll('.node');
+    const targetNode = nodes[index];
+
+    if (index === 0) {
+      pgStatus.textContent = "Langkah 1: Geser HEAD ke node berikutnya";
+    } else {
+      pgStatus.textContent = "Langkah 1: Hubungkan prev->next melompati node ini";
+      const prevNode = nodes[index-1];
+      const prevArrow = prevNode.querySelector('.arrow');
+      prevArrow.style.transition = 'width 0.5s ease';
+      prevArrow.style.width = '130px'; // Double length to skip
+    }
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    pgStatus.textContent = "Langkah 2: Hapus node (delete)";
+    targetNode.classList.add('anim-fade');
+    await new Promise(r => setTimeout(r, 600));
+
     listData.splice(index, 1);
+    pgStatus.textContent = "Node berhasil dihapus!";
     renderList();
+    isAnimating = false;
+    setTimeout(() => { if (!isAnimating) pgStatus.textContent = ""; }, 2000);
   }
 
   btnResetPG.onclick = () => {
+    if (isAnimating) return;
     listData = [];
+    pgStatus.textContent = "";
     renderList();
   };
 
