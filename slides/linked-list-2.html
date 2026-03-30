@@ -66,7 +66,9 @@
     left: 25px; /* Start from center of node-next */
     width: 65px; /* Reaches next node across 40px insert-zone */
     transform: translateY(-50%);
+    transform-origin: left center;
     pointer-events: none;
+    transition: width 0.5s ease, transform 0.5s ease;
   }
   .arrow::after {
     content: '';
@@ -95,8 +97,8 @@
     align-items: center;
     gap: 0;
     margin: 40px 0;
-    min-height: 160px;
-    padding: 60px 20px 20px 20px;
+    min-height: 240px;
+    padding: 120px 20px 20px 20px;
     background: rgba(var(--accent-rgb), 0.05);
     border-radius: 8px;
     overflow-x: auto;
@@ -184,13 +186,16 @@
   }
 
   .node.anim-new {
-    transform: translateY(-20px);
+    transform: translateY(-100px);
     opacity: 0;
     transition: all 0.5s ease;
   }
   .node.anim-new.visible {
-    transform: translateY(0);
+    transform: translateY(-100px);
     opacity: 1;
+  }
+  .node.anim-new.lowered {
+    transform: translateY(0);
   }
   .node.anim-fade {
     opacity: 0;
@@ -200,7 +205,6 @@
 
   .arrow.anim-link {
     width: 0;
-    transition: width 0.5s ease;
   }
 
   /* Analysis Slide Styles */
@@ -702,6 +706,31 @@
 
   // Slide 15: Interactive Playground Logic
   const playground = document.getElementById('playground');
+
+  function updateArrow(arrow, targetEl) {
+    if (!targetEl) {
+      arrow.style.width = '65px';
+      arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+      return;
+    }
+
+    const parentRect = arrow.parentElement.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+
+    // Arrow origin is center of .node-next
+    const startX = parentRect.left + parentRect.width / 2;
+    const startY = parentRect.top + parentRect.height / 2;
+    const endX = targetRect.left;
+    const endY = targetRect.top + targetRect.height / 2;
+
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    arrow.style.width = `${distance}px`;
+    arrow.style.transform = `translateY(-50%) rotate(${angle}deg)`;
+  }
   const btnResetPG = document.getElementById('btn-reset-pg');
   const pgStatus = document.getElementById('pg-status');
   let listData = [];
@@ -770,19 +799,24 @@
     const val = Math.floor(Math.random() * 90) + 10;
 
     // 1. Show steps in status
-    pgStatus.textContent = "Langkah 1: Alokasi node baru (next = NULL)";
+    pgStatus.textContent = "Langkah 1: Alokasi node baru (di atas list)";
 
-    // Create new node element (temporarily outside regular flow)
+    // Create new node element
     const newNodeWrap = document.createElement('div');
     newNodeWrap.className = 'node anim-new';
     newNodeWrap.innerHTML = `
       <div class="node-box" style="border-color: var(--accent2);">
         <div class="node-data">${val}</div>
-        <div class="node-next"><div class="arrow anim-link" style="width: 0;"></div></div>
+        <div class="node-next"><div class="arrow anim-link"></div></div>
       </div>
     `;
 
-    // Temporarily insert into playground to show creation
+    // Find all nodes and NULL label
+    const nodes = playground.querySelectorAll('.node');
+    const nullLabel = playground.querySelector('.null-label');
+    const successor = nodes[index] || nullLabel;
+
+    // Insert new node into DOM (maintains reserved space)
     const zones = playground.querySelectorAll('.insert-zone');
     const targetZone = zones[index];
     playground.insertBefore(newNodeWrap, targetZone);
@@ -791,31 +825,69 @@
     newNodeWrap.classList.add('visible');
     await new Promise(r => setTimeout(r, 1000));
 
-    // 2. Point next to current node at that position
+    // 2. Point next to successor node diagonally
     pgStatus.textContent = "Langkah 2: Hubungkan next ke sisa list";
     const newArrow = newNodeWrap.querySelector('.arrow');
-    newArrow.style.width = '65px';
+    newArrow.style.transition = 'none'; // Snap for manual calculation
+    updateArrow(newArrow, successor);
+    newArrow.style.transition = 'width 0.5s ease, transform 0.5s ease';
     await new Promise(r => setTimeout(r, 1000));
 
-    // 3. Update previous node
+    // 3. Update previous node/pointer
+    let prevArrow = null;
     if (index === 0) {
       pgStatus.textContent = "Langkah 3: Update HEAD ke node baru";
+      const headLabel = document.createElement('div');
+      headLabel.className = 'pointer-label';
+      headLabel.textContent = 'HEAD';
+      headLabel.style.opacity = '0';
+      headLabel.style.transition = 'opacity 0.5s ease';
+      newNodeWrap.appendChild(headLabel);
+      const oldHead = playground.querySelector('.node .pointer-label');
+      if (oldHead) oldHead.style.opacity = '0';
+      await new Promise(r => setTimeout(r, 50));
+      headLabel.style.opacity = '1';
     } else {
       pgStatus.textContent = "Langkah 3: Hubungkan prev->next ke node baru";
-      const nodes = playground.querySelectorAll('.node');
-      // index is where we inserted newNodeWrap. prev is at index - 1
       const prevNode = nodes[index - 1];
-      const prevArrow = prevNode.querySelector('.arrow');
-      if (prevArrow) {
-        prevArrow.style.transition = 'none';
-        prevArrow.style.width = '0';
-        await new Promise(r => setTimeout(r, 50));
-        prevArrow.style.transition = 'width 0.5s ease';
-        prevArrow.style.width = '65px';
-      }
+      prevArrow = prevNode.querySelector('.arrow');
+      prevArrow.style.transition = 'none';
+      updateArrow(prevArrow, successor);
+      await new Promise(r => setTimeout(r, 50));
+      prevArrow.style.transition = 'width 0.5s ease, transform 0.5s ease';
+      updateArrow(prevArrow, newNodeWrap.querySelector('.node-box'));
     }
 
     await new Promise(r => setTimeout(r, 1000));
+
+    // 4. Lower the node and straighten the arrows
+    pgStatus.textContent = "Langkah 4: Sisipkan node ke dalam list";
+    newArrow.style.transition = 'none';
+    if (prevArrow) prevArrow.style.transition = 'none';
+
+    newNodeWrap.classList.add('lowered');
+
+    // During transition, we need to periodically update the diagonal arrows
+    // because the "lowered" class uses CSS transitions, changing the coordinates.
+    const startTime = performance.now();
+    const duration = 500;
+
+    const animateArrows = (now) => {
+        const elapsed = now - startTime;
+        updateArrow(newArrow, successor);
+        if (prevArrow) updateArrow(prevArrow, newNodeWrap.querySelector('.node-box'));
+
+        if (elapsed < duration) {
+            requestAnimationFrame(animateArrows);
+        } else {
+            // Final snap
+            updateArrow(newArrow, successor);
+            if (prevArrow) updateArrow(prevArrow, newNodeWrap.querySelector('.node-box'));
+        }
+    };
+    requestAnimationFrame(animateArrows);
+
+    await new Promise(r => setTimeout(r, 600));
 
     // Finalize
     listData.splice(index, 0, val);
