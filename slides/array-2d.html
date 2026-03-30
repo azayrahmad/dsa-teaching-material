@@ -577,71 +577,9 @@ for(int i = 0; i &lt; 3; i++){
 
 <script type="module">
   import { initApp } from '../src/main.js';
+  import { initSlides } from '../src/slides.js';
   initApp();
-
-  const slides = document.querySelectorAll('.slide');
-  let current = 0;
-  const total = slides.length;
-
-  function navigate(dir) {
-    goToSlide(current + dir);
-  }
-
-  function goToSlide(index) {
-    if (index < 0 || index >= total) return;
-
-    slides.forEach((slide, i) => {
-      if (i < index) {
-        slide.className = 'slide prev';
-      } else if (i === index) {
-        slide.className = 'slide active';
-      } else {
-        slide.className = 'slide';
-      }
-    });
-
-    current = index;
-    updateUI();
-  }
-
-  function updateUI() {
-    document.getElementById('counter').textContent = (current+1) + ' / ' + total;
-    const progressEl = document.getElementById('progress');
-    if (progressEl) {
-      progressEl.style.width = ((current+1)/total*100) + '%';
-    }
-  }
-
-  document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
-  document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
-
-  document.querySelectorAll('.toc-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const slideIdx = parseInt(item.getAttribute('data-slide'));
-      goToSlide(slideIdx);
-    });
-  });
-
-  // Touch support
-  let touchStartX = 0;
-  document.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-
-  document.addEventListener('touchend', e => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    if (Math.abs(diff) > 50) {
-      navigate(diff > 0 ? 1 : -1);
-    }
-  }, { passive: true });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
-    if (e.key === 'ArrowLeft') navigate(-1);
-  });
-
-  updateUI();
+  initSlides();
 
   // Slide 9 Interactive Grid
   const gridContainer = document.getElementById('mem-grid-interactive');
