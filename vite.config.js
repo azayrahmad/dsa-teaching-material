@@ -17,6 +17,8 @@ export default defineConfig({
         linked_list_topic: resolve(__dirname, 'topics/linked-list.html'),
         linked_list_slides: resolve(__dirname, 'slides/linked-list-1.html'),
         linked_list_slides_2: resolve(__dirname, 'slides/linked-list-2.html'),
+        searching_topic: resolve(__dirname, 'topics/searching.html'),
+        searching_slides: resolve(__dirname, 'slides/searching.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
