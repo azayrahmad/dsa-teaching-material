@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 9 – Searching Algorithms</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+<style>
+  .search-grid {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+    justify-content: center;
+  }
+  .search-cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .search-cell .idx {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    position: absolute;
+    top: 2px;
+  }
+  .search-cell .val {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  .search-cell.active-search {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    transform: translateY(-5px);
+  }
+  .search-cell.found {
+    border-color: var(--accent2);
+    background: rgba(var(--accent2-rgb), 0.2);
+  }
+  .search-cell.ignored {
+    opacity: 0.3;
+    filter: grayscale(1);
+  }
+  .search-cell.current-mid {
+    border-color: var(--accent3);
+    background: rgba(var(--accent3-rgb), 0.2);
+    box-shadow: 0 0 15px var(--accent3);
+  }
+
+  .search-pointer {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent);
+    font-size: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .binary-range {
+    position: absolute;
+    top: -30px;
+    height: 4px;
+    background: var(--accent);
+    transition: all 0.3s ease;
+    border-radius: 2px;
+  }
+  .range-label {
+    position: absolute;
+    top: -25px;
+    font-size: 0.7rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+  .status-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 1px solid var(--border);
+    min-height: 60px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .highlight-val {
+    color: var(--accent2);
+    font-weight: bold;
+  }
+  .tally-box {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/searching.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Hari ini kita masuk ke topik yang sangat penting dalam dunia nyata: mencari data. Kaitkan dengan sistem nyata (Google, database, dll)">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 09</div>
+    <div class="section-badge"><span class="dot"></span>Searching Algorithms</div>
+    <div class="slide-title">SEARCHING ALGORITHMS:<br><span class="highlight">Sequential &amp; Binary</span><br>Search</div>
+    <div class="subtitle">160 menit · 24 Slide</div>
+    <div class="desc">Bagaimana cara komputer menemukan jarum dalam tumpukan jerami data?</div>
+  </div>
+
+  <!-- SLIDE 1: KONTEKS -->
+  <div class="slide" id="slide-1" data-notes="Tekankan transisi: dari 'menyimpan' -> 'menggunakan'">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Konteks Setelah UTS</div>
+    <div class="slide-title">Dari Struktur Data → <span class="highlight">Operasi Data</span></div>
+    <div class="slide-body">
+      <p>Kita sudah belajar bagaimana cara menyimpan data:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">📦</span><span><strong>Array:</strong> Berurutan & statis.</span></div>
+        <div class="kp-item"><span class="icon">🔗</span><span><strong>Linked List:</strong> Terhubung & dinamis.</span></div>
+      </div>
+      <p style="margin-top: 30px;">Sekarang pertanyaannya: <strong>Bagaimana mencari data di dalamnya?</strong></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: STUDI KASUS -->
+  <div class="slide" id="slide-2" data-notes="Biarkan mahasiswa menjawab. Bangun rasa 'butuh solusi'.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Studi Kasus</div>
+    <div class="slide-title">Kasus: Cari Data di <span class="highlight">1 Juta Record</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <div class="tip-box">
+            <div class="tip-label">CARA 1</div>
+            Cek satu per satu dari awal sampai akhir.
+          </div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">
+            <div class="tip-label" style="background: var(--accent2);">CARA 2</div>
+            Gunakan strategi tertentu (misal: bagi dua).
+          </div>
+        </div>
+      </div>
+      <p style="text-align: center; font-size: 2rem; margin-top: 40px;">❓ Mana lebih cepat?</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: TUJUAN -->
+  <div class="slide" id="slide-3">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pembelajaran</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Memahami konsep dasar Searching.</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Implementasi Sequential Search.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Implementasi Binary Search.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Membandingkan efisiensi kedua algoritma.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: DEFINISI -->
+  <div class="slide" id="slide-4" data-notes="Gunakan contoh sehari-hari.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Konsep Dasar</div>
+    <div class="slide-title">Apa itu <span class="highlight">Searching?</span></div>
+    <div class="slide-body">
+      <p><strong>Searching</strong> adalah proses menemukan lokasi data tertentu (key) di dalam sebuah koleksi data.</p>
+      <p style="margin-top: 20px;">Contoh nyata:</p>
+      <ul>
+        <li>Mencari kontak di HP.</li>
+        <li>Mencari NIM di database mahasiswa.</li>
+        <li>Mencari file di dalam folder.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: JENIS -->
+  <div class="slide" id="slide-5" data-notes="Jelaskan hanya dua dulu (tidak overload).">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Jenis Searching</div>
+    <div class="slide-title">Dua Algoritma <span class="highlight">Utama</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <h3>1. Sequential Search</h3>
+          <p>Mencari secara linear/berurutan.</p>
+        </div>
+        <div class="col">
+          <h3>2. Binary Search</h3>
+          <p>Mencari dengan membagi dua wilayah pencarian.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: SEQUENTIAL CONCEPT -->
+  <div class="slide" id="slide-6" data-notes="Tunjukkan proses step-by-step.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Sequential Search</div>
+    <div class="slide-title">Konsep <span class="highlight">Sequential Search</span></div>
+    <div class="slide-body">
+      <p>Strategi paling sederhana: <strong>Cari dari awal sampai akhir</strong> sampai ketemu atau data habis.</p>
+      <div class="quote">"Seperti mencari buku satu per satu di rak dari ujung kiri ke kanan."</div>
+      <pre style="margin-top: 20px;"><code class="language-cpp">[10, 20, 30, 40]
+Cari: 30</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: SEQUENTIAL VISUALIZATION -->
+  <div class="slide" id="slide-7" data-notes="Klik tombol untuk mulai simulasi.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">Visualisasi <span class="highlight">Sequential Search</span></div>
+    <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Cari angka: <input type="number" id="seq-input" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;" value="30">
+        <button class="btn btn-primary" id="btn-seq-start" style="padding: 5px 15px;">Mulai</button>
+        <button class="btn btn-outline" id="btn-seq-next" style="padding: 5px 15px; display: none;">Langkah Lanjut (Next)</button>
+      </div>
+      <div class="search-grid" id="seq-grid" style="position: relative;">
+        <!-- Cells generated by JS -->
+      </div>
+      <div class="status-box" id="seq-status">Siap mencari...</div>
+      <div id="seq-tally" class="tally-box" style="text-align: center; visibility: hidden;">Jumlah elemen dicek: <span class="count">0</span></div>
+      <div class="controls-row">
+        <button class="btn btn-outline" id="btn-seq-random">Acak Array</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: SEQUENTIAL PSEUDOCODE -->
+  <div class="slide" id="slide-8" data-notes="Hubungkan dengan loop yang sudah dipelajari.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Pseudocode</div>
+    <div class="slide-title">Pseudocode <span class="highlight">Sequential Search</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for i = 0 to n-1:
+    if data[i] == key:
+        return i  // Ditemukan!
+return -1  // Tidak ditemukan</code></pre>
+      <p style="margin-top: 20px;">Sangat mudah diimplementasikan dengan <code>for</code> loop atau <code>while</code> loop.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: SEQUENTIAL ANALYSIS -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Analisis</div>
+    <div class="slide-title">Analisis <span class="highlight">Sequential Search</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">📈</span><span><strong>Kompleksitas:</strong> O(n) - Waktu berbanding lurus dengan jumlah data.</span></div>
+        <div class="kp-item"><span class="icon">✅</span><span><strong>Kelebihan:</strong> Data tidak perlu diurutkan (bebas).</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Kekurangan:</strong> Lambat untuk data berjumlah besar.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: BINARY MOTIVATION -->
+  <div class="slide" id="slide-10" data-notes="Arahkan ke konsep 'bagi dua'.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Binary Search</div>
+    <div class="slide-title">Motivasi <span class="highlight">Binary Search</span></div>
+    <div class="slide-body">
+      <p style="font-size: 1.5rem; text-align: center; margin-top: 40px;">
+        Bagaimana kalau kita <strong>tidak perlu</strong> mengecek satu per satu?
+      </p>
+      <div class="quote" style="margin-top: 30px;">"Seperti mencari kata di kamus, kita tidak mulai dari halaman 1, tapi langsung buka di tengah."</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: BINARY SYARAT -->
+  <div class="slide" id="slide-11" data-notes="Tekankan ini sering jadi kesalahan mahasiswa.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Syarat Penting</div>
+    <div class="slide-title">⚠️ Syarat <span class="highlight">Mutlak</span></div>
+    <div class="slide-body">
+      <p>Binary search hanya bisa bekerja jika data sudah:</p>
+      <h2 style="text-align: center; color: var(--accent); margin: 30px 0;">TERURUT (SORTED)</h2>
+      <pre><code class="language-cpp">[10, 20, 30, 40, 50] // Bisa Binary Search
+[40, 10, 50, 20, 30] // TIDAK BISA</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: BINARY CONCEPT -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Konsep</div>
+    <div class="slide-title">Cara Kerja <span class="highlight">Binary Search</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Tentukan nilai tengah (<strong>mid</strong>).</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Bandingkan data tengah dengan kunci.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Jika kunci lebih kecil, buang setengah kanan.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Jika kunci lebih besar, buang setengah kiri.</span></div>
+        <div class="kp-item"><span class="icon">5</span><span>Ulangi sampai ketemu atau rentang habis.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: BINARY VISUALIZATION -->
+  <div class="slide" id="slide-13" data-notes="Gunakan analogi tebak angka.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">Visualisasi <span class="highlight">Binary Search</span></div>
+    <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Cari angka: <input type="number" id="bin-input" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;" value="30">
+        <button class="btn btn-primary" id="btn-bin-start" style="padding: 5px 15px;">Mulai</button>
+        <button class="btn btn-outline" id="btn-bin-next" style="padding: 5px 15px; display: none;">Langkah Lanjut (Next)</button>
+      </div>
+      <div class="search-grid" id="bin-grid" style="position: relative; margin-top: 40px;">
+        <!-- Cells generated by JS -->
+      </div>
+      <div class="status-box" id="bin-status">Siap mencari (Data harus terurut)...</div>
+      <div id="bin-tally" class="tally-box" style="text-align: center; visibility: hidden;">Jumlah elemen dicek: <span class="count">0</span></div>
+      <div class="controls-row">
+        <button class="btn btn-outline" id="btn-bin-random">Acak & Urutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: BINARY PSEUDOCODE -->
+  <div class="slide" id="slide-14">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Pseudocode</div>
+    <div class="slide-title">Pseudocode <span class="highlight">Binary Search</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">while left &lt;= right:
+    mid = (left + right) / 2
+    if data[mid] == key:
+        return mid
+    else if key &lt; data[mid]:
+        right = mid - 1
+    else:
+        left = mid + 1
+return -1</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: BINARY ANALYSIS -->
+  <div class="slide" id="slide-15">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Analisis</div>
+    <div class="slide-title">Analisis <span class="highlight">Binary Search</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">📈</span><span><strong>Kompleksitas:</strong> O(log n) - Sangat efisien untuk data besar.</span></div>
+        <div class="kp-item"><span class="icon">✅</span><span><strong>Kelebihan:</strong> Sangat cepat.</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Kekurangan:</strong> Data WAJIB terurut.</span></div>
+      </div>
+      <div class="tip-box" style="margin-top: 20px;">
+        Contoh: Untuk 1 juta data, Sequential butuh max 1.000.000 cek, Binary cuma butuh max 20 cek!
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: PERBANDINGAN -->
+  <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Perbandingan</div>
+    <div class="slide-title">Tabel <span class="highlight">Perbandingan</span></div>
+    <div class="slide-body">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Aspek</th>
+            <th>Sequential</th>
+            <th>Binary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Syarat Data</td>
+            <td>Bebas (Acak)</td>
+            <td>Terurut</td>
+          </tr>
+          <tr>
+            <td>Kompleksitas</td>
+            <td>O(n)</td>
+            <td>O(log n)</td>
+          </tr>
+          <tr>
+            <td>Efisiensi</td>
+            <td>Rendah</td>
+            <td>Sangat Tinggi</td>
+          </tr>
+          <tr>
+            <td>Implementasi</td>
+            <td>Sangat Mudah</td>
+            <td>Sedang</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: DISKUSI KRITIS -->
+  <div class="slide" id="slide-17" data-notes="Ini bridging ke pertemuan sorting.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Diskusi</div>
+    <div class="slide-title">Diskusi <span class="highlight">Kritis</span></div>
+    <div class="slide-body">
+      <p style="font-size: 1.2rem; margin-bottom: 30px;">Mana yang lebih cepat jika data awalnya acak?</p>
+      <div class="cols">
+        <div class="col">
+          <div class="tip-box">
+            Langsung pakai <strong>Sequential Search</strong>?
+          </div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">
+            <strong>Sorting</strong> dulu, baru <strong>Binary Search</strong>?
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 30px; color: var(--text-muted);">*Jawabannya tergantung pada berapa kali kita akan melakukan pencarian pada data yang sama.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: INSTRUKSI PRAKTIKUM -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Praktikum</div>
+    <div class="slide-title">Instruksi <span class="highlight">Praktikum</span></div>
+    <div class="slide-body">
+      <p>Buatlah program C++ yang mengimplementasikan:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">💻</span><span>Fungsi <code>sequentialSearch</code></span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Fungsi <code>binarySearch</code></span></div>
+      </div>
+      <p style="margin-top: 20px;">Gunakan array yang sama untuk menguji keduanya (pastikan terurut untuk binary).</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: TANTANGAN -->
+  <div class="slide" id="slide-19" data-notes="Ini membuat mereka 'merasakan' kompleksitas.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Tantangan</div>
+    <div class="slide-title">🔥 Tantangan <span class="highlight">Ekstra</span></div>
+    <div class="slide-body">
+      <p>Modifikasi fungsi pencarianmu agar:</p>
+      <div class="quote">
+        Menghitung dan menampilkan <strong>jumlah langkah/iterasi</strong> yang dilakukan sampai data ditemukan.
+      </div>
+      <p style="margin-top: 20px;">Bandingkan jumlah langkah tersebut untuk data yang sama!</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: KESALAHAN UMUM -->
+  <div class="slide" id="slide-20">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Common Pitfalls</div>
+    <div class="slide-title">⚠️ Kesalahan <span class="highlight">Umum</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">❌</span><span>Lupa melakukan <strong>sorting</strong> sebelum Binary Search.</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span>Salah menentukan <strong>mid</strong> (pembulatan).</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span>Kondisi loop (<code>left &lt;= right</code>) yang salah menyebabkan infinite loop.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: RINGKASAN -->
+  <div class="slide" id="slide-21">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">21 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Ringkasan</div>
+    <div class="slide-title">💡 <span class="highlight">Kesimpulan</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔹</span><span>Searching adalah operasi fundamental.</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Sequential: Mudah, fleksibel, tapi lambat (O(n)).</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Binary: Cepat (O(log n)), tapi butuh data terurut.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: PREVIEW -->
+  <div class="slide" id="slide-22">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">22 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Next Meeting</div>
+    <div class="slide-title">🚀 Preview <span class="highlight">Berikutnya</span></div>
+    <div class="slide-body">
+      <p><strong>Pertemuan 10: Sorting Algorithms</strong></p>
+      <p>Kita akan belajar bagaimana cara mengurutkan data secara efisien agar bisa menggunakan Binary Search!</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: PENUTUP -->
+  <div class="slide" id="slide-23">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">23 / 24</div>
+    <div class="section-badge"><span class="dot"></span>Selesai</div>
+    <div class="slide-title">🙏 Terima <span class="highlight">Kasih</span></div>
+    <div class="slide-body">
+      <p style="text-align: center; margin-top: 50px;">Ada pertanyaan tentang pencarian data?</p>
+      <div class="quote" style="margin-top: 50px; text-align: center;">"The more you know about your data, the faster you can find it."</div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 24</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  import { initSlides } from '../src/slides.js';
+  initApp();
+  initSlides();
+
+  // SHARED UTILS
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+  function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  // SEQUENTIAL SEARCH LOGIC
+  const seqGrid = document.getElementById('seq-grid');
+  const seqStatus = document.getElementById('seq-status');
+  const seqInput = document.getElementById('seq-input');
+  const btnSeqStart = document.getElementById('btn-seq-start');
+  const btnSeqNext = document.getElementById('btn-seq-next');
+  const btnSeqRandom = document.getElementById('btn-seq-random');
+  const seqTally = document.getElementById('seq-tally');
+
+  let seqData = [];
+  let seqTarget = 0;
+  let seqIndex = 0;
+  let seqFound = false;
+  let seqStepCount = 0;
+
+  function initSeq() {
+    seqData = Array.from({length: 8}, () => getRandomInt(10, 99));
+    seqGrid.innerHTML = '';
+    seqData.forEach((val, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'search-cell';
+      cell.innerHTML = `<div class="idx">${i}</div><div class="val">${val}</div>`;
+      seqGrid.appendChild(cell);
+    });
+    seqStatus.textContent = "Siap mencari. Masukkan angka lalu klik Mulai.";
+    btnSeqStart.style.display = 'inline-block';
+    btnSeqNext.style.display = 'none';
+    btnSeqRandom.disabled = false;
+    seqTally.style.visibility = 'hidden';
+    seqIndex = 0;
+    seqFound = false;
+    seqStepCount = 0;
+  }
+
+  btnSeqRandom.addEventListener('click', initSeq);
+
+  btnSeqStart.addEventListener('click', () => {
+    seqTarget = parseInt(seqInput.value);
+    if (isNaN(seqTarget)) {
+      alert("Masukkan angka yang valid!");
+      return;
+    }
+    seqIndex = 0;
+    seqFound = false;
+    seqStepCount = 0;
+    const cells = seqGrid.querySelectorAll('.search-cell');
+    cells.forEach(c => {
+      c.className = 'search-cell';
+    });
+
+    btnSeqStart.style.display = 'none';
+    btnSeqNext.style.display = 'inline-block';
+    btnSeqRandom.disabled = true;
+    seqTally.style.visibility = 'hidden';
+    seqStatus.textContent = `Mencari ${seqTarget}. Klik 'Next' untuk mulai melangkah.`;
+  });
+
+  btnSeqNext.addEventListener('click', () => {
+    const cells = seqGrid.querySelectorAll('.search-cell');
+
+    if (seqIndex > 0) {
+      cells[seqIndex-1].classList.remove('active-search');
+      if (seqData[seqIndex-1] !== seqTarget) {
+        cells[seqIndex-1].classList.add('ignored');
+      }
+    }
+
+    if (seqIndex < seqData.length) {
+      seqStepCount++;
+      cells[seqIndex].classList.add('active-search');
+      seqStatus.textContent = `Mengecek index ${seqIndex}: ${seqData[seqIndex]} == ${seqTarget}?`;
+
+      if (seqData[seqIndex] === seqTarget) {
+        cells[seqIndex].classList.remove('active-search');
+        cells[seqIndex].classList.add('found');
+        seqStatus.textContent = `Ditemukan! ${seqTarget} ada di index ${seqIndex}.`;
+        seqFound = true;
+        btnSeqNext.style.display = 'none';
+        btnSeqStart.style.display = 'inline-block';
+        btnSeqRandom.disabled = false;
+
+        seqTally.querySelector('.count').textContent = seqStepCount;
+        seqTally.style.visibility = 'visible';
+      }
+      seqIndex++;
+    } else {
+      seqStatus.textContent = `Data ${seqTarget} tidak ditemukan.`;
+      btnSeqNext.style.display = 'none';
+      btnSeqStart.style.display = 'inline-block';
+      btnSeqRandom.disabled = false;
+
+      seqTally.querySelector('.count').textContent = seqStepCount;
+      seqTally.style.visibility = 'visible';
+    }
+  });
+
+  // BINARY SEARCH LOGIC
+  const binGrid = document.getElementById('bin-grid');
+  const binStatus = document.getElementById('bin-status');
+  const binInput = document.getElementById('bin-input');
+  const btnBinStart = document.getElementById('btn-bin-start');
+  const btnBinNext = document.getElementById('btn-bin-next');
+  const btnBinRandom = document.getElementById('btn-bin-random');
+  const binTally = document.getElementById('bin-tally');
+
+  let binData = [];
+  let binTarget = 0;
+  let binLeft = 0;
+  let binRight = 0;
+  let binMid = -1;
+  let binStepCount = 0;
+  let binState = 'init'; // 'init', 'mid', 'compare'
+
+  function initBin() {
+    binData = Array.from({length: 12}, () => getRandomInt(10, 99));
+    binData.sort((a, b) => a - b);
+    binGrid.innerHTML = '';
+    binData.forEach((val, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'search-cell';
+      cell.innerHTML = `<div class="idx">${i}</div><div class="val">${val}</div>`;
+      binGrid.appendChild(cell);
+    });
+    binStatus.textContent = "Data terurut. Masukkan angka lalu klik Mulai.";
+    btnBinStart.style.display = 'inline-block';
+    btnBinNext.style.display = 'none';
+    btnBinRandom.disabled = false;
+    binTally.style.visibility = 'hidden';
+    binState = 'init';
+    binStepCount = 0;
+  }
+
+  btnBinRandom.addEventListener('click', initBin);
+
+  btnBinStart.addEventListener('click', () => {
+    binTarget = parseInt(binInput.value);
+    if (isNaN(binTarget)) {
+      alert("Masukkan angka yang valid!");
+      return;
+    }
+    binLeft = 0;
+    binRight = binData.length - 1;
+    binState = 'mid';
+    binStepCount = 0;
+
+    const cells = binGrid.querySelectorAll('.search-cell');
+    cells.forEach(c => c.className = 'search-cell');
+
+    btnBinStart.style.display = 'none';
+    btnBinNext.style.display = 'inline-block';
+    btnBinRandom.disabled = true;
+    binTally.style.visibility = 'hidden';
+    binStatus.textContent = `Mencari ${binTarget}. Klik 'Next' untuk menentukan titik tengah.`;
+  });
+
+  btnBinNext.addEventListener('click', () => {
+    const cells = binGrid.querySelectorAll('.search-cell');
+
+    if (binState === 'mid') {
+      if (binLeft <= binRight) {
+        binStepCount++;
+        cells.forEach(c => c.classList.remove('current-mid'));
+        binMid = Math.floor((binLeft + binRight) / 2);
+        cells[binMid].classList.add('current-mid');
+        binStatus.textContent = `Rentang: [${binLeft}...${binRight}], Tengah: index ${binMid} (${binData[binMid]})`;
+        binState = 'compare';
+      } else {
+        binStatus.textContent = `Rentang habis. Data ${binTarget} tidak ditemukan.`;
+        btnBinNext.style.display = 'none';
+        btnBinStart.style.display = 'inline-block';
+        btnBinRandom.disabled = false;
+
+        binTally.querySelector('.count').textContent = binStepCount;
+        binTally.style.visibility = 'visible';
+      }
+    } else if (binState === 'compare') {
+      if (binData[binMid] === binTarget) {
+        cells[binMid].classList.remove('current-mid');
+        cells[binMid].classList.add('found');
+        binStatus.textContent = `Ditemukan! ${binTarget} ada di index ${binMid}.`;
+        btnBinNext.style.display = 'none';
+        btnBinStart.style.display = 'inline-block';
+        btnBinRandom.disabled = false;
+
+        binTally.querySelector('.count').textContent = binStepCount;
+        binTally.style.visibility = 'visible';
+      } else if (binTarget < binData[binMid]) {
+        binStatus.textContent = `${binTarget} < ${binData[binMid]}, buang sisi kanan.`;
+        for (let i = binMid; i <= binRight; i++) cells[i].classList.add('ignored');
+        binRight = binMid - 1;
+        binState = 'mid';
+      } else {
+        binStatus.textContent = `${binTarget} > ${binData[binMid]}, buang sisi kiri.`;
+        for (let i = binLeft; i <= binMid; i++) cells[i].classList.add('ignored');
+        binLeft = binMid + 1;
+        binState = 'mid';
+      }
+    }
+  });
+
+  // Initialization when slide becomes active
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains('active')) {
+        if (mutation.target.id === 'slide-7') initSeq();
+        if (mutation.target.id === 'slide-13') initBin();
+      }
+    });
+  });
+
+  observer.observe(document.getElementById('slide-7'), { attributes: true, attributeFilter: ['class'] });
+  observer.observe(document.getElementById('slide-13'), { attributes: true, attributeFilter: ['class'] });
+
+  // Initial call
+  initSeq();
+  initBin();
+
+</script>
+</body>
+</html>
