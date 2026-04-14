@@ -304,13 +304,20 @@
     <div class="slide-num">08 / 22</div>
     <div class="section-badge"><span class="dot"></span>Insight Utama</div>
     <div class="slide-title">Cara Berbeda, <span class="highlight">Hasil Berbeda</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">➕</span><span><strong>Sequential:</strong> Langkah bertambah satu per satu.</span></div>
-        <div class="kp-item"><span class="icon">✖️</span><span><strong>Binary:</strong> Langkah mengurangi setengah populasi data.</span></div>
-      </div>
-      <div class="quote" style="margin-top: 50px; text-align: center; font-size: 2rem;">
-        "Binary <strong>'melompat'</strong>, bukan <strong>'menyusuri'</strong>."
+    <div class="slide-body" style="max-width: 1100px;">
+      <div class="cols">
+        <div class="col" style="flex: 1;">
+          <div class="kp">
+            <div class="kp-item"><span class="icon">➕</span><span><strong>Sequential:</strong> Langkah bertambah secara linear.</span></div>
+            <div class="kp-item"><span class="icon">✖️</span><span><strong>Binary:</strong> Langkah bertambah secara logaritmik (sangat lambat).</span></div>
+          </div>
+          <div class="quote" style="margin-top: 30px; font-size: 1.2rem;">
+            "Binary <strong>'melompat'</strong>, bukan <strong>'menyusuri'</strong>."
+          </div>
+        </div>
+        <div class="col" style="flex: 1.5; background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); min-height: 350px;">
+          <canvas id="comparisonChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -554,6 +561,8 @@ cout &lt;&lt; "Total langkah: " &lt;&lt; langkah;</code></pre>
 <script type="module">
   import { initApp } from '../src/main.js';
   import { initSlides } from '../src/slides.js';
+  import Chart from 'chart.js/auto';
+
   initApp();
   initSlides();
 
@@ -790,6 +799,109 @@ cout &lt;&lt; "Total langkah: " &lt;&lt; langkah;</code></pre>
     }
   };
 
+  // SLIDE 8 CHART
+  let comparisonChart = null;
+
+  function initComparisonChart() {
+    const ctx = document.getElementById('comparisonChart');
+    if (!ctx) return;
+
+    if (comparisonChart) {
+      comparisonChart.destroy();
+    }
+
+    const labels = [];
+    const seqData = [];
+    const binData = [];
+
+    // Generate data from 10 to 1000 in intervals of 50
+    for (let n = 10; n <= 1010; n += (n < 100 ? 10 : 50)) {
+      const finalN = Math.min(n, 1000);
+      labels.push(finalN);
+      seqData.push(finalN / 2); // Average sequential steps
+      binData.push(Math.log2(finalN)); // Average binary steps
+      if (finalN === 1000) break;
+    }
+
+    const style = getComputedStyle(document.documentElement);
+    const accent = style.getPropertyValue('--accent').trim() || '#f0c040';
+    const accent2 = style.getPropertyValue('--accent2').trim() || '#4de8b0';
+    const textColor = style.getPropertyValue('--text-muted').trim() || '#94a3b8';
+    const borderColor = style.getPropertyValue('--border').trim() || '#2a2d3a';
+
+    comparisonChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Sequential (Rata-rata)',
+            data: seqData,
+            borderColor: accent,
+            backgroundColor: accent + '22',
+            borderWidth: 3,
+            tension: 0.1,
+            pointRadius: 2
+          },
+          {
+            label: 'Binary (Rata-rata)',
+            data: binData,
+            borderColor: accent2,
+            backgroundColor: accent2 + '22',
+            borderWidth: 3,
+            tension: 0.1,
+            pointRadius: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 2000,
+          easing: 'easeOutQuart'
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Ukuran Data (N)',
+              color: textColor,
+              font: { family: 'JetBrains Mono' }
+            },
+            grid: { color: borderColor },
+            ticks: { color: textColor, font: { family: 'JetBrains Mono' } }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Rata-rata Langkah',
+              color: textColor,
+              font: { family: 'JetBrains Mono' }
+            },
+            grid: { color: borderColor },
+            ticks: { color: textColor, font: { family: 'JetBrains Mono' } }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: textColor,
+              font: { family: 'JetBrains Mono', size: 12 }
+            }
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleFont: { family: 'JetBrains Mono' },
+            bodyFont: { family: 'JetBrains Mono' }
+          }
+        }
+      }
+    });
+  }
+
   // Observe slide changes to reset animations
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -798,6 +910,7 @@ cout &lt;&lt; "Total langkah: " &lt;&lt; langkah;</code></pre>
         if (id === 'slide-3') initDemo();
         if (id === 'slide-5') updateExp1Target();
         if (id === 'slide-7') updateExp2Target();
+        if (id === 'slide-8') setTimeout(initComparisonChart, 100);
       }
     });
   });
@@ -805,6 +918,12 @@ cout &lt;&lt; "Total langkah: " &lt;&lt; langkah;</code></pre>
   document.querySelectorAll('.slide').forEach(s => {
     observer.observe(s, { attributes: true, attributeFilter: ['class'] });
   });
+
+  // Check initial state
+  const activeSlide = document.querySelector('.slide.active');
+  if (activeSlide && activeSlide.id === 'slide-8') {
+    initComparisonChart();
+  }
 
 </script>
 </body>
