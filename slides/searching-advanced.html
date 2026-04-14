@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 10 – Searching Advanced</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+<style>
+  .search-grid {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .search-cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .search-cell .idx {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    position: absolute;
+    top: 2px;
+  }
+  .search-cell .val {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  #exp2-grid .search-cell {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+  }
+  #exp2-grid .search-cell .val {
+    font-size: 0.8rem;
+  }
+  #exp2-grid .search-cell .idx {
+    font-size: 0.5rem;
+  }
+  .search-cell.active-search {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    transform: translateY(-5px);
+  }
+  .search-cell.found {
+    border-color: var(--accent2);
+    background: rgba(var(--accent2-rgb), 0.2);
+  }
+  .search-cell.ignored {
+    opacity: 0.3;
+    filter: grayscale(1);
+  }
+  .search-cell.current-mid {
+    border-color: var(--accent3);
+    background: rgba(var(--accent3-rgb), 0.2);
+    box-shadow: 0 0 15px var(--accent3);
+  }
+
+  .status-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 1px solid var(--border);
+    min-height: 60px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tally-box {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .comparison-table th, .comparison-table td {
+    padding: 15px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/searching.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 0: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Tekankan: hari ini bukan belajar rumus. Tapi belajar “memilih cara terbaik”">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 10</div>
+    <div class="section-badge"><span class="dot"></span>Searching Advanced</div>
+    <div class="slide-title">SEARCHING LEBIH CEPAT:<br><span class="highlight">Pilih Cara yang Tepat</span></div>
+    <div class="subtitle">Sequential vs Binary Search (Praktis & Intuitif)</div>
+  </div>
+
+  <!-- SLIDE 1: TUJUAN -->
+  <div class="slide" id="slide-1" data-notes="Hindari kata “kompleksitas”. Gunakan “langkah” atau “usaha”">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">01 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Tujuan Pembelajaran</div>
+    <div class="slide-title">🎯 Apa yang akan <span class="highlight">kita capai?</span></div>
+    <div class="slide-body">
+      <p>Setelah pertemuan ini:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">📊</span><span>Membandingkan dua metode pencarian.</span></div>
+        <div class="kp-item"><span class="icon">🔢</span><span>Menghitung jumlah langkah.</span></div>
+        <div class="kp-item"><span class="icon">⚖️</span><span>Memilih metode yang tepat sesuai kondisi.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: REVIEW -->
+  <div class="slide" id="slide-2" data-notes="Jangan jelaskan ulang panjang. Hanya aktivasi memori.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">02 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Review Cepat</div>
+    <div class="slide-title">Apa yang kamu <span class="highlight">ingat?</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <div class="tip-box">
+            <h3>Sequential Search</h3>
+            <p style="font-size: 2rem;">?</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">
+            <h3>Binary Search</h3>
+            <p style="font-size: 2rem;">?</p>
+          </div>
+        </div>
+      </div>
+      <p style="text-align: center; margin-top: 40px; color: var(--text-muted);">Aktivitas: Jawab cepat secara lisan!</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: ILLUSTRATION COMPARISON -->
+  <div class="slide" id="slide-3" data-notes="Bandingkan cara kerja keduanya pada data yang sama.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">03 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Perbandingan Visual</div>
+    <div class="slide-title">Ilustrasi <span class="highlight">Bersamaan</span></div>
+    <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 10px;">
+        Cari angka: <input type="number" id="demo-target-input" style="width: 70px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-size: 1.2rem; text-align: center;" value="0">
+        <button class="btn btn-outline" id="btn-demo-random" style="margin-left: 20px; padding: 5px 15px;">Acak Data & Target</button>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <h3 style="text-align: center; margin-bottom: 0;">Sequential Search</h3>
+          <div class="search-grid" id="seq-demo-grid"></div>
+          <div style="text-align: center;">
+            <button class="btn btn-primary" id="btn-seq-demo-start">Mulai Sequential</button>
+          </div>
+        </div>
+        <div class="col">
+          <h3 style="text-align: center; margin-bottom: 0;">Binary Search</h3>
+          <div class="search-grid" id="bin-demo-grid"></div>
+          <div style="text-align: center;">
+            <button class="btn btn-primary" id="btn-bin-demo-start" style="background-color: var(--accent2); border-color: var(--accent2);">Mulai Binary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: KEY QUESTION -->
+  <div class="slide" id="slide-4" data-notes="Jangan jawab langsung. Biarkan mereka menebak.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">04 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Pertanyaan Kunci</div>
+    <div class="slide-title">Mana yang <span class="highlight">lebih cepat?</span></div>
+    <div class="slide-body" style="text-align: center;">
+      <p style="font-size: 1.5rem; margin-top: 40px;">Selalu?</p>
+      <p style="font-size: 1.5rem; margin-top: 20px;">Dalam kondisi apa?</p>
+      <div class="quote" style="margin-top: 50px;">"Berikan pendapatmu sebelum kita buktikan!"</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: EXPERIMENT 1 -->
+  <div class="slide" id="slide-5" data-notes="Minta mereka hitung manual">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">05 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Eksperimen 1</div>
+    <div class="slide-title">Eksperimen 1: <span class="highlight">Data 10 Angka</span></div>
+    <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px;">
+        Pilih posisi target:
+        <select id="exp1-pos-select" style="padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+          <option value="akhir">Akhir (Paling Lambat Seq)</option>
+          <option value="awal">Awal (Paling Cepat Seq)</option>
+          <option value="tengah">Tengah</option>
+          <option value="kustom">Kustom</option>
+        </select>
+        <span style="margin-left: 20px;">Target: <input type="number" id="exp1-target-input" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;" value="99"></span>
+      </div>
+      <div class="search-grid" id="exp1-grid"></div>
+      <div class="cols" style="margin-top: 30px;">
+        <div class="col">
+          <div class="status-box" id="exp1-seq-status">Sequential Search?</div>
+          <div style="text-align: center; margin-top: 10px;">
+            <button class="btn btn-outline" id="btn-exp1-seq">Jalankan Sequential</button>
+          </div>
+        </div>
+        <div class="col">
+          <div class="status-box" id="exp1-bin-status">Binary Search?</div>
+          <div style="text-align: center; margin-top: 10px;">
+            <button class="btn btn-outline" id="btn-exp1-bin">Jalankan Binary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: DISCUSSION 1 -->
+  <div class="slide" id="slide-6">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">06 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Diskusi Hasil</div>
+    <div class="slide-title">Hasil <span class="highlight">Eksperimen 1</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🚶</span><span><strong>Sequential:</strong> 10 langkah.</span></div>
+        <div class="kp-item"><span class="icon">🏃</span><span><strong>Binary:</strong> ±4 langkah.</span></div>
+      </div>
+      <div class="quote" style="margin-top: 50px; text-align: center;">
+        "Kenapa bisa beda jauh?"
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: EXPERIMENT 2 -->
+  <div class="slide" id="slide-7" data-notes="Fokus ke “pertumbuhan langkah”">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">07 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Eksperimen 2</div>
+    <div class="slide-title">Eksperimen 2: <span class="highlight">Data 100 Angka</span></div>
+    <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 10px;">
+        Pilih posisi target:
+        <select id="exp2-pos-select" style="padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+          <option value="akhir">Akhir (Paling Lambat Seq)</option>
+          <option value="awal">Awal (Paling Cepat Seq)</option>
+          <option value="tengah">Tengah</option>
+          <option value="kustom">Kustom</option>
+        </select>
+        <span style="margin-left: 20px;">Target: <input type="number" id="exp2-target-input" style="width: 70px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;" value="200"></span>
+      </div>
+      <div id="exp2-grid" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 460px; margin: 0 auto;"></div>
+      <div class="cols" style="margin-top: 20px;">
+        <div class="col">
+          <div class="status-box" id="exp2-seq-status" style="padding: 8px; min-height: 40px; font-size: 0.9rem;">Seq Search?</div>
+          <div style="text-align: center; margin-top: 5px;">
+            <button class="btn btn-outline" id="btn-exp2-seq" style="padding: 5px 10px; font-size: 0.8rem;">Jalankan Seq</button>
+          </div>
+        </div>
+        <div class="col">
+          <div class="status-box" id="exp2-bin-status" style="padding: 8px; min-height: 40px; font-size: 0.9rem;">Bin Search?</div>
+          <div style="text-align: center; margin-top: 5px;">
+            <button class="btn btn-outline" id="btn-exp2-bin" style="padding: 5px 10px; font-size: 0.8rem;">Jalankan Bin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: INSIGHT 1 -->
+  <div class="slide" id="slide-8">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">08 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Insight Utama</div>
+    <div class="slide-title">Cara Berbeda, <span class="highlight">Hasil Berbeda</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">➕</span><span><strong>Sequential:</strong> Langkah bertambah satu per satu.</span></div>
+        <div class="kp-item"><span class="icon">✖️</span><span><strong>Binary:</strong> Langkah mengurangi setengah populasi data.</span></div>
+      </div>
+      <div class="quote" style="margin-top: 50px; text-align: center; font-size: 2rem;">
+        "Binary <strong>'melompat'</strong>, bukan <strong>'menyusuri'</strong>."
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: REQUIREMENT -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">09 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Syarat Binary Search</div>
+    <div class="slide-title">⚠️ Syarat <span class="highlight">Mutlak</span></div>
+    <div class="slide-body">
+      <p style="font-size: 1.5rem; text-align: center; margin-top: 50px;">Data harus <strong>TERURUT</strong>.</p>
+      <p style="text-align: center; margin-top: 40px; font-size: 1.2rem;">Kalau tidak terurut?</p>
+      <div class="tip-box" style="margin-top: 30px; border-color: var(--accent3);">
+        Binary search akan memberikan jawaban yang salah atau tersesat jika data acak.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: HIDDEN COST -->
+  <div class="slide" id="slide-10">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">10 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Biaya Tersembunyi</div>
+    <div class="slide-title">Ada <span class="highlight">Harga</span> yang Harus Dibayar</div>
+    <div class="slide-body">
+      <p>Binary Search butuh:</p>
+      <h2 style="text-align: center; color: var(--accent); margin: 30px 0;">SORTING DULU</h2>
+      <p style="text-align: center; font-size: 1.5rem;">Worth it tidak?</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: CASE STUDY 1 -->
+  <div class="slide" id="slide-11" data-notes="Aktivitas: Diskusi cepat">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">11 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Studi Kasus 1</div>
+    <div class="slide-title">Kasus: <span class="highlight">Data Kecil & Sekali Cari</span></div>
+    <div class="slide-body">
+      <p>Data cuma 10 angka, dan kamu cuma butuh cari satu kali saja.</p>
+      <div class="cols" style="margin-top: 40px;">
+        <div class="col">
+          <div class="tip-box">Sequential</div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">Binary</div>
+        </div>
+      </div>
+      <p style="text-align: center; margin-top: 40px;">Mana pilihanmu? Mengapa?</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: CASE STUDY 2 -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">12 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Studi Kasus 2</div>
+    <div class="slide-title">Kasus: <span class="highlight">Data Besar & Sering Dicari</span></div>
+    <div class="slide-body">
+      <p>Data 1 juta record, dan aplikasi akan melakukan pencarian ribuan kali setiap jam.</p>
+      <div class="cols" style="margin-top: 40px;">
+        <div class="col">
+          <div class="tip-box">Sequential</div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">Binary (+ sorting sekali di awal)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: CASE STUDY 3 -->
+  <div class="slide" id="slide-13">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">13 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Studi Kasus 3</div>
+    <div class="slide-title">Kasus: <span class="highlight">Data Sering Berubah</span></div>
+    <div class="slide-body">
+      <p>Data masuk dan keluar setiap detik. Data tidak pernah diam.</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔄</span><span>Sorting terus-menerus? (Sangat mahal)</span></div>
+        <div class="kp-item"><span class="icon">🚶</span><span>Atau tetap pakai sequential?</span></div>
+      </div>
+      <p style="text-align: center; margin-top: 40px; color: var(--accent3); font-weight: bold;">Ini adalah tantangan nyata di dunia sistem informasi.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: GREAT INSIGHT -->
+  <div class="slide" id="slide-14">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">14 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Insight Besar</div>
+    <div class="slide-title">Kebijaksanaan dalam <span class="highlight">Memilih</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 2.5rem; text-align: center;">
+        "Tidak ada algoritma terbaik untuk semua kondisi."
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: CODING REFLECTION -->
+  <div class="slide" id="slide-15" data-notes="Fokus ke observasi, bukan coding kompleks">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">15 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Refleksi Coding</div>
+    <div class="slide-title">Implementasi <span class="highlight">Langkah</span></div>
+    <div class="slide-body">
+      <p>Tambahkan variabel <code>counter</code> ke programmu:</p>
+      <pre><code class="language-cpp">int langkah = 0;
+while (left &lt;= right) {
+    langkah++; // Hitung setiap iterasi
+    // ... logic binary search ...
+}
+cout &lt;&lt; "Total langkah: " &lt;&lt; langkah;</code></pre>
+      <p style="margin-top: 20px;">Observasi perbedaannya secara langsung di terminal.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: REFLECTION QUESTIONS -->
+  <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">16 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Pertanyaan Refleksi</div>
+    <div class="slide-title">Waktunya <span class="highlight">Berpikir</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🤔</span><span>Kapan Sequential cukup memadai?</span></div>
+        <div class="kp-item"><span class="icon">💡</span><span>Kapan Binary mutlak diperlukan?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: INDIVIDUAL PRACTICE -->
+  <div class="slide" id="slide-17">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">17 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Latihan Individu</div>
+    <div class="slide-title">Uji <span class="highlight">Pemahaman</span></div>
+    <div class="slide-body">
+      <p>Diberikan Array: <code>[3, 9, 1, 7, 5, 8]</code></p>
+      <div class="search-grid" id="practice-grid">
+        <div class="search-cell"><div class="idx">0</div><div class="val">3</div></div>
+        <div class="search-cell"><div class="idx">1</div><div class="val">9</div></div>
+        <div class="search-cell"><div class="idx">2</div><div class="val">1</div></div>
+        <div class="search-cell"><div class="idx">3</div><div class="val">7</div></div>
+        <div class="search-cell"><div class="idx">4</div><div class="val">5</div></div>
+        <div class="search-cell"><div class="idx">5</div><div class="val">8</div></div>
+      </div>
+      <p style="margin-top: 20px;">Tugas:</p>
+      <ol>
+        <li>Berapa langkah Sequential Search untuk cari angka <strong>5</strong>?</li>
+        <li>Bisakah kita langsung pakai Binary Search?</li>
+        <li>Jika diurutkan → coba hitung langkah Binary Search untuk cari <strong>5</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: DISCUSSION ANSWER -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">18 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Diskusi Jawaban</div>
+    <div class="slide-title">Bedah <span class="highlight">Latihan</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">❌</span><span>Tidak bisa Binary Search langsung (belum terurut).</span></div>
+        <div class="kp-item"><span class="icon">✅</span><span>Setelah sorting <code>[1, 3, 5, 7, 8, 9]</code> → baru bisa Binary.</span></div>
+      </div>
+      <div class="tip-box" style="margin-top: 30px;">
+        Pencarian angka 5:<br>
+        Sequential: 5 langkah (di index 4 dari data asli).<br>
+        Binary (setelah urut): 1-3 langkah (tergantung pembulatan mid).
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: SUMMARY -->
+  <div class="slide" id="slide-19">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">19 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Ringkasan</div>
+    <div class="slide-title">💡 <span class="highlight">Kesimpulan</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔹</span><span><strong>Sequential:</strong> Sederhana, fleksibel (data acak OK).</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span><strong>Binary:</strong> Cepat, tapi ada syarat (harus terurut).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: MAIN MESSAGE -->
+  <div class="slide" id="slide-20">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">20 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Pesan Utama</div>
+    <div class="slide-title">Pesan <span class="highlight">Hari Ini</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 3rem; text-align: center; color: var(--accent);">
+        “Algoritma terbaik adalah yang paling sesuai kondisi”
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: PREVIEW -->
+  <div class="slide" id="slide-21">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">21 / 22</div>
+    <div class="section-badge"><span class="dot"></span>Next Meeting</div>
+    <div class="slide-title">🚀 Preview <span class="highlight">Berikutnya</span></div>
+    <div class="slide-body">
+      <p style="text-align: center; font-size: 1.5rem; margin-top: 50px;">
+        <strong>Sorting:</strong> Kenapa penting untuk binary search?
+      </p>
+      <p style="text-align: center; margin-top: 20px;">Bagaimana cara mengurutkan data dengan cepat?</p>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 22</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  import { initSlides } from '../src/slides.js';
+  initApp();
+  initSlides();
+
+  // SHARED UTILS
+  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+  function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  // SIMPLIFIED SEARCH LOGIC FOR DEMOS
+  async function runSeq(gridId, target, delay=500) {
+    const grid = document.getElementById(gridId);
+    const cells = grid.querySelectorAll('.search-cell');
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].classList.add('active-search');
+      const val = parseInt(cells[i].querySelector('.val').textContent);
+      await sleep(delay);
+      if (val === target) {
+        cells[i].classList.remove('active-search');
+        cells[i].classList.add('found');
+        return;
+      }
+      cells[i].classList.remove('active-search');
+      cells[i].classList.add('ignored');
+    }
+  }
+
+  async function runBin(gridId, target, delay=800) {
+    const grid = document.getElementById(gridId);
+    const cells = grid.querySelectorAll('.search-cell');
+    let l = 0, r = cells.length - 1;
+    while (l <= r) {
+      let m = Math.floor((l + r) / 2);
+      cells[m].classList.add('current-mid');
+      await sleep(delay);
+      const val = parseInt(cells[m].querySelector('.val').textContent);
+      if (val === target) {
+        cells[m].classList.remove('current-mid');
+        cells[m].classList.add('found');
+        return;
+      }
+      if (val < target) {
+        for (let i = l; i <= m; i++) cells[i].classList.add('ignored');
+        l = m + 1;
+      } else {
+        for (let i = m; i <= r; i++) cells[i].classList.add('ignored');
+        r = m - 1;
+      }
+      cells[m].classList.remove('current-mid');
+    }
+  }
+
+  // INIT GRIDS
+  function setupGrid(id, data) {
+    const grid = document.getElementById(id);
+    grid.innerHTML = '';
+    data.forEach((v, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'search-cell';
+      cell.innerHTML = `<div class="idx">${i}</div><div class="val">${v}</div>`;
+      grid.appendChild(cell);
+    });
+  }
+
+  // SLIDE 3 DEMO
+  let demoData = [];
+  let demoTarget = 0;
+
+  function initDemo() {
+    demoData = Array.from({length: 7}, () => getRandomInt(10, 99));
+    demoData.sort((a, b) => a - b);
+    demoTarget = demoData[getRandomInt(0, demoData.length - 1)];
+    document.getElementById('demo-target-input').value = demoTarget;
+    setupGrid('seq-demo-grid', demoData);
+    setupGrid('bin-demo-grid', demoData);
+  }
+
+  document.getElementById('btn-demo-random').onclick = initDemo;
+
+  document.getElementById('btn-seq-demo-start').onclick = () => {
+    demoTarget = parseInt(document.getElementById('demo-target-input').value);
+    setupGrid('seq-demo-grid', demoData);
+    runSeq('seq-demo-grid', demoTarget);
+  };
+
+  document.getElementById('btn-bin-demo-start').onclick = () => {
+    demoTarget = parseInt(document.getElementById('demo-target-input').value);
+    setupGrid('bin-demo-grid', demoData);
+    runBin('bin-demo-grid', demoTarget);
+  };
+
+  // SLIDE 5 EXPERIMENT 1
+  const exp1Data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 99];
+  let exp1Target = 99;
+
+  function updateExp1Target() {
+    const posSelect = document.getElementById('exp1-pos-select');
+    const pos = posSelect.value;
+    if (pos === 'awal') exp1Target = exp1Data[0];
+    else if (pos === 'tengah') exp1Target = exp1Data[4];
+    else if (pos === 'akhir') exp1Target = exp1Data[9];
+
+    if (pos !== 'kustom') {
+      document.getElementById('exp1-target-input').value = exp1Target;
+    }
+    setupGrid('exp1-grid', exp1Data);
+    document.getElementById('exp1-seq-status').textContent = "Sequential Search?";
+    document.getElementById('exp1-bin-status').textContent = "Binary Search?";
+  }
+
+  document.getElementById('exp1-pos-select').onchange = updateExp1Target;
+  document.getElementById('exp1-target-input').oninput = () => {
+    document.getElementById('exp1-pos-select').value = 'kustom';
+  };
+
+  document.getElementById('btn-exp1-seq').onclick = async () => {
+    exp1Target = parseInt(document.getElementById('exp1-target-input').value);
+    setupGrid('exp1-grid', exp1Data);
+    const status = document.getElementById('exp1-seq-status');
+    let count = 0;
+    const cells = document.getElementById('exp1-grid').querySelectorAll('.search-cell');
+    for(let i=0; i<cells.length; i++) {
+      count++;
+      status.textContent = `Langkah: ${count}`;
+      cells[i].classList.add('active-search');
+      await sleep(300);
+      if (exp1Data[i] === exp1Target) {
+        cells[i].classList.add('found');
+        status.textContent = `Selesai! Total: ${count} langkah`;
+        break;
+      }
+      cells[i].classList.remove('active-search');
+      cells[i].classList.add('ignored');
+    }
+  };
+
+  document.getElementById('btn-exp1-bin').onclick = async () => {
+    setupGrid('exp1-grid', exp1Data);
+    const status = document.getElementById('exp1-bin-status');
+    let count = 0;
+    let l = 0, r = exp1Data.length - 1;
+    const cells = document.getElementById('exp1-grid').querySelectorAll('.search-cell');
+    while(l <= r) {
+      count++;
+      status.textContent = `Langkah: ${count}`;
+      let m = Math.floor((l+r)/2);
+      cells[m].classList.add('current-mid');
+      await sleep(600);
+      if(exp1Data[m] === exp1Target) {
+        cells[m].classList.add('found');
+        status.textContent = `Selesai! Total: ${count} langkah`;
+        break;
+      }
+      if(exp1Data[m] < exp1Target) {
+        for(let i=l; i<=m; i++) cells[i].classList.add('ignored');
+        l = m + 1;
+      } else {
+        for(let i=m; i<=r; i++) cells[i].classList.add('ignored');
+        r = m - 1;
+      }
+      cells[m].classList.remove('current-mid');
+    }
+  };
+
+  // SLIDE 7 EXPERIMENT 2
+  const exp2Data = Array.from({length: 100}, (_, i) => (i + 1) * 2);
+  let exp2Target = 200;
+
+  function updateExp2Target() {
+    const posSelect = document.getElementById('exp2-pos-select');
+    const pos = posSelect.value;
+    if (pos === 'awal') exp2Target = exp2Data[0];
+    else if (pos === 'tengah') exp2Target = exp2Data[49];
+    else if (pos === 'akhir') exp2Target = exp2Data[99];
+
+    if (pos !== 'kustom') {
+      document.getElementById('exp2-target-input').value = exp2Target;
+    }
+    setupGrid('exp2-grid', exp2Data);
+    document.getElementById('exp2-seq-status').textContent = "Seq Search?";
+    document.getElementById('exp2-bin-status').textContent = "Bin Search?";
+  }
+
+  document.getElementById('exp2-pos-select').onchange = updateExp2Target;
+  document.getElementById('exp2-target-input').oninput = () => {
+    document.getElementById('exp2-pos-select').value = 'kustom';
+  };
+
+  document.getElementById('btn-exp2-seq').onclick = async () => {
+    exp2Target = parseInt(document.getElementById('exp2-target-input').value);
+    setupGrid('exp2-grid', exp2Data);
+    const status = document.getElementById('exp2-seq-status');
+    let count = 0;
+    const cells = document.getElementById('exp2-grid').querySelectorAll('.search-cell');
+    for(let i=0; i<cells.length; i++) {
+      count++;
+      status.textContent = `Langkah: ${count}`;
+      cells[i].classList.add('active-search');
+      if (i % 10 === 0) await sleep(50); // Speed up for 100 elements
+      if (exp2Data[i] === exp2Target) {
+        cells[i].classList.add('found');
+        status.textContent = `Selesai! ${count} langkah`;
+        break;
+      }
+      cells[i].classList.remove('active-search');
+      cells[i].classList.add('ignored');
+    }
+  };
+
+  document.getElementById('btn-exp2-bin').onclick = async () => {
+    exp2Target = parseInt(document.getElementById('exp2-target-input').value);
+    setupGrid('exp2-grid', exp2Data);
+    const status = document.getElementById('exp2-bin-status');
+    let count = 0;
+    let l = 0, r = exp2Data.length - 1;
+    const cells = document.getElementById('exp2-grid').querySelectorAll('.search-cell');
+    while(l <= r) {
+      count++;
+      status.textContent = `Langkah: ${count}`;
+      let m = Math.floor((l+r)/2);
+      cells[m].classList.add('current-mid');
+      await sleep(400);
+      if(exp2Data[m] === exp2Target) {
+        cells[m].classList.add('found');
+        status.textContent = `Selesai! ${count} langkah`;
+        break;
+      }
+      if(exp2Data[m] < exp2Target) {
+        for(let i=l; i<=m; i++) cells[i].classList.add('ignored');
+        l = m + 1;
+      } else {
+        for(let i=m; i<=r; i++) cells[i].classList.add('ignored');
+        r = m - 1;
+      }
+      cells[m].classList.remove('current-mid');
+    }
+  };
+
+  // Observe slide changes to reset animations
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains('active')) {
+        const id = mutation.target.id;
+        if (id === 'slide-3') initDemo();
+        if (id === 'slide-5') updateExp1Target();
+        if (id === 'slide-7') updateExp2Target();
+      }
+    });
+  });
+
+  document.querySelectorAll('.slide').forEach(s => {
+    observer.observe(s, { attributes: true, attributeFilter: ['class'] });
+  });
+
+</script>
+</body>
+</html>
