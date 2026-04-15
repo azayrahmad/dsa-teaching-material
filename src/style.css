@@ -1,29 +1,32 @@
- :root {
+@import url('https://fonts.cdnfonts.com/css/tex-gyre-heros');
+@import url('https://fonts.cdnfonts.com/css/tex-gyre-termes');
+
+:root {
   --bg: #0a0c10;
   --surface: #111318;
   --surface2: #1a1d26;
   --border: #252836;
-  --accent: #f0c040;
-  --accent2: #4de8b0;
-  --accent3: #7eb8ff;
-  --accent4: #ff7eb8;
-  --text: #e8eaf0;
-  --text-muted: #7a7f94;
+  --accent: #ffcc33;
+  --accent2: #5eead4;
+  --accent3: #93c5fd;
+  --accent4: #f472b6;
+  --text: #f0f2f7;
+  --text-muted: #9da3be;
   --code-bg: #0e1117;
 }
 
 [data-theme="light"] {
-  --bg: #f5f7fa;
+  --bg: #f8fafc;
   --surface: #ffffff;
   --surface2: #edf2f7;
   --border: #e2e8f0;
-  --accent: #d69e2e;
-  --accent2: #38a169;
-  --accent3: #3182ce;
-  --accent4: #d53f8c;
-  --text: #1a202c;
-  --text-muted: #718096;
-  --code-bg: #f8fafc;
+  --accent: #713f12;
+  --accent2: #064e3b;
+  --accent3: #1e40af;
+  --accent4: #9d174d;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --code-bg: #f1f5f9;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,8 +34,12 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'TeXGyreHeros', sans-serif;
   transition: background 0.3s, color 0.3s;
+}
+
+i, em, .italic, [style*="font-style: italic"], [style*="font-style:italic"] {
+  font-family: 'TeXGyreTermes', serif;
 }
 
 .container {
@@ -132,5 +139,5 @@ button.control-btn:hover {
 }
 
 .btn-outline:hover {
-  background: rgba(240, 192, 100, 0.1);
+  background: rgba(255, 204, 51, 0.1);
 }
