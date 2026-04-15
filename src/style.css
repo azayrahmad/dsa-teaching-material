@@ -38,7 +38,7 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-i, em, .italic, [style*="font-style: italic"], [style*="font-style:italic"] {
+i, em, .italic, .highlight, .quote, [style*="font-style: italic"], [style*="font-style:italic"] {
   font-family: 'TeXGyreTermes', serif;
 }
 
