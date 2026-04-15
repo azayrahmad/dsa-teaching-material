@@ -62,9 +62,28 @@ export function initApp() {
   }
 }
 
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `${r}, ${g}, ${b}`;
+}
+
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
+
+  // Update RGB variables for transparency
+  const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  const colors = ['accent', 'accent2', 'accent3', 'accent4'];
+
+  colors.forEach(c => {
+    const hex = styles.getPropertyValue(`--${c}`).trim();
+    if (hex.startsWith('#')) {
+      root.style.setProperty(`--${c}-rgb`, hexToRgb(hex));
+    }
+  });
 }
 
 function applyLanguage(lang) {
