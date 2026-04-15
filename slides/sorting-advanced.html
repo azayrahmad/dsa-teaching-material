@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 12 – Sorting Algorithms Lanjutan</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/sorting.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <div class="slide active" id="slide-0">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 12</div>
+    <div class="section-badge"><span class="dot"></span>Sorting Lanjutan</div>
+    <div class="slide-title">SORTING ALGORITHMS<br><span class="highlight">LANJUTAN</span></div>
+    <div class="subtitle">Coming Soon: Merge Sort, Quick Sort, & Perbandingan Kompleksitas</div>
+    <p style="margin-top: 40px; text-align: center; color: var(--text-muted);">Materi ini akan segera hadir.</p>
+  </div>
+</div>
+
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 1</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  import { initSlides } from '../src/slides.js';
+  initApp();
+  initSlides();
+</script>
+</body>
+</html>

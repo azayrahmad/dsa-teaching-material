@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pertemuan 11 – Sorting Algorithms Dasar</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/style.css">
+<link rel="stylesheet" href="../src/slides.css">
+<style>
+  .sort-grid {
+    display: flex;
+    gap: 8px;
+    margin: 40px 0;
+    justify-content: center;
+    align-items: flex-end;
+    height: 150px;
+  }
+  .sort-cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .sort-cell .val {
+    font-size: 1.1rem;
+    font-weight: bold;
+    z-index: 2;
+  }
+  .sort-cell .bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(var(--accent-rgb), 0.2);
+    transition: height 0.3s ease;
+    z-index: 1;
+  }
+  .sort-cell.active-compare {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    transform: translateY(-10px);
+  }
+  .sort-cell.min-found {
+    border-color: var(--accent3);
+    background: rgba(var(--accent3-rgb), 0.2);
+  }
+  .sort-cell.sorted {
+    border-color: var(--accent2);
+    background: rgba(var(--accent2-rgb), 0.1);
+  }
+  .sort-cell.sorted .bar {
+    background: rgba(var(--accent2-rgb), 0.3);
+  }
+  .sort-cell.swapping {
+    animation: swap-shake 0.3s ease;
+  }
+  @keyframes swap-shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+  }
+
+  .status-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 1px solid var(--border);
+    min-height: 60px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="top-nav slide-top-nav">
+  <div class="back-hotspot">
+    <a href="../topics/sorting.html" class="back-link" data-i18n="back">Kembali</a>
+  </div>
+  <div class="controls-hotspot">
+    <div class="controls slide-controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </div>
+</nav>
+
+<div class="slides-wrapper" id="slidesWrapper">
+  <!-- SLIDE 1: JUDUL -->
+  <div class="slide active" id="slide-0" data-notes="Sambungkan dengan materi sebelumnya (searching). Tekankan: hari ini fokus 'bagaimana membuat data siap dicari'">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="slide-num">PERTEMUAN 11</div>
+    <div class="section-badge"><span class="dot"></span>Sorting Algorithms</div>
+    <div class="slide-title">SORTING ALGORITHMS<br><span class="highlight">DASAR</span></div>
+    <div class="subtitle">Mengurutkan Data untuk Efisiensi</div>
+  </div>
+
+  <!-- SLIDE 2: REVIEW SEARCHING -->
+  <div class="slide" id="slide-1" data-notes="Tanya mahasiswa: 'Kenapa Binary Search bisa cepat?'. Arahkan ke kebutuhan sorting">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Review</div>
+    <div class="slide-title">Mengingat Kembali <span class="highlight">Searching</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔍</span><span><strong>Sequential Search:</strong> Cek satu per satu, data boleh acak.</span></div>
+        <div class="kp-item"><span class="icon">⚡</span><span><strong>Binary Search:</strong> Sangat cepat, tapi...</span></div>
+      </div>
+      <div class="tip-box" style="margin-top: 40px; text-align: center;">
+        <strong>Syarat Binary Search:</strong> Data harus terurut!
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: MOTIVASI -->
+  <div class="slide" id="slide-2" data-notes="Bangun kesadaran pentingnya sorting">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Motivasi</div>
+    <div class="slide-title">Kenapa <span class="highlight">Sorting?</span></div>
+    <div class="slide-body">
+      <p>Data nilai: <code>78, 90, 65, 88, 70</code></p>
+      <p>Cari nilai <code>88</code>. Mana lebih cepat?</p>
+      <div class="cols">
+        <div class="col">
+          <div class="tip-box">Data Acak</div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">Data Terurut</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: DEFINISI -->
+  <div class="slide" id="slide-3">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Konsep</div>
+    <div class="slide-title">Apa itu <span class="highlight">Sorting?</span></div>
+    <div class="slide-body">
+      <p>Proses mengatur sekumpulan data ke dalam urutan tertentu berdasarkan kriteria.</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">⬆️</span><span><strong>Ascending:</strong> Kecil ke Besar (1, 2, 3...)</span></div>
+        <div class="kp-item"><span class="icon">⬇️</span><span><strong>Descending:</strong> Besar ke Kecil (9, 8, 7...)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: TUJUAN -->
+  <div class="slide" id="slide-4" data-notes="Contoh nyata: Ranking, Database, E-commerce sorting">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Tujuan</div>
+    <div class="slide-title">Tujuan <span class="highlight">Sorting</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🚀</span><span>Mempermudah pencarian (Binary Search).</span></div>
+        <div class="kp-item"><span class="icon">📊</span><span>Mempermudah analisis data (Median, Min/Max).</span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Digunakan di hampir semua sistem (E-commerce, Ranking).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: ILUSTRASI -->
+  <div class="slide" id="slide-5">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Ilustrasi</div>
+    <div class="slide-title">Ilustrasi <span class="highlight">Sederhana</span></div>
+    <div class="slide-body">
+      <p style="text-align: center;">Data Awal:</p>
+      <div class="sort-grid">
+        <div class="sort-cell"><div class="val">5</div></div>
+        <div class="sort-cell"><div class="val">3</div></div>
+        <div class="sort-cell"><div class="val">8</div></div>
+        <div class="sort-cell"><div class="val">1</div></div>
+      </div>
+      <p style="text-align: center;">Setelah Sorting (Ascending):</p>
+      <div class="sort-grid">
+        <div class="sort-cell sorted"><div class="val">1</div></div>
+        <div class="sort-cell sorted"><div class="val">3</div></div>
+        <div class="sort-cell sorted"><div class="val">5</div></div>
+        <div class="sort-cell sorted"><div class="val">8</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: AKTIVITAS -->
+  <div class="slide" id="slide-6" data-notes="Biarkan mahasiswa pakai cara masing-masing. Tanya: 'Cara kalian mirip algoritma apa?'">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Aktivitas</div>
+    <div class="slide-title">Aktivitas <span class="highlight">Kelas</span></div>
+    <div class="slide-body">
+      <p style="text-align: center; font-size: 1.5rem;">Urutkan angka berikut secara manual:</p>
+      <h1 style="text-align: center; color: var(--accent); margin-top: 50px;">7, 2, 5, 1</h1>
+      <p style="text-align: center; margin-top: 50px; color: var(--text-muted);">Pikirkan: Bagaimana langkah-langkah yang otak kalian lakukan?</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: BUBBLE SORT CONCEPT -->
+  <div class="slide" id="slide-7">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Bubble Sort</div>
+    <div class="slide-title">Konsep <span class="highlight">Bubble Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">👉</span><span>Bandingkan dua elemen bersebelahan.</span></div>
+        <div class="kp-item"><span class="icon">🔄</span><span>Tukar posisi jika urutannya salah.</span></div>
+        <div class="kp-item"><span class="icon">🫧</span><span>Elemen terbesar akan pelan-pelan "naik" ke posisi akhir.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: BUBBLE SORT VISUALIZATION -->
+  <div class="slide" id="slide-8" data-notes="Jelaskan langkah perlahan. Gunakan animasi jika ada.">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">Visualisasi <span class="highlight">Bubble Sort</span></div>
+    <div class="slide-body">
+      <div class="sort-grid" id="bubble-grid"></div>
+      <div class="status-box" id="bubble-status">Klik Mulai untuk simulasi.</div>
+      <div class="controls-row">
+        <button class="btn btn-primary" id="bubble-start">Mulai</button>
+        <button class="btn btn-outline" id="bubble-next" style="display:none">Langkah Lanjut (Next)</button>
+        <button class="btn btn-outline" id="bubble-reset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: BUBBLE SORT HOW IT WORKS -->
+  <div class="slide" id="slide-9">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Cara Kerja</div>
+    <div class="slide-title">Cara Kerja <span class="highlight">Bubble Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔁</span><span><strong>Loop Luar:</strong> Mengulang proses untuk setiap elemen.</span></div>
+        <div class="kp-item"><span class="icon">➡️</span><span><strong>Loop Dalam:</strong> Melakukan perbandingan dari awal ke akhir.</span></div>
+      </div>
+      <p style="margin-top: 30px;">Setiap satu iterasi loop luar selesai, satu elemen terbesar sudah pasti berada di posisi yang benar.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: BUBBLE SORT CODE -->
+  <div class="slide" id="slide-10" data-notes="Fokus pada logika, bukan sintaks">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode C++</div>
+    <div class="slide-title">Implementasi <span class="highlight">Bubble Sort</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; n-1; i++) {
+    for(int j = 0; j &lt; n-i-1; j++) {
+        if(arr[j] &gt; arr[j+1]) {
+            swap(arr[j], arr[j+1]);
+        }
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: BUBBLE SORT PROS/CONS -->
+  <div class="slide" id="slide-11">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Analisis</div>
+    <div class="slide-title">Kelebihan &amp; <span class="highlight">Kekurangan</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <h3 style="color: var(--accent2);">Kelebihan</h3>
+          <ul>
+            <li>Sangat mudah dipahami.</li>
+            <li>Sederhana untuk ditulis.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3 style="color: var(--accent4);">Kekurangan</h3>
+          <ul>
+            <li>Lambat untuk data besar.</li>
+            <li>Banyak melakukan pertukaran (swap).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: SELECTION SORT CONCEPT -->
+  <div class="slide" id="slide-12">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Selection Sort</div>
+    <div class="slide-title">Konsep <span class="highlight">Selection Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔎</span><span>Cari elemen terkecil dalam array.</span></div>
+        <div class="kp-item"><span class="icon">📍</span><span>Tukar dengan elemen di posisi paling depan yang belum terurut.</span></div>
+        <div class="kp-item"><span class="icon">🎯</span><span>"Pilih lalu letakkan".</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: SELECTION SORT VISUALIZATION -->
+  <div class="slide" id="slide-13">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">Visualisasi <span class="highlight">Selection Sort</span></div>
+    <div class="slide-body">
+      <div class="sort-grid" id="select-grid"></div>
+      <div class="status-box" id="select-status">Klik Mulai untuk simulasi.</div>
+      <div class="controls-row">
+        <button class="btn btn-primary" id="select-start">Mulai</button>
+        <button class="btn btn-outline" id="select-next" style="display:none">Langkah Lanjut (Next)</button>
+        <button class="btn btn-outline" id="select-reset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: SELECTION SORT HOW IT WORKS -->
+  <div class="slide" id="slide-14">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Cara Kerja</div>
+    <div class="slide-title">Cara Kerja <span class="highlight">Selection Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">📉</span><span><strong>Tentukan Minimum:</strong> Anggap elemen pertama sebagai minimum.</span></div>
+        <div class="kp-item"><span class="icon">🔄</span><span><strong>Tukar Sekali:</strong> Hanya satu kali swap per iterasi loop luar.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: SELECTION SORT CODE -->
+  <div class="slide" id="slide-15">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode C++</div>
+    <div class="slide-title">Implementasi <span class="highlight">Selection Sort</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 0; i &lt; n-1; i++) {
+    int min_idx = i;
+    for(int j = i+1; j &lt; n; j++) {
+        if(arr[j] &lt; arr[min_idx])
+            min_idx = j;
+    }
+    swap(arr[i], arr[min_idx]);
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: SELECTION SORT INSIGHT -->
+  <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insight</div>
+    <div class="slide-title">Wawasan <span class="highlight">Selection Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">⚡</span><span>Jauh lebih sedikit proses <strong>swap</strong> dibanding Bubble Sort.</span></div>
+        <div class="kp-item"><span class="icon">👌</span><span>Tetap sederhana dan mudah diimplementasikan.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: INSERTION SORT CONCEPT -->
+  <div class="slide" id="slide-17">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insertion Sort</div>
+    <div class="slide-title">Konsep <span class="highlight">Insertion Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🃏</span><span>Mirip seperti menyusun kartu di tangan.</span></div>
+        <div class="kp-item"><span class="icon">📥</span><span>Ambil satu elemen, lalu sisipkan di posisi yang tepat.</span></div>
+        <div class="kp-item"><span class="icon">↔️</span><span>Geser elemen lain untuk memberi ruang.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: INSERTION SORT VISUALIZATION -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+    <div class="slide-title">Visualisasi <span class="highlight">Insertion Sort</span></div>
+    <div class="slide-body">
+      <div class="sort-grid" id="insert-grid"></div>
+      <div class="status-box" id="insert-status">Klik Mulai untuk simulasi.</div>
+      <div class="controls-row">
+        <button class="btn btn-primary" id="insert-start">Mulai</button>
+        <button class="btn btn-outline" id="insert-next" style="display:none">Langkah Lanjut (Next)</button>
+        <button class="btn btn-outline" id="insert-reset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: INSERTION SORT HOW IT WORKS -->
+  <div class="slide" id="slide-19">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Cara Kerja</div>
+    <div class="slide-title">Cara Kerja <span class="highlight">Insertion Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">1</span><span>Ambil satu elemen sebagai "key".</span></div>
+        <div class="kp-item"><span class="icon">2</span><span>Bandingkan dengan elemen-elemen sebelumnya.</span></div>
+        <div class="kp-item"><span class="icon">3</span><span>Geser elemen yang lebih besar ke kanan.</span></div>
+        <div class="kp-item"><span class="icon">4</span><span>Sisipkan "key" di posisi yang kosong.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: INSERTION SORT CODE -->
+  <div class="slide" id="slide-20">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Kode C++</div>
+    <div class="slide-title">Implementasi <span class="highlight">Insertion Sort</span></div>
+    <div class="slide-body">
+      <pre><code class="language-cpp">for(int i = 1; i &lt; n; i++) {
+    int key = arr[i];
+    int j = i - 1;
+
+    while(j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+        arr[j + 1] = arr[j];
+        j--;
+    }
+    arr[j + 1] = key;
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: INSERTION SORT INSIGHT -->
+  <div class="slide" id="slide-21">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insight</div>
+    <div class="slide-title">Wawasan <span class="highlight">Insertion Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">✨</span><span>Sangat efektif untuk data berjumlah kecil.</span></div>
+        <div class="kp-item"><span class="icon">💪</span><span>Paling cepat jika data sudah hampir terurut (adaptif).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: COMPARISON -->
+  <div class="slide" id="slide-22">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Perbandingan</div>
+    <div class="slide-title">Perbandingan <span class="highlight">Algoritma</span></div>
+    <div class="slide-body">
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--accent);">
+            <th style="padding: 10px; text-align: left;">Algoritma</th>
+            <th style="padding: 10px; text-align: left;">Cara Utama</th>
+            <th style="padding: 10px; text-align: left;">Karakteristik</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px;">Bubble</td>
+            <td style="padding: 10px;">Tukar Tetangga</td>
+            <td style="padding: 10px;">Paling Sederhana</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px;">Selection</td>
+            <td style="padding: 10px;">Pilih Minimum</td>
+            <td style="padding: 10px;">Swap Minimal</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px;">Insertion</td>
+            <td style="padding: 10px;">Sisip & Geser</td>
+            <td style="padding: 10px;">Adaptif (Cepat untuk data hampir urut)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 24: DISCUSSION -->
+  <div class="slide" id="slide-23" data-notes="Hindari istilah kompleksitas formal. Fokus ke intuisi">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Diskusi</div>
+    <div class="slide-title">Mari <span class="highlight">Berdiskusi</span></div>
+    <div class="slide-body">
+      <div class="cols">
+        <div class="col">
+          <p style="font-size: 1.2rem;">Menurut kalian:</p>
+          <ul>
+            <li>Mana yang paling mudah diimplementasikan?</li>
+            <li>Mana yang terasa paling cepat?</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="tip-box">Pikirkan berapa banyak langkah yang dibutuhkan jika datanya ada 100? Bagaimana kalau 1 Juta?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 25: PRAKTIKUM INSTRUCTIONS -->
+  <div class="slide" id="slide-24">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Praktikum</div>
+    <div class="slide-title">Instruksi <span class="highlight">Praktikum</span></div>
+    <div class="slide-body">
+      <p>Buka IDE kalian dan implementasikan:</p>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">💻</span><span>Bubble Sort.</span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Pilih satu: Selection atau Insertion Sort.</span></div>
+      </div>
+      <p style="margin-top: 20px;">Gunakan array dengan isi bebas untuk pengujian.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 26: EXPERIMENT -->
+  <div class="slide" id="slide-25">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Eksperimen</div>
+    <div class="slide-title">Uji Coba <span class="highlight">Kritikal</span></div>
+    <div class="slide-body">
+      <p>Coba algoritma kalian dengan kondisi:</p>
+      <ul>
+        <li><strong>Data Acak:</strong> <code>[4, 1, 3, 2]</code></li>
+        <li><strong>Data Terurut:</strong> <code>[1, 2, 3, 4]</code></li>
+        <li><strong>Data Terbalik:</strong> <code>[4, 3, 2, 1]</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SLIDE 27: PRAKTIKUM QUESTIONS -->
+  <div class="slide" id="slide-26">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Refleksi</div>
+    <div class="slide-title">Pertanyaan <span class="highlight">Praktikum</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">❓</span><span>Mana yang paling cepat saat dijalankan?</span></div>
+        <div class="kp-item"><span class="icon">❓</span><span>Mana yang kodenya paling pendek?</span></div>
+        <div class="kp-item"><span class="icon">❓</span><span>Apakah ada perbedaan mencolok untuk data terbalik?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 28: SUMMARY -->
+  <div class="slide" id="slide-27">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Ringkasan</div>
+    <div class="slide-title">💡 <span class="highlight">Kesimpulan</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🔹</span><span>Sorting sangat penting untuk efisiensi sistem.</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Bubble, Selection, dan Insertion adalah algoritma dasar yang wajib dipahami.</span></div>
+        <div class="kp-item"><span class="icon">🔹</span><span>Setiap algoritma memiliki karakteristik unik (swap minimal, adaptif, dsb).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 29: REFLECTION -->
+  <div class="slide" id="slide-28">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Refleksi</div>
+    <div class="slide-title">Tanya <span class="highlight">Diri</span></div>
+    <div class="slide-body">
+      <p style="text-align: center; margin-top: 50px; font-size: 1.5rem;">Algoritma mana yang menurutmu paling "cerdas"? Kenapa?</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 30: PREVIEW NEXT -->
+  <div class="slide" id="slide-29">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Next</div>
+    <div class="slide-title">Preview <span class="highlight">Berikutnya</span></div>
+    <div class="slide-body">
+      <p><strong>Pertemuan 12: Sorting Lanjutan</strong></p>
+      <ul>
+        <li>Merge Sort & Quick Sort.</li>
+        <li>Analisis Performa mendalam.</li>
+        <li>Kapan menggunakan algoritma yang mana?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav-slides-container">
+  <div class="nav-slides">
+    <button class="nav-btn" id="prevBtn">←</button>
+    <span class="nav-counter" id="counter">1 / 30</span>
+    <button class="nav-btn" id="nextBtn">→</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initApp } from '../src/main.js';
+  import { initSlides } from '../src/slides.js';
+  initApp();
+  initSlides();
+
+  function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  // --- BUBBLE SORT LOGIC ---
+  let bubbleData = [];
+  let bubbleI = 0;
+  let bubbleJ = 0;
+  let bubbleState = 'compare'; // 'compare', 'swap', 'done'
+  const bubbleGrid = document.getElementById('bubble-grid');
+  const bubbleStatus = document.getElementById('bubble-status');
+  const btnBubbleStart = document.getElementById('bubble-start');
+  const btnBubbleNext = document.getElementById('bubble-next');
+  const btnBubbleReset = document.getElementById('bubble-reset');
+
+  function initBubble() {
+    bubbleData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    renderGrid(bubbleGrid, bubbleData);
+    bubbleI = 0;
+    bubbleJ = 0;
+    bubbleState = 'compare';
+    bubbleStatus.textContent = "Data acak siap. Klik Mulai.";
+    btnBubbleStart.style.display = 'inline-block';
+    btnBubbleNext.style.display = 'none';
+  }
+
+  function renderGrid(container, data, activeIdx = [], sortedIdx = [], minIdx = -1) {
+    container.innerHTML = '';
+    const maxVal = Math.max(...data);
+    data.forEach((val, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'sort-cell';
+      if (activeIdx.includes(i)) cell.classList.add('active-compare');
+      if (sortedIdx.includes(i)) cell.classList.add('sorted');
+      if (i === minIdx) cell.classList.add('min-found');
+
+      const barHeight = (val / maxVal) * 100;
+      cell.innerHTML = `
+        <div class="bar" style="height: ${barHeight}%"></div>
+        <div class="val">${val}</div>
+      `;
+      container.appendChild(cell);
+    });
+  }
+
+  btnBubbleStart.addEventListener('click', () => {
+    btnBubbleStart.style.display = 'none';
+    btnBubbleNext.style.display = 'inline-block';
+    bubbleStatus.textContent = "Mulai membandingkan elemen bersebelahan.";
+  });
+
+  btnBubbleNext.addEventListener('click', () => {
+    const n = bubbleData.length;
+    if (bubbleI < n - 1) {
+      if (bubbleJ < n - bubbleI - 1) {
+        const cells = bubbleGrid.querySelectorAll('.sort-cell');
+        if (bubbleState === 'compare') {
+          renderGrid(bubbleGrid, bubbleData, [bubbleJ, bubbleJ + 1], getSortedIdx(n, bubbleI));
+          bubbleStatus.textContent = `Bandingkan ${bubbleData[bubbleJ]} dan ${bubbleData[bubbleJ+1]}`;
+          if (bubbleData[bubbleJ] > bubbleData[bubbleJ+1]) {
+            bubbleState = 'swap';
+          } else {
+            bubbleJ++;
+            bubbleState = 'compare';
+          }
+        } else if (bubbleState === 'swap') {
+          bubbleStatus.textContent = `${bubbleData[bubbleJ]} > ${bubbleData[bubbleJ+1]}, Tukar!`;
+          let temp = bubbleData[bubbleJ];
+          bubbleData[bubbleJ] = bubbleData[bubbleJ+1];
+          bubbleData[bubbleJ+1] = temp;
+          renderGrid(bubbleGrid, bubbleData, [bubbleJ, bubbleJ + 1], getSortedIdx(n, bubbleI));
+          bubbleGrid.querySelectorAll('.sort-cell')[bubbleJ].classList.add('swapping');
+          bubbleGrid.querySelectorAll('.sort-cell')[bubbleJ+1].classList.add('swapping');
+          bubbleJ++;
+          bubbleState = 'compare';
+        }
+      } else {
+        bubbleI++;
+        bubbleJ = 0;
+        bubbleStatus.textContent = `Elemen terbesar sudah di belakang. Lanjut iterasi berikutnya.`;
+        renderGrid(bubbleGrid, bubbleData, [], getSortedIdx(n, bubbleI));
+      }
+    } else {
+      bubbleStatus.textContent = "Selesai! Seluruh data sudah terurut.";
+      renderGrid(bubbleGrid, bubbleData, [], Array.from({length: n}, (_, i) => i));
+      btnBubbleNext.style.display = 'none';
+    }
+  });
+
+  function getSortedIdx(n, i) {
+    return Array.from({length: i}, (_, k) => n - 1 - k);
+  }
+
+  btnBubbleReset.addEventListener('click', initBubble);
+
+  // --- SELECTION SORT LOGIC ---
+  let selectData = [];
+  let selectI = 0;
+  let selectJ = 0;
+  let selectMin = 0;
+  let selectState = 'find'; // 'find', 'swap'
+  const selectGrid = document.getElementById('select-grid');
+  const selectStatus = document.getElementById('select-status');
+  const btnSelectStart = document.getElementById('select-start');
+  const btnSelectNext = document.getElementById('select-next');
+  const btnSelectReset = document.getElementById('select-reset');
+
+  function initSelect() {
+    selectData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    renderGrid(selectGrid, selectData);
+    selectI = 0;
+    selectJ = 1;
+    selectMin = 0;
+    selectState = 'find';
+    selectStatus.textContent = "Data acak siap. Klik Mulai.";
+    btnSelectStart.style.display = 'inline-block';
+    btnSelectNext.style.display = 'none';
+  }
+
+  btnSelectStart.addEventListener('click', () => {
+    btnSelectStart.style.display = 'none';
+    btnSelectNext.style.display = 'inline-block';
+    selectStatus.textContent = `Anggap index ${selectI} (${selectData[selectI]}) adalah minimum sementara.`;
+    renderGrid(selectGrid, selectData, [selectI], [], selectI);
+  });
+
+  btnSelectNext.addEventListener('click', () => {
+    const n = selectData.length;
+    if (selectI < n - 1) {
+      if (selectState === 'find') {
+        if (selectJ < n) {
+          renderGrid(selectGrid, selectData, [selectJ], getRange(0, selectI - 1), selectMin);
+          selectStatus.textContent = `Cek index ${selectJ}: ${selectData[selectJ]} < ${selectData[selectMin]}?`;
+          if (selectData[selectJ] < selectData[selectMin]) {
+            selectMin = selectJ;
+            selectStatus.textContent = `Ketemu yang lebih kecil! Minimum baru: ${selectData[selectMin]} (index ${selectMin})`;
+          }
+          selectJ++;
+        } else {
+          selectState = 'swap';
+          selectStatus.textContent = `Selesai mencari minimum. Siap menukar index ${selectI} dengan ${selectMin}.`;
+          renderGrid(selectGrid, selectData, [selectI, selectMin], getRange(0, selectI - 1), selectMin);
+        }
+      } else if (selectState === 'swap') {
+        if (selectI !== selectMin) {
+          let temp = selectData[selectI];
+          selectData[selectI] = selectData[selectMin];
+          selectData[selectMin] = temp;
+        }
+        selectI++;
+        selectMin = selectI;
+        selectJ = selectI + 1;
+        selectState = 'find';
+        selectStatus.textContent = `Swap selesai. Lanjut ke posisi berikutnya.`;
+        renderGrid(selectGrid, selectData, [], getRange(0, selectI - 1));
+      }
+    } else {
+      selectStatus.textContent = "Selesai! Seluruh data sudah terurut.";
+      renderGrid(selectGrid, selectData, [], getRange(0, n - 1));
+      btnSelectNext.style.display = 'none';
+    }
+  });
+
+  function getRange(start, end) {
+    if (end < start) return [];
+    return Array.from({length: end - start + 1}, (_, k) => start + k);
+  }
+
+  btnSelectReset.addEventListener('click', initSelect);
+
+  // --- INSERTION SORT LOGIC ---
+  let insertData = [];
+  let insertI = 1;
+  let insertJ = 0;
+  let insertKey = 0;
+  let insertState = 'pick'; // 'pick', 'compare', 'insert'
+  const insertGrid = document.getElementById('insert-grid');
+  const insertStatus = document.getElementById('insert-status');
+  const btnInsertStart = document.getElementById('insert-start');
+  const btnInsertNext = document.getElementById('insert-next');
+  const btnInsertReset = document.getElementById('insert-reset');
+
+  function initInsert() {
+    insertData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    renderGrid(insertGrid, insertData);
+    insertI = 1;
+    insertState = 'pick';
+    insertStatus.textContent = "Data acak siap. Klik Mulai.";
+    btnInsertStart.style.display = 'inline-block';
+    btnInsertNext.style.display = 'none';
+  }
+
+  btnInsertStart.addEventListener('click', () => {
+    btnInsertStart.style.display = 'none';
+    btnInsertNext.style.display = 'inline-block';
+    insertStatus.textContent = "Anggap elemen pertama sudah terurut.";
+    renderGrid(insertGrid, insertData, [], [0]);
+  });
+
+  btnInsertNext.addEventListener('click', () => {
+    const n = insertData.length;
+    if (insertI < n) {
+      if (insertState === 'pick') {
+        insertKey = insertData[insertI];
+        insertJ = insertI - 1;
+        insertStatus.textContent = `Ambil index ${insertI} (key = ${insertKey}) untuk disisipkan.`;
+        renderGrid(insertGrid, insertData, [insertI], getRange(0, insertI - 1));
+        insertState = 'compare';
+      } else if (insertState === 'compare') {
+        if (insertJ >= 0 && insertData[insertJ] > insertKey) {
+          insertStatus.textContent = `${insertData[insertJ]} > ${insertKey}, geser ${insertData[insertJ]} ke kanan.`;
+          insertData[insertJ + 1] = insertData[insertJ];
+          renderGrid(insertGrid, insertData, [insertJ], getRange(0, insertI).filter(idx => idx !== insertJ));
+          insertJ--;
+        } else {
+          insertStatus.textContent = `Posisi tepat ditemukan. Sisipkan ${insertKey}.`;
+          insertData[insertJ + 1] = insertKey;
+          renderGrid(insertGrid, insertData, [insertJ + 1], getRange(0, insertI));
+          insertI++;
+          insertState = 'pick';
+        }
+      }
+    } else {
+      insertStatus.textContent = "Selesai! Seluruh data sudah terurut.";
+      renderGrid(insertGrid, insertData, [], getRange(0, n - 1));
+      btnInsertNext.style.display = 'none';
+    }
+  });
+
+  btnInsertReset.addEventListener('click', initInsert);
+
+  // Observer to trigger init when slide becomes active
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains('active')) {
+        if (mutation.target.id === 'slide-8') initBubble();
+        if (mutation.target.id === 'slide-13') initSelect();
+        if (mutation.target.id === 'slide-18') initInsert();
+      }
+    });
+  });
+
+  observer.observe(document.getElementById('slide-8'), { attributes: true, attributeFilter: ['class'] });
+  observer.observe(document.getElementById('slide-13'), { attributes: true, attributeFilter: ['class'] });
+  observer.observe(document.getElementById('slide-18'), { attributes: true, attributeFilter: ['class'] });
+
+  initBubble();
+  initSelect();
+  initInsert();
+
+</script>
+</body>
+</html>
