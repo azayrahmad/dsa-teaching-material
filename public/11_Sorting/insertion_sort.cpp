@@ -1,55 +1,38 @@
 #include <iostream>
 using namespace std;
 
-void printArray(int array[], int panjangArray) {
-	for(int i = 0; i < panjangArray; i++) {
-		cout << array[i] << " ";
-	}
-	cout << endl;
+void printArray(int arr[], int n) {
+    for(int i = 0; i < n; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
 }
 
-void bubbleSort(int laci[], int jumlahLaci) {
-	bool adaPertukaran = true;
-	int hitungLoop = 0;
+void insertionSort(int arr[], int n) {
+    for(int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
 
-	while(adaPertukaran) {
-		adaPertukaran = false;
-		for(int i = 0; i < jumlahLaci - 1; i++) {
-			if(laci[i] > laci[i + 1]) {
-				int temp = laci[i];
-				laci[i] = laci[i + 1];
-				laci[i + 1] = temp;
-				adaPertukaran = true;
-			}
-		}
-		hitungLoop++;
-		cout << "Array setelah bubble sort ke-" << hitungLoop << ":" << endl;
-		printArray(laci, jumlahLaci);
-	}
-}
-
-void insertionSort(int laci[], int jumlahLaci){
-	for (int i = 1; i < jumlahLaci; i++){
-		int isi = laci[i];
-		int sebelum = i - 1;
-		while(sebelum >= 0 && isi < laci[sebelum]){
-			laci[i] = laci[sebelum];
-			sebelum--;
-		}
-		laci[sebelum + 1] = isi;
-		cout << "Array setelah insertion sort ke-" << i << ":" << endl;
-		printArray(laci, jumlahLaci);
-	}
+        // Geser elemen yang lebih besar dari key ke satu posisi di depannya
+        while(j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
 }
 
 int main() {
-	const int jumlahLaci = 8;
-	int laci[jumlahLaci] = {14, 33, 27, 10, 35, 19, 42, 44};
+    int data[] = {12, 11, 13, 5, 6};
+    int n = sizeof(data)/sizeof(data[0]);
 
-	cout << "Array sebelum sorting:" << endl;
-	printArray(laci, jumlahLaci);
+    cout << "Data awal: ";
+    printArray(data, n);
 
-	insertionSort(laci, jumlahLaci);
+    insertionSort(data, n);
 
-	return 0;
+    cout << "Data terurut (Insertion Sort): ";
+    printArray(data, n);
+
+    return 0;
 }

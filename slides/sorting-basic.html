@@ -240,6 +240,9 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
     <div class="slide-title">Visualisasi <span class="highlight">Bubble Sort</span></div>
     <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Jumlah Data (3-10): <input type="number" id="bubble-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+      </div>
       <div class="sort-grid" id="bubble-grid"></div>
       <div class="status-box" id="bubble-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
@@ -330,6 +333,9 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
     <div class="slide-title">Visualisasi <span class="highlight">Selection Sort</span></div>
     <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Jumlah Data (3-10): <input type="number" id="select-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+      </div>
       <div class="sort-grid" id="select-grid"></div>
       <div class="status-box" id="select-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
@@ -408,6 +414,9 @@
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
     <div class="slide-title">Visualisasi <span class="highlight">Insertion Sort</span></div>
     <div class="slide-body">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Jumlah Data (3-10): <input type="number" id="insert-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+      </div>
       <div class="sort-grid" id="insert-grid"></div>
       <div class="status-box" id="insert-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
@@ -640,12 +649,18 @@
   let bubbleState = 'compare'; // 'compare', 'swap', 'done'
   const bubbleGrid = document.getElementById('bubble-grid');
   const bubbleStatus = document.getElementById('bubble-status');
+  const bubbleNInput = document.getElementById('bubble-n');
+  bubbleNInput.addEventListener('change', initBubble);
   const btnBubbleStart = document.getElementById('bubble-start');
   const btnBubbleNext = document.getElementById('bubble-next');
   const btnBubbleReset = document.getElementById('bubble-reset');
 
   function initBubble() {
-    bubbleData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    let n = parseInt(bubbleNInput.value) || 6;
+    if (n < 3) n = 3;
+    if (n > 10) n = 10;
+    bubbleNInput.value = n;
+    bubbleData = Array.from({length: n}, () => getRandomInt(10, 90));
     renderGrid(bubbleGrid, bubbleData);
     bubbleI = 0;
     bubbleJ = 0;
@@ -677,6 +692,7 @@
   btnBubbleStart.addEventListener('click', () => {
     btnBubbleStart.style.display = 'none';
     btnBubbleNext.style.display = 'inline-block';
+    bubbleNInput.disabled = true;
     bubbleStatus.textContent = "Mulai membandingkan elemen bersebelahan.";
   });
 
@@ -722,7 +738,10 @@
     return Array.from({length: i}, (_, k) => n - 1 - k);
   }
 
-  btnBubbleReset.addEventListener('click', initBubble);
+  btnBubbleReset.addEventListener('click', () => {
+    bubbleNInput.disabled = false;
+    initBubble();
+  });
 
   // --- SELECTION SORT LOGIC ---
   let selectData = [];
@@ -732,12 +751,18 @@
   let selectState = 'find'; // 'find', 'swap'
   const selectGrid = document.getElementById('select-grid');
   const selectStatus = document.getElementById('select-status');
+  const selectNInput = document.getElementById('select-n');
+  selectNInput.addEventListener('change', initSelect);
   const btnSelectStart = document.getElementById('select-start');
   const btnSelectNext = document.getElementById('select-next');
   const btnSelectReset = document.getElementById('select-reset');
 
   function initSelect() {
-    selectData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    let n = parseInt(selectNInput.value) || 6;
+    if (n < 3) n = 3;
+    if (n > 10) n = 10;
+    selectNInput.value = n;
+    selectData = Array.from({length: n}, () => getRandomInt(10, 90));
     renderGrid(selectGrid, selectData);
     selectI = 0;
     selectJ = 1;
@@ -751,6 +776,7 @@
   btnSelectStart.addEventListener('click', () => {
     btnSelectStart.style.display = 'none';
     btnSelectNext.style.display = 'inline-block';
+    selectNInput.disabled = true;
     selectStatus.textContent = `Anggap index ${selectI} (${selectData[selectI]}) adalah minimum sementara.`;
     renderGrid(selectGrid, selectData, [selectI], [], selectI);
   });
@@ -797,7 +823,10 @@
     return Array.from({length: end - start + 1}, (_, k) => start + k);
   }
 
-  btnSelectReset.addEventListener('click', initSelect);
+  btnSelectReset.addEventListener('click', () => {
+    selectNInput.disabled = false;
+    initSelect();
+  });
 
   // --- INSERTION SORT LOGIC ---
   let insertData = [];
@@ -807,12 +836,18 @@
   let insertState = 'pick'; // 'pick', 'compare', 'insert'
   const insertGrid = document.getElementById('insert-grid');
   const insertStatus = document.getElementById('insert-status');
+  const insertNInput = document.getElementById('insert-n');
+  insertNInput.addEventListener('change', initInsert);
   const btnInsertStart = document.getElementById('insert-start');
   const btnInsertNext = document.getElementById('insert-next');
   const btnInsertReset = document.getElementById('insert-reset');
 
   function initInsert() {
-    insertData = Array.from({length: 6}, () => getRandomInt(10, 90));
+    let n = parseInt(insertNInput.value) || 6;
+    if (n < 3) n = 3;
+    if (n > 10) n = 10;
+    insertNInput.value = n;
+    insertData = Array.from({length: n}, () => getRandomInt(10, 90));
     renderGrid(insertGrid, insertData);
     insertI = 1;
     insertState = 'pick';
@@ -824,6 +859,7 @@
   btnInsertStart.addEventListener('click', () => {
     btnInsertStart.style.display = 'none';
     btnInsertNext.style.display = 'inline-block';
+    insertNInput.disabled = true;
     insertStatus.textContent = "Anggap elemen pertama sudah terurut.";
     renderGrid(insertGrid, insertData, [], [0]);
   });
@@ -858,7 +894,10 @@
     }
   });
 
-  btnInsertReset.addEventListener('click', initInsert);
+  btnInsertReset.addEventListener('click', () => {
+    insertNInput.disabled = false;
+    initInsert();
+  });
 
   // Observer to trigger init when slide becomes active
   const observer = new MutationObserver((mutations) => {
