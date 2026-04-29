@@ -244,6 +244,7 @@
         Jumlah Data (3-10): <input type="number" id="bubble-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
       </div>
       <div class="sort-grid" id="bubble-grid"></div>
+      <div id="bubble-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-top: 10px;">Jumlah Pertukaran: <span class="count">0</span></div>
       <div class="status-box" id="bubble-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
         <button class="btn btn-primary" id="bubble-start">Mulai</button>
@@ -337,6 +338,7 @@
         Jumlah Data (3-10): <input type="number" id="select-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
       </div>
       <div class="sort-grid" id="select-grid"></div>
+      <div id="select-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-top: 10px;">Jumlah Pertukaran: <span class="count">0</span></div>
       <div class="status-box" id="select-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
         <button class="btn btn-primary" id="select-start">Mulai</button>
@@ -418,6 +420,7 @@
         Jumlah Data (3-10): <input type="number" id="insert-n" min="3" max="10" value="6" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
       </div>
       <div class="sort-grid" id="insert-grid"></div>
+      <div id="insert-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-top: 10px;">Jumlah Pergeseran: <span class="count">0</span></div>
       <div class="status-box" id="insert-status">Klik Mulai untuk simulasi.</div>
       <div class="controls-row">
         <button class="btn btn-primary" id="insert-start">Mulai</button>
@@ -646,9 +649,11 @@
   let bubbleData = [];
   let bubbleI = 0;
   let bubbleJ = 0;
+  let bubbleSwaps = 0;
   let bubbleState = 'compare'; // 'compare', 'swap', 'done'
   const bubbleGrid = document.getElementById('bubble-grid');
   const bubbleStatus = document.getElementById('bubble-status');
+  const bubbleTally = document.getElementById('bubble-tally');
   const bubbleNInput = document.getElementById('bubble-n');
   bubbleNInput.addEventListener('change', initBubble);
   const btnBubbleStart = document.getElementById('bubble-start');
@@ -664,8 +669,10 @@
     renderGrid(bubbleGrid, bubbleData);
     bubbleI = 0;
     bubbleJ = 0;
+    bubbleSwaps = 0;
     bubbleState = 'compare';
     bubbleStatus.textContent = "Data acak siap. Klik Mulai.";
+    bubbleTally.style.visibility = 'hidden';
     btnBubbleStart.style.display = 'inline-block';
     btnBubbleNext.style.display = 'none';
   }
@@ -693,6 +700,9 @@
     btnBubbleStart.style.display = 'none';
     btnBubbleNext.style.display = 'inline-block';
     bubbleNInput.disabled = true;
+    bubbleSwaps = 0;
+    bubbleTally.style.visibility = 'visible';
+    bubbleTally.querySelector('.count').textContent = '0';
     bubbleStatus.textContent = "Mulai membandingkan elemen bersebelahan.";
   });
 
@@ -711,6 +721,8 @@
             bubbleState = 'compare';
           }
         } else if (bubbleState === 'swap') {
+          bubbleSwaps++;
+          bubbleTally.querySelector('.count').textContent = bubbleSwaps;
           bubbleStatus.textContent = `${bubbleData[bubbleJ]} > ${bubbleData[bubbleJ+1]}, Tukar!`;
           let temp = bubbleData[bubbleJ];
           bubbleData[bubbleJ] = bubbleData[bubbleJ+1];
@@ -748,9 +760,11 @@
   let selectI = 0;
   let selectJ = 0;
   let selectMin = 0;
+  let selectSwaps = 0;
   let selectState = 'find'; // 'find', 'swap'
   const selectGrid = document.getElementById('select-grid');
   const selectStatus = document.getElementById('select-status');
+  const selectTally = document.getElementById('select-tally');
   const selectNInput = document.getElementById('select-n');
   selectNInput.addEventListener('change', initSelect);
   const btnSelectStart = document.getElementById('select-start');
@@ -767,8 +781,10 @@
     selectI = 0;
     selectJ = 1;
     selectMin = 0;
+    selectSwaps = 0;
     selectState = 'find';
     selectStatus.textContent = "Data acak siap. Klik Mulai.";
+    selectTally.style.visibility = 'hidden';
     btnSelectStart.style.display = 'inline-block';
     btnSelectNext.style.display = 'none';
   }
@@ -777,6 +793,9 @@
     btnSelectStart.style.display = 'none';
     btnSelectNext.style.display = 'inline-block';
     selectNInput.disabled = true;
+    selectSwaps = 0;
+    selectTally.style.visibility = 'visible';
+    selectTally.querySelector('.count').textContent = '0';
     selectStatus.textContent = `Anggap index ${selectI} (${selectData[selectI]}) adalah minimum sementara.`;
     renderGrid(selectGrid, selectData, [selectI], [], selectI);
   });
@@ -800,6 +819,8 @@
         }
       } else if (selectState === 'swap') {
         if (selectI !== selectMin) {
+          selectSwaps++;
+          selectTally.querySelector('.count').textContent = selectSwaps;
           let temp = selectData[selectI];
           selectData[selectI] = selectData[selectMin];
           selectData[selectMin] = temp;
@@ -833,9 +854,11 @@
   let insertI = 1;
   let insertJ = 0;
   let insertKey = 0;
+  let insertShifts = 0;
   let insertState = 'pick'; // 'pick', 'compare', 'insert'
   const insertGrid = document.getElementById('insert-grid');
   const insertStatus = document.getElementById('insert-status');
+  const insertTally = document.getElementById('insert-tally');
   const insertNInput = document.getElementById('insert-n');
   insertNInput.addEventListener('change', initInsert);
   const btnInsertStart = document.getElementById('insert-start');
@@ -850,8 +873,10 @@
     insertData = Array.from({length: n}, () => getRandomInt(10, 90));
     renderGrid(insertGrid, insertData);
     insertI = 1;
+    insertShifts = 0;
     insertState = 'pick';
     insertStatus.textContent = "Data acak siap. Klik Mulai.";
+    insertTally.style.visibility = 'hidden';
     btnInsertStart.style.display = 'inline-block';
     btnInsertNext.style.display = 'none';
   }
@@ -860,6 +885,9 @@
     btnInsertStart.style.display = 'none';
     btnInsertNext.style.display = 'inline-block';
     insertNInput.disabled = true;
+    insertShifts = 0;
+    insertTally.style.visibility = 'visible';
+    insertTally.querySelector('.count').textContent = '0';
     insertStatus.textContent = "Anggap elemen pertama sudah terurut.";
     renderGrid(insertGrid, insertData, [], [0]);
   });
@@ -875,6 +903,8 @@
         insertState = 'compare';
       } else if (insertState === 'compare') {
         if (insertJ >= 0 && insertData[insertJ] > insertKey) {
+          insertShifts++;
+          insertTally.querySelector('.count').textContent = insertShifts;
           insertStatus.textContent = `${insertData[insertJ]} > ${insertKey}, geser ${insertData[insertJ]} ke kanan.`;
           insertData[insertJ + 1] = insertData[insertJ];
           renderGrid(insertGrid, insertData, [insertJ], getRange(0, insertI).filter(idx => idx !== insertJ));
