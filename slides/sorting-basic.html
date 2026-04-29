@@ -907,7 +907,7 @@
           insertTally.querySelector('.count').textContent = insertShifts;
           insertStatus.textContent = `${insertData[insertJ]} > ${insertKey}, geser ${insertData[insertJ]} ke kanan.`;
           insertData[insertJ + 1] = insertData[insertJ];
-          renderGrid(insertGrid, insertData, [insertJ + 1], getRange(0, insertI).filter(idx => idx !== insertJ + 1));
+          renderGrid(insertGrid, insertData, [insertJ], getRange(0, insertI).filter(idx => idx !== insertJ));
           insertJ--;
         } else {
           insertStatus.textContent = `Posisi tepat ditemukan. Sisipkan ${insertKey}.`;
