@@ -677,9 +677,11 @@
     btnBubbleNext.style.display = 'none';
   }
 
-  function renderGrid(container, data, activeIdx = [], sortedIdx = [], minIdx = -1) {
+  function renderGrid(container, data, activeIdx = [], sortedIdx = [], minIdx = -1, overrideActiveVal = null) {
     container.innerHTML = '';
-    const maxVal = Math.max(...data);
+    let maxVal = Math.max(...data);
+    if (overrideActiveVal !== null) maxVal = Math.max(maxVal, overrideActiveVal);
+
     data.forEach((val, i) => {
       const cell = document.createElement('div');
       cell.className = 'sort-cell';
@@ -687,10 +689,11 @@
       if (sortedIdx.includes(i)) cell.classList.add('sorted');
       if (i === minIdx) cell.classList.add('min-found');
 
-      const barHeight = (val / maxVal) * 100;
+      const displayVal = (overrideActiveVal !== null && activeIdx.includes(i)) ? overrideActiveVal : val;
+      const barHeight = (displayVal / maxVal) * 100;
       cell.innerHTML = `
         <div class="bar" style="height: ${barHeight}%"></div>
-        <div class="val">${val}</div>
+        <div class="val">${displayVal}</div>
       `;
       container.appendChild(cell);
     });
@@ -907,7 +910,7 @@
           insertTally.querySelector('.count').textContent = insertShifts;
           insertStatus.textContent = `${insertData[insertJ]} > ${insertKey}, geser ${insertData[insertJ]} ke kanan.`;
           insertData[insertJ + 1] = insertData[insertJ];
-          renderGrid(insertGrid, insertData, [insertJ], getRange(0, insertI).filter(idx => idx !== insertJ));
+          renderGrid(insertGrid, insertData, [insertJ], getRange(0, insertI).filter(idx => idx !== insertJ), -1, insertKey);
           insertJ--;
         } else {
           insertStatus.textContent = `Posisi tepat ditemukan. Sisipkan ${insertKey}.`;
