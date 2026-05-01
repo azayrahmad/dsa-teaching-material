@@ -3,80 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pertemuan 12 – Analisis & Perbandingan Sorting</title>
+<title>Pertemuan 12 – Analisis & Pemilihan Sorting</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../src/style.css">
 <link rel="stylesheet" href="../src/slides.css">
 <style>
-  .sort-grid {
-    display: flex;
-    gap: 8px;
-    margin: 20px 0;
-    justify-content: center;
-    align-items: flex-end;
-    height: 100px;
-  }
-  .sort-cell {
-    width: 50px;
-    height: 50px;
-    border: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    background: var(--surface);
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  .sort-cell.active {
-    border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.1);
-  }
-  .sort-cell.sorted {
-    border-color: var(--accent2);
-    background: rgba(var(--accent2-rgb), 0.1);
-  }
-
-  /* Merge Sort Tree Styles */
-  .merge-tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  .tree-level {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    width: 100%;
-  }
-  .array-block {
-    display: flex;
-    gap: 4px;
-    padding: 8px;
-    border: 1px solid var(--border);
-    background: rgba(var(--accent-rgb), 0.05);
-    border-radius: 4px;
-  }
-  .array-item {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-  .array-item.highlight {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-  }
-
+  /* Base styles already in slides.css, adding specific ones */
   .comparison-table {
     width: 100%;
     border-collapse: collapse;
@@ -89,6 +21,45 @@
   }
   .comparison-table th {
     background: rgba(var(--accent-rgb), 0.1);
+  }
+
+  /* Merge Tree Styles */
+  .merge-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .tree-level {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+  }
+  .array-block {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 4px;
+  }
+  .array-item {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  .array-item.highlight {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
   }
 
   .case-card {
@@ -136,34 +107,44 @@
 </nav>
 
 <div class="slides-wrapper" id="slidesWrapper">
-  <!-- SLIDE 1: JUDUL -->
-  <div class="slide active" id="slide-0" data-notes="Tekankan: “Kemarin kita belajar cara sorting, sekarang kita belajar memilih sorting”">
+  <!-- BAGIAN 1: PEMBUKAAN & BRIDGING -->
+
+  <!-- SLIDE 1 -->
+  <div class="slide active" id="slide-0" data-notes="“Kemarin kita belajar cara sorting. Hari ini: memilih yang tepat.” Tekankan perubahan mindset">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="slide-num">PERTEMUAN 12</div>
     <div class="section-badge"><span class="dot"></span>Sorting Lanjutan</div>
     <div class="slide-title">SORTING LANJUTAN:<br><span class="highlight">Memilih Algoritma yang Tepat</span></div>
-    <div class="subtitle">Dari “bisa sorting” → “sorting yang efisien”</div>
+    <div class="subtitle">Dari “bisa” → “efisien”</div>
   </div>
 
-  <!-- SLIDE 2: REVIEW PERTEMUAN 11 -->
-  <div class="slide" id="slide-1" data-notes="Tanyakan: “Mana yang paling mudah?”, “Mana yang paling cepat menurut kalian?”">
+  <!-- SLIDE 2 -->
+  <div class="slide" id="slide-1" data-notes="Ajak voting cepat (angkat tangan)">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Review</div>
-    <div class="slide-title">Review <span class="highlight">Pertemuan 11</span></div>
+    <div class="slide-title">Review Cepat <span class="highlight">(Interactive)</span></div>
     <div class="slide-body">
-      <p>Algoritma yang sudah dipelajari:</p>
+      <p>Algoritma sebelumnya:</p>
       <div class="kp">
-        <div class="kp-item"><span class="icon">🫧</span><span><strong>Bubble Sort</strong></span></div>
-        <div class="kp-item"><span class="icon">📍</span><span><strong>Selection Sort</strong></span></div>
-        <div class="kp-item"><span class="icon">📥</span><span><strong>Insertion Sort</strong></span></div>
+        <div class="kp-item"><span class="icon">🫧</span><span>Bubble Sort</span></div>
+        <div class="kp-item"><span class="icon">📍</span><span>Selection Sort</span></div>
+        <div class="kp-item"><span class="icon">📥</span><span>Insertion Sort</span></div>
+      </div>
+      <div class="cols" style="margin-top: 30px;">
+        <div class="col">
+          <div class="tip-box">Mana paling mudah?</div>
+        </div>
+        <div class="col">
+          <div class="tip-box" style="border-color: var(--accent2);">Mana paling cepat?</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 3: RECALL INSIGHT -->
-  <div class="slide" id="slide-2" data-notes="Ini penting sebagai jembatan ke analisis">
+  <!-- SLIDE 3 -->
+  <div class="slide" id="slide-2" data-notes="Ini jadi “baseline pembanding”">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Recall</div>
@@ -171,42 +152,44 @@
     <div class="slide-body">
       <div class="kp">
         <div class="kp-item"><span class="icon">🔄</span><span><strong>Bubble:</strong> Banyak swap.</span></div>
-        <div class="kp-item"><span class="icon">🔎</span><span><strong>Selection:</strong> Sedikit swap.</span></div>
+        <div class="kp-item"><span class="icon">🔎</span><span><strong>Selection:</strong> Minim swap.</span></div>
         <div class="kp-item"><span class="icon">🃏</span><span><strong>Insertion:</strong> Adaptif (mirip kartu).</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 4: MASALAH BARU -->
-  <div class="slide" id="slide-3" data-notes="Trigger berpikir kritis. Ini inti pertemuan 12">
+  <!-- SLIDE 4 -->
+  <div class="slide" id="slide-3" data-notes="Pause sejenak, biarkan mereka berpikir">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Problem</div>
-    <div class="slide-title">Masalah <span class="highlight">Baru</span></div>
+    <div class="slide-title">Masalah <span class="highlight">Inti</span></div>
     <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <p style="font-size: 1.5rem;">“Jika semua bisa sorting…”</p>
-      <h2 style="color: var(--accent); margin-top: 20px;">👉 Mana yang harus dipakai?</h2>
+      <p style="font-size: 1.5rem;">“Semua bisa sorting…”</p>
+      <h2 style="color: var(--accent); margin-top: 20px;">👉 Tapi mana yang harus dipakai?</h2>
     </div>
   </div>
 
-  <!-- SLIDE 5: EKSPERIMEN MANUAL -->
+  <!-- BAGIAN 2: DISCOVERY -->
+
+  <!-- SLIDE 5 -->
   <div class="slide" id="slide-4">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Discovery</div>
-    <div class="slide-title">Eksperimen <span class="highlight">Manual</span></div>
+    <div class="slide-title">Eksperimen <span class="highlight">Cepat</span></div>
     <div class="slide-body">
-      <p style="text-align: center;">Bandingkan usaha kalian saat mengurutkan:</p>
+      <p style="text-align: center;">Urutkan angka berikut di otakmu:</p>
       <div class="cols">
         <div class="col">
           <div class="tip-box">
-            <p>Kasus A (Hampir Terurut):</p>
+            <p>Kasus A:</p>
             <h3 style="color: var(--accent);">2, 3, 4, 5, 1</h3>
           </div>
         </div>
         <div class="col">
           <div class="tip-box" style="border-color: var(--accent3);">
-            <p>Kasus B (Terbalik):</p>
+            <p>Kasus B:</p>
             <h3 style="color: var(--accent3);">5, 4, 3, 2, 1</h3>
           </div>
         </div>
@@ -215,24 +198,21 @@
     </div>
   </div>
 
-  <!-- SLIDE 6: DISKUSI HASIL -->
-  <div class="slide" id="slide-5" data-notes="Arahkan ke: performa tergantung kondisi data">
+  <!-- SLIDE 6 -->
+  <div class="slide" id="slide-5" data-notes="Kaitkan ke Insertion Sort">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Diskusi</div>
     <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
     <div class="slide-body">
       <div class="kp">
-        <div class="kp-item"><span class="icon">✅</span><span><strong>Data hampir terurut:</strong> Sangat cepat (terutama Insertion).</span></div>
-        <div class="kp-item"><span class="icon">❌</span><span><strong>Data terbalik:</strong> Jauh lebih lambat (banyak langkah).</span></div>
-      </div>
-      <div class="tip-box" style="margin-top: 40px; text-align: center;">
-        Kesimpulan: Performa tergantung pada <strong>kondisi data</strong> awal.
+        <div class="kp-item"><span class="icon">✅</span><span><strong>Hampir terurut:</strong> Cepat.</span></div>
+        <div class="kp-item"><span class="icon">❌</span><span><strong>Terbalik:</strong> Lambat.</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 7: INSIGHT PENTING -->
+  <!-- SLIDE 7 -->
   <div class="slide" id="slide-6">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
@@ -240,57 +220,41 @@
     <div class="slide-title">Insight <span class="highlight">Penting</span></div>
     <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
       <div class="quote" style="font-size: 2.5rem; text-align: center;">
-        👉 Tidak ada algoritma terbaik untuk semua kasus
+        👉 Performa tergantung kondisi data
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 8: APA YANG DIUKUR? -->
+  <!-- BAGIAN 3: KONSEP EFISIENSI -->
+
+  <!-- SLIDE 8 -->
   <div class="slide" id="slide-7">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Efisiensi</div>
-    <div class="slide-title">Apa yang <span class="highlight">Diukur?</span></div>
+    <div class="slide-title">Apa yang <span class="highlight">Kita Ukur?</span></div>
     <div class="slide-body">
       <div class="kp">
-        <div class="kp-item"><span class="icon">⚖️</span><span><strong>Jumlah Perbandingan:</strong> Berapa kali kita membandingkan dua angka?</span></div>
-        <div class="kp-item"><span class="icon">🔄</span><span><strong>Jumlah Pergeseran/Swap:</strong> Berapa kali kita memindahkan data?</span></div>
-        <div class="kp-item"><span class="icon">⏱️</span><span><strong>Waktu Eksekusi:</strong> Berapa lama program berjalan (milidetik/detik)?</span></div>
+        <div class="kp-item"><span class="icon">🔎</span><span>Perbandingan</span></div>
+        <div class="kp-item"><span class="icon">🔄</span><span>Perpindahan (swap/geser)</span></div>
+        <div class="kp-item"><span class="icon">⏱️</span><span>Waktu eksekusi</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 9: ILUSTRASI SEDERHANA -->
-  <div class="slide" id="slide-8" data-notes="Gunakan analogi: Tukar buku vs geser buku di rak">
+  <!-- SLIDE 9 -->
+  <div class="slide" id="slide-8" data-notes="Buat analogi rak buku">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Analogi</div>
-    <div class="slide-title">Ilustrasi <span class="highlight">Sederhana</span></div>
-    <div class="slide-body">
-      <div class="cols">
-        <div class="col">
-          <div class="tip-box">
-            <strong>Bubble Sort</strong><br>
-            Banyak "tukar tetangga".
-          </div>
-        </div>
-        <div class="col">
-          <div class="tip-box" style="border-color: var(--accent2);">
-            <strong>Selection Sort</strong><br>
-            Cari yang paling kecil, lalu tukar sekali.
-          </div>
-        </div>
-        <div class="col">
-          <div class="tip-box" style="border-color: var(--accent3);">
-            <strong>Insertion Sort</strong><br>
-            Geser-geser buku untuk menyelipkan satu buku baru.
-          </div>
-        </div>
-      </div>
+    <div class="slide-title">Analogi <span class="highlight">Nyata</span></div>
+    <div class="slide-body" style="text-align: center;">
+      <h2 style="margin-top: 50px;">Tukar buku vs geser buku</h2>
+      <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent);">Mana lebih mahal?</p>
     </div>
   </div>
 
-  <!-- SLIDE 10: PERBANDINGAN INTUITIF -->
+  <!-- SLIDE 10 -->
   <div class="slide" id="slide-9">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
@@ -301,107 +265,92 @@
         <thead>
           <tr>
             <th>Algoritma</th>
-            <th>Kuat di</th>
-            <th>Lemah di</th>
+            <th>Kuat</th>
+            <th>Lemah</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>Bubble</strong></td>
-            <td>Sederhana, mudah dibuat</td>
-            <td>Data besar (sangat lambat)</td>
+            <td>Mudah</td>
+            <td>Lambat</td>
           </tr>
           <tr>
             <td><strong>Selection</strong></td>
-            <td>Swap minimal (efisien jika swap mahal)</td>
-            <td>Tetap lambat untuk data besar</td>
+            <td>Swap sedikit</td>
+            <td>Tetap lambat</td>
           </tr>
           <tr>
             <td><strong>Insertion</strong></td>
-            <td>Data hampir terurut</td>
-            <td>Data acak besar</td>
+            <td>Adaptif</td>
+            <td>Buruk di acak besar</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- SLIDE 11: MASALAH SKALA BESAR -->
-  <div class="slide" id="slide-10">
+  <!-- BAGIAN 4: KEBUTUHAN LEBIH CEPAT -->
+
+  <!-- SLIDE 11 -->
+  <div class="slide" id="slide-10" data-notes="Tekankan lonjakan skala">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Skalabilitas</div>
-    <div class="slide-title">Masalah <span class="highlight">Skala Besar</span></div>
-    <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <p style="font-size: 1.8rem;">“Bagaimana jika datanya berjumlah 1 Juta?”</p>
-      <div class="tip-box" style="margin-top: 30px; border-color: var(--accent4);">
-        Algoritma dasar (Bubble/Selection/Insertion) butuh waktu <strong>tahunan</strong> untuk mengurutkan 1 miliar data!
+    <div class="section-badge"><span class="dot"></span>Scaling</div>
+    <div class="slide-title">Scaling <span class="highlight">Problem</span></div>
+    <div class="slide-body">
+      <pre style="text-align: center; font-size: 2rem; margin-top: 50px;">
+n = 10 → OK
+n = 1.000.000 → ?
+      </pre>
+    </div>
+  </div>
+
+  <!-- SLIDE 12 -->
+  <div class="slide" id="slide-11">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Insight</div>
+    <div class="slide-title">Insight <span class="highlight">Penting</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 2.5rem; text-align: center;">
+        👉 Bandingkan satu-satu tidak cukup
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 12: IDE BARU -->
-  <div class="slide" id="slide-11">
+  <!-- SLIDE 13 -->
+  <div class="slide" id="slide-12">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Ide</div>
     <div class="slide-title">Ide <span class="highlight">Baru</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🚫</span><span>Jangan bandingkan satu-satu dari awal ke akhir terus menerus.</span></div>
-        <div class="kp-item"><span class="icon">✂️</span><span><strong>Pecah masalahnya!</strong></span></div>
-      </div>
-      <p style="text-align: center; margin-top: 40px; font-size: 1.2rem;">Lebih mudah mengurutkan 2 data daripada 100 data, bukan?</p>
-    </div>
-  </div>
-
-  <!-- SLIDE 13: KONSEP DIVIDE & CONQUER -->
-  <div class="slide" id="slide-12">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Strategi</div>
-    <div class="slide-title">Divide &amp; <span class="highlight">Conquer</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">1️⃣</span><span><strong>Divide (Bagi):</strong> Pecah data menjadi bagian kecil.</span></div>
-        <div class="kp-item"><span class="icon">2️⃣</span><span><strong>Conquer (Urutkan):</strong> Urutkan bagian terkecil tersebut.</span></div>
-        <div class="kp-item"><span class="icon">3️⃣</span><span><strong>Combine (Gabung):</strong> Gabungkan kembali menjadi satu kesatuan yang utuh.</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 2.5rem; text-align: center;">
+        👉 Pecah masalah (Divide &amp; Conquer)
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 14: MERGE SORT (KONSEP) -->
+  <!-- BAGIAN 5: MERGE SORT -->
+
+  <!-- SLIDE 14 -->
   <div class="slide" id="slide-13">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Merge Sort</div>
     <div class="slide-title">Konsep <span class="highlight">Merge Sort</span></div>
     <div class="slide-body">
-      <div class="cols">
-        <div class="col">
-          <div class="kp">
-            <div class="kp-item"><span class="icon">↔️</span><span>Bagi array menjadi dua bagian terus menerus sampai tersisa 1 elemen.</span></div>
-            <div class="kp-item"><span class="icon">📈</span><span>Urutkan saat proses penggabungan.</span></div>
-            <div class="kp-item"><span class="icon">⚡</span><span>Sangat efisien untuk data masif.</span></div>
-          </div>
-        </div>
-        <div class="col">
-          <pre style="font-size: 0.7rem;"><code class="language-cpp">// Snippet Ide Merge
-void mergeSort(int arr[], int l, int r) {
-  if (l &lt; r) {
-    int m = l + (r - l) / 2;
-    mergeSort(arr, l, m);
-    mergeSort(arr, m + 1, r);
-    merge(arr, l, m, r);
-  }
-}</code></pre>
-        </div>
+      <div class="kp">
+        <div class="kp-item"><span class="icon">↔️</span><span>Bagi data jadi dua</span></div>
+        <div class="kp-item"><span class="icon">📈</span><span>Urutkan masing-masing</span></div>
+        <div class="kp-item"><span class="icon">🤝</span><span>Gabungkan</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 15: VISUALISASI MERGE SORT -->
-  <div class="slide" id="slide-14" data-notes="Fokus ke ide, bukan detail kode">
+  <!-- SLIDE 15 -->
+  <div class="slide" id="slide-14" data-notes="Jangan buru-buru. Ini momen “aha”">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
@@ -417,22 +366,106 @@ void mergeSort(int arr[], int l, int r) {
     </div>
   </div>
 
-  <!-- SLIDE 16: INSIGHT MERGE SORT -->
+  <!-- SLIDE 16 -->
   <div class="slide" id="slide-15">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Insight</div>
-    <div class="slide-title">Insight <span class="highlight">Merge Sort</span></div>
+    <div class="section-badge"><span class="dot"></span>Analisis</div>
+    <div class="slide-title">Kenapa <span class="highlight">Cepat?</span></div>
     <div class="slide-body">
       <div class="kp">
-        <div class="kp-item"><span class="icon">🚀</span><span><strong>Keunggulan:</strong> Jauh lebih cepat untuk data besar dibanding Bubble/Selection.</span></div>
-        <div class="kp-item"><span class="icon">📦</span><span><strong>Kelemahan:</strong> Membutuhkan memori tambahan untuk menyimpan bagian yang dipecah.</span></div>
+        <div class="kp-item"><span class="icon">🚫</span><span>Tidak bandingkan semua pasangan.</span></div>
+        <div class="kp-item"><span class="icon">📦</span><span>Bekerja dalam bagian kecil.</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 17: SEMUA ALGORITMA -->
+  <!-- SLIDE 17 -->
   <div class="slide" id="slide-16">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Analisis</div>
+    <div class="slide-title">Trade-off <span class="highlight">Merge Sort</span></div>
+    <div class="slide-body">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Kelebihan</th>
+            <th>Kekurangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cepat untuk data besar</td>
+            <td>Butuh memori tambahan</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 18 -->
+  <div class="slide" id="slide-17">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Aplikasi</div>
+    <div class="slide-title">Kapan <span class="highlight">Dipakai?</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🏢</span><span>Data besar.</span></div>
+        <div class="kp-item"><span class="icon">⚖️</span><span>Sorting Stabil.</span></div>
+        <div class="kp-item"><span class="icon">💾</span><span>Tidak masalah tambahan memori.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAGIAN 6: SHELL SORT (INSIGHT) -->
+
+  <!-- SLIDE 19 -->
+  <div class="slide" id="slide-18">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+    <div class="slide-title">Ide <span class="highlight">Shell Sort</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 2.2rem; text-align: center;">
+        “Bagaimana kalau insertion… tapi lompat jauh dulu?”
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 20 -->
+  <div class="slide" id="slide-19">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+    <div class="slide-title">Intuisi <span class="highlight">Shell Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🏃</span><span>Bandingkan elemen berjauhan.</span></div>
+        <div class="kp-item"><span class="icon">🤏</span><span>Lalu dipersempit secara bertahap.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21 -->
+  <div class="slide" id="slide-20" data-notes="Jangan masuk gap sequence detail">
+    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+    <div class="slide-title">Posisi <span class="highlight">Shell Sort</span></div>
+    <div class="slide-body">
+      <div class="kp">
+        <div class="kp-item"><span class="icon">🚀</span><span>Lebih cepat dari Insertion.</span></div>
+        <div class="kp-item"><span class="icon">👌</span><span>Lebih sederhana dari Merge.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAGIAN 7: PERBANDINGAN BESAR -->
+
+  <!-- SLIDE 22 -->
+  <div class="slide" id="slide-21">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Ringkasan</div>
@@ -442,229 +475,168 @@ void mergeSort(int arr[], int l, int r) {
         <thead>
           <tr>
             <th>Algoritma</th>
-            <th>Karakter Utama</th>
+            <th>Tipe</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Bubble</strong></td>
-            <td>Sederhana & Lambat</td>
-          </tr>
-          <tr>
-            <td><strong>Selection</strong></td>
-            <td>Minim Swap</td>
-          </tr>
-          <tr>
-            <td><strong>Insertion</strong></td>
-            <td>Adaptif (Hebat di data hampir urut)</td>
-          </tr>
-          <tr>
-            <td><strong>Merge</strong></td>
-            <td>Scalable (Cepat di data besar)</td>
-          </tr>
+          <tr><td>Bubble</td><td>sederhana</td></tr>
+          <tr><td>Selection</td><td>sederhana</td></tr>
+          <tr><td>Insertion</td><td>adaptif</td></tr>
+          <tr><td>Shell</td><td>optimasi</td></tr>
+          <tr><td>Merge</td><td>scalable</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- SLIDE 18: STUDI KASUS 1 -->
-  <div class="slide" id="slide-17" data-notes="Jawaban: Insertion / Bubble">
+  <!-- SLIDE 23 -->
+  <div class="slide" id="slide-22">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Studi Kasus 1</div>
-    <div class="slide-title">Studi Kasus: <span class="highlight">Data Kecil</span></div>
-    <div class="slide-body">
-      <p style="text-align: center; font-size: 1.2rem;">Data cuma 15 angka (n < 20).</p>
-      <h3 style="text-align: center; margin-top: 30px;">Algoritma mana yang kamu pilih?</h3>
-      <div class="cols" style="margin-top: 40px;">
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Bubble Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Insertion Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Merge Sort</div></div>
-      </div>
-      <p style="text-align: center; margin-top: 30px; color: var(--text-muted);">Klik pilihanmu untuk diskusi!</p>
+    <div class="slide-title">Kasus: <span class="highlight">Data Kecil</span></div>
+    <div class="slide-body" style="text-align: center;">
+      <p style="font-size: 1.5rem; margin-top: 50px;">Data kecil (n &lt; 20)</p>
+      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Insertion</h3>
     </div>
   </div>
 
-  <!-- SLIDE 19: STUDI KASUS 2 -->
-  <div class="slide" id="slide-18" data-notes="Jawaban: Insertion Sort">
+  <!-- SLIDE 24 -->
+  <div class="slide" id="slide-23">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Studi Kasus 2</div>
-    <div class="slide-title">Studi Kasus: <span class="highlight">Hampir Terurut</span></div>
-    <div class="slide-body">
-      <p style="text-align: center; font-size: 1.2rem;">Data sudah 90% terurut, hanya 1-2 yang salah posisi.</p>
-      <h3 style="text-align: center; margin-top: 30px;">Mana yang paling efisien?</h3>
-      <div class="cols" style="margin-top: 40px;">
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Selection Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Insertion Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Merge Sort</div></div>
-      </div>
+    <div class="slide-title">Kasus: <span class="highlight">Hampir Terurut</span></div>
+    <div class="slide-body" style="text-align: center;">
+      <p style="font-size: 1.5rem; margin-top: 50px;">Data sudah 90% terurut</p>
+      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Insertion</h3>
     </div>
   </div>
 
-  <!-- SLIDE 20: STUDI KASUS 3 -->
-  <div class="slide" id="slide-19" data-notes="Jawaban: Merge Sort">
+  <!-- SLIDE 25 -->
+  <div class="slide" id="slide-24">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Studi Kasus 3</div>
-    <div class="slide-title">Studi Kasus: <span class="highlight">Data Sangat Besar</span></div>
-    <div class="slide-body">
-      <p style="text-align: center; font-size: 1.2rem;">Data 100.000 mahasiswa se-Provinsi.</p>
-      <h3 style="text-align: center; margin-top: 30px;">Pilihan terbaik?</h3>
-      <div class="cols" style="margin-top: 40px;">
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Bubble Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Selection Sort</div></div>
-        <div class="col"><div class="case-card" onclick="this.classList.toggle('selected')">Merge Sort</div></div>
-      </div>
+    <div class="slide-title">Kasus: <span class="highlight">Data Besar</span></div>
+    <div class="slide-body" style="text-align: center;">
+      <p style="font-size: 1.5rem; margin-top: 50px;">Data 1 Juta elemen</p>
+      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Merge</h3>
     </div>
   </div>
 
-  <!-- SLIDE 21: INSTRUKSI PRAKTIKUM -->
-  <div class="slide" id="slide-20">
+  <!-- BAGIAN 8: PRAKTIKUM -->
+
+  <!-- SLIDE 26 -->
+  <div class="slide" id="slide-25">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Praktikum</div>
     <div class="slide-title">Instruksi <span class="highlight">Praktikum</span></div>
     <div class="slide-body">
-      <p>Buka IDE kalian dan implementasikan / siapkan fungsi:</p>
+      <p>Implementasikan:</p>
       <div class="kp">
-        <div class="kp-item"><span class="icon">🫧</span><span>Bubble Sort</span></div>
-        <div class="kp-item"><span class="icon">📥</span><span>Insertion Sort</span></div>
-        <div class="kp-item"><span class="icon">↔️</span><span>Merge Sort (Gunakan template)</span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Bubble Sort</span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Insertion Sort</span></div>
+        <div class="kp-item"><span class="icon">💻</span><span>Merge Sort</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 22: EKSPERIMEN -->
-  <div class="slide" id="slide-21">
+  <!-- SLIDE 27 -->
+  <div class="slide" id="slide-26">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Eksperimen</div>
-    <div class="slide-title">Jalankan <span class="highlight">Eksperimen</span></div>
+    <div class="slide-title">Uji <span class="highlight">Data</span></div>
     <div class="slide-body">
-      <p>Uji ketiga algoritma tersebut dengan kondisi:</p>
+      <p>Coba dengan:</p>
       <div class="kp">
-        <div class="kp-item"><span class="icon">🤏</span><span><strong>Data Kecil:</strong> 10 elemen.</span></div>
-        <div class="kp-item"><span class="icon">🏢</span><span><strong>Data Besar:</strong> 10.000 elemen (gunakan loop untuk generate).</span></div>
-        <div class="kp-item"><span class="icon">📏</span><span><strong>Data Hampir Terurut:</strong> 10.000 elemen yang sudah urut tapi diacak sedikit.</span></div>
+        <div class="kp-item"><span class="icon">🤏</span><span>Data kecil</span></div>
+        <div class="kp-item"><span class="icon">🏢</span><span>Data besar (10.000+)</span></div>
+        <div class="kp-item"><span class="icon">📏</span><span>Hampir terurut</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 23: PENGUKURAN WAKTU -->
-  <div class="slide" id="slide-22">
+  <!-- SLIDE 28 -->
+  <div class="slide" id="slide-27">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Timer</div>
-    <div class="slide-title">Pengukuran <span class="highlight">Waktu</span></div>
+    <div class="slide-title">Ukur <span class="highlight">Waktu</span></div>
     <div class="slide-body">
-      <p>Gunakan pustaka <code>&lt;chrono&gt;</code> di C++ untuk mengukur:</p>
-      <pre><code class="language-cpp">auto start = chrono::high_resolution_clock::now();
-// panggil fungsi sorting di sini
-auto end = chrono::high_resolution_clock::now();
-chrono::duration&lt;double, milli&gt; diff = end - start;
-cout &lt;&lt; "Waktu: " &lt;&lt; diff.count() &lt;&lt; " ms" &lt;&lt; endl;</code></pre>
+      <p>Gunakan library <code>&lt;chrono&gt;</code> di C++:</p>
+      <pre style="font-size: 0.8rem;"><code class="language-cpp">auto s = chrono::high_resolution_clock::now();
+// sorting...
+auto e = chrono::high_resolution_clock::now();
+cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
     </div>
   </div>
 
-  <!-- SLIDE 24: TABEL HASIL / CHART -->
-  <div class="slide" id="slide-23">
+  <!-- SLIDE 29 -->
+  <div class="slide" id="slide-28">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Analisis</div>
-    <div class="slide-title">Perbandingan <span class="highlight">Performa</span></div>
+    <div class="section-badge"><span class="dot"></span>Diskusi</div>
+    <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
     <div class="slide-body">
       <div class="chart-container">
         <canvas id="sortComparisonChart"></canvas>
       </div>
-      <p style="text-align: center; margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">
-        Visualisasi perbandingan langkah (N vs Waktu/Langkah)
-      </p>
     </div>
   </div>
 
-  <!-- SLIDE 25: ANALISIS -->
-  <div class="slide" id="slide-24">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Diskusi</div>
-    <div class="slide-title">Mari <span class="highlight">Analisis</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">❓</span><span>Siapa yang paling cepat di data 10.000?</span></div>
-        <div class="kp-item"><span class="icon">❓</span><span>Kenapa Merge Sort jauh mengungguli Bubble Sort?</span></div>
-        <div class="kp-item"><span class="icon">❓</span><span>Adakah kasus di mana Bubble Sort "menang"?</span></div>
-      </div>
-    </div>
-  </div>
+  <!-- BAGIAN 9: PENUTUP -->
 
-  <!-- SLIDE 26: INSIGHT UTAMA -->
-  <div class="slide" id="slide-25">
+  <!-- SLIDE 30 -->
+  <div class="slide" id="slide-29">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Insight</div>
     <div class="slide-title">Insight <span class="highlight">Utama</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🌟</span><span>Tidak ada satu pun algoritma yang "terbaik" selamanya.</span></div>
-        <div class="kp-item"><span class="icon">📍</span><span>Semua tergantung pada konteks data dan keterbatasan memori.</span></div>
-        <div class="kp-item"><span class="icon">🧠</span><span>Efisiensi adalah inti dari keputusan desain seorang engineer.</span></div>
+    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+      <div class="quote" style="font-size: 2.2rem; text-align: center;">
+        👉 Tidak ada algoritma terbaik.<br>Yang ada: algoritma yang tepat.
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 27: KONEKSI KE DUNIA NYATA -->
-  <div class="slide" id="slide-26">
+  <!-- SLIDE 31 -->
+  <div class="slide" id="slide-30">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Dunia Nyata</div>
-    <div class="slide-title">Koneksi ke <span class="highlight">Dunia Nyata</span></div>
+    <div class="section-badge"><span class="dot"></span>Aplikasi</div>
+    <div class="slide-title">Dunia <span class="highlight">Nyata</span></div>
     <div class="slide-body">
       <div class="kp">
-        <div class="kp-item"><span class="icon">🗄️</span><span><strong>Database:</strong> Mengurutkan jutaan data transaksi.</span></div>
-        <div class="kp-item"><span class="icon">🏆</span><span><strong>Sistem Ranking:</strong> Leaderboard game secara real-time.</span></div>
-        <div class="kp-item"><span class="icon">🛒</span><span><strong>E-Commerce:</strong> Filter harga termurah/termahal.</span></div>
+        <div class="kp-item"><span class="icon">📦</span><span>Library <code>sort()</code></span></div>
+        <div class="kp-item"><span class="icon">🗄️</span><span>Database Indexing</span></div>
+        <div class="kp-item"><span class="icon">🏆</span><span>Ranking System</span></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 28: REFLEKSI MAHASISWA -->
-  <div class="slide" id="slide-27">
+  <!-- SLIDE 32 -->
+  <div class="slide" id="slide-31">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Refleksi</div>
-    <div class="slide-title">Waktunya <span class="highlight">Berpikir</span></div>
+    <div class="slide-title">Waktunya <span class="highlight">Refleksi</span></div>
     <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <p style="font-size: 1.5rem;">“Algoritma mana yang jadi favoritmu sekarang?”</p>
-      <p style="font-size: 1.2rem; margin-top: 20px; color: var(--accent2);">Kapan kamu akan menggunakannya di proyek masa depan?</p>
+      <p style="font-size: 1.5rem;">Pilihan kalian?</p>
+      <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent);">Kenapa?</p>
     </div>
   </div>
 
-  <!-- SLIDE 29: RINGKASAN -->
-  <div class="slide" id="slide-28">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Ringkasan</div>
-    <div class="slide-title">💡 <span class="highlight">Kesimpulan</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">✅</span><span>Sorting bukan sekadar menghafal kode.</span></div>
-        <div class="kp-item"><span class="icon">✅</span><span>Memilih algoritma yang tepat menghemat waktu dan biaya.</span></div>
-        <div class="kp-item"><span class="icon">✅</span><span>Divide & Conquer adalah kunci kecepatan untuk data besar.</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 30: PREVIEW PERTEMUAN 13 -->
-  <div class="slide" id="slide-29">
+  <!-- SLIDE 33 -->
+  <div class="slide" id="slide-32">
     <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Next</div>
-    <div class="slide-title">Preview <span class="highlight">Pertemuan 13</span></div>
+    <div class="slide-title">Preview <span class="highlight">Berikutnya</span></div>
     <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h2 style="color: var(--accent);">STACK (Tumpukan)</h2>
-      <p style="font-size: 1.3rem; margin-top: 20px;">Struktur data berbasis operasi LIFO (Last-In, First-Out).</p>
-      <p style="margin-top: 10px; color: var(--text-muted);">Bagaimana tombol "Undo" dan "Back" bekerja?</p>
+      <h2 style="color: var(--accent);">👉 Stack (LIFO)</h2>
     </div>
   </div>
 </div>
@@ -673,7 +645,7 @@ cout &lt;&lt; "Waktu: " &lt;&lt; diff.count() &lt;&lt; " ms" &lt;&lt; endl;</cod
 <div class="nav-slides-container">
   <div class="nav-slides">
     <button class="nav-btn" id="prevBtn">←</button>
-    <span class="nav-counter" id="counter">1 / 30</span>
+    <span class="nav-counter" id="counter">1 / 33</span>
     <button class="nav-btn" id="nextBtn">→</button>
   </div>
 </div>
@@ -696,44 +668,35 @@ cout &lt;&lt; "Waktu: " &lt;&lt; diff.count() &lt;&lt; " ms" &lt;&lt; endl;</cod
 
   function renderMergeTree(step) {
     mergeTreeContainer.innerHTML = '';
-
-    // Level 0: Original
     const l0 = document.createElement('div');
     l0.className = 'tree-level';
     l0.innerHTML = renderBlock(initialArray);
     mergeTreeContainer.appendChild(l0);
 
     if (step >= 1) {
-      // Level 1: Split
       const l1 = document.createElement('div');
       l1.className = 'tree-level';
       l1.innerHTML = renderBlock([38, 27, 43, 3]) + renderBlock([9, 82, 10]);
       mergeTreeContainer.appendChild(l1);
     }
-
     if (step >= 2) {
-      // Level 2: Split more
       const l2 = document.createElement('div');
       l2.className = 'tree-level';
       l2.innerHTML = renderBlock([38, 27]) + renderBlock([43, 3]) + renderBlock([9, 82]) + renderBlock([10]);
       mergeTreeContainer.appendChild(l2);
     }
-
     if (step >= 3) {
-      // Level 3: Individual elements
       const l3 = document.createElement('div');
       l3.className = 'tree-level';
       l3.innerHTML = initialArray.map(n => renderBlock([n])).join('');
       mergeTreeContainer.appendChild(l3);
     }
-
     if (step >= 4) {
-        // Level 4: Sorted Merge (showing the end result of merge for simplicity in visualization)
-        const l4 = document.createElement('div');
-        l4.className = 'tree-level';
-        const sorted = [...initialArray].sort((a,b) => a-b);
-        l4.innerHTML = renderBlock(sorted, true);
-        mergeTreeContainer.appendChild(l4);
+      const l4 = document.createElement('div');
+      l4.className = 'tree-level';
+      const sorted = [...initialArray].sort((a,b) => a-b);
+      l4.innerHTML = renderBlock(sorted, true);
+      mergeTreeContainer.appendChild(l4);
     }
   }
 
@@ -743,29 +706,21 @@ cout &lt;&lt; "Waktu: " &lt;&lt; diff.count() &lt;&lt; " ms" &lt;&lt; endl;</cod
     </div>`;
   }
 
-  btnMergeStep.onclick = () => {
-    if (mergeStep < 4) {
-      mergeStep++;
-      renderMergeTree(mergeStep);
-    }
-  };
+  if (btnMergeStep) {
+    btnMergeStep.onclick = () => { if (mergeStep < 4) { mergeStep++; renderMergeTree(mergeStep); } };
+    btnMergeReset.onclick = () => { mergeStep = 0; renderMergeTree(mergeStep); };
+  }
 
-  btnMergeReset.onclick = () => {
-    mergeStep = 0;
-    renderMergeTree(mergeStep);
-  };
-
-  // --- SORT COMPARISON CHART ---
+  // --- CHART ---
   let sortChart = null;
   function initSortChart() {
     const ctx = document.getElementById('sortComparisonChart');
     if (!ctx) return;
-
     if (sortChart) sortChart.destroy();
 
     const labels = [10, 50, 100, 200, 500, 1000];
-    const bubble = labels.map(n => n * n);
-    const merge = labels.map(n => n * Math.log2(n));
+    const n2 = labels.map(n => n * n);
+    const nlogn = labels.map(n => n * Math.log2(n));
 
     const style = getComputedStyle(document.documentElement);
     const accent = style.getPropertyValue('--accent').trim() || '#f0c040';
@@ -777,63 +732,33 @@ cout &lt;&lt; "Waktu: " &lt;&lt; diff.count() &lt;&lt; " ms" &lt;&lt; endl;</cod
       data: {
         labels: labels,
         datasets: [
-          {
-            label: 'Bubble/Selection/Insertion (N²)',
-            data: bubble,
-            borderColor: accent,
-            backgroundColor: accent + '22',
-            tension: 0.3
-          },
-          {
-            label: 'Merge Sort (N log N)',
-            data: merge,
-            borderColor: accent2,
-            backgroundColor: accent2 + '22',
-            tension: 0.3
-          }
+          { label: 'Bubble/Insertion (N²)', data: n2, borderColor: accent, backgroundColor: accent + '22', tension: 0.3 },
+          { label: 'Merge Sort (N log N)', data: nlogn, borderColor: accent2, backgroundColor: accent2 + '22', tension: 0.3 }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: {
-            title: { display: true, text: 'Ukuran Data (N)', color: textColor },
-            ticks: { color: textColor }
-          },
-          y: {
-            title: { display: true, text: 'Langkah / Usaha', color: textColor },
-            ticks: { color: textColor },
-            type: 'logarithmic'
-          }
+          x: { title: { display: true, text: 'Ukuran Data (N)', color: textColor }, ticks: { color: textColor } },
+          y: { title: { display: true, text: 'Langkah', color: textColor }, ticks: { color: textColor }, type: 'logarithmic' }
         },
-        plugins: {
-          legend: { labels: { color: textColor } }
-        }
+        plugins: { legend: { labels: { color: textColor } } }
       }
     });
   }
 
-  // Observer to trigger animations
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.target.classList.contains('active')) {
-        if (mutation.target.id === 'slide-14') {
-            mergeStep = 0;
-            renderMergeTree(0);
-        }
-        if (mutation.target.id === 'slide-23') {
-            setTimeout(initSortChart, 100);
-        }
+        if (mutation.target.id === 'slide-14') { mergeStep = 0; renderMergeTree(0); }
+        if (mutation.target.id === 'slide-28') { setTimeout(initSortChart, 100); }
       }
     });
   });
 
-  document.querySelectorAll('.slide').forEach(s => {
-    observer.observe(s, { attributes: true, attributeFilter: ['class'] });
-  });
+  document.querySelectorAll('.slide').forEach(s => observer.observe(s, { attributes: true, attributeFilter: ['class'] }));
 
-  // Initial render
   renderMergeTree(0);
 </script>
 </body>
