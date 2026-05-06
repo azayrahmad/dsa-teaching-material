@@ -740,7 +740,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
     let levels = [];
     function buildTree(arr, level) {
       if (!levels[level]) levels[level] = [];
-      let node = { data: [...arr], sortedData: [], children: [], status: (level === 0 ? 'normal' : 'hidden') };
+      let node = { data: [...arr], sortedData: [], exhaustedIdxs: [], children: [], status: (level === 0 ? 'normal' : 'hidden') };
       levels[level].push(node);
 
       if (arr.length > 1) {
@@ -785,9 +785,11 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         recordStep(levels, `Bandingkan ${sLeft[i]} dan ${sRight[j]}.`, {compare: [ {node: left, idx: i}, {node: right, idx: j} ]});
         if (sLeft[i] <= sRight[j]) {
           node.sortedData.push(sLeft[i]);
+          left.exhaustedIdxs.push(i);
           i++;
         } else {
           node.sortedData.push(sRight[j]);
+          right.exhaustedIdxs.push(j);
           j++;
         }
         moveCount++;
@@ -796,12 +798,14 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
 
       while (i < sLeft.length) {
         node.sortedData.push(sLeft[i]);
+        left.exhaustedIdxs.push(i);
         i++;
         moveCount++;
         recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
       }
       while (j < sRight.length) {
         node.sortedData.push(sRight[j]);
+        right.exhaustedIdxs.push(j);
         j++;
         moveCount++;
         recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
@@ -822,6 +826,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
       let copy = lvls.map(l => l.map(n => ({
         data: [...n.data],
         sortedData: [...n.sortedData],
+        exhaustedIdxs: [...n.exhaustedIdxs],
         status: n.status,
         id: n // keep ref for comparison
       })));
@@ -883,7 +888,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
           itemDiv.textContent = node.status === 'hidden' ? '?' : val;
 
           if (node.status === 'sorted') itemDiv.classList.add('highlight');
-          if (node.status === 'exhausted') itemDiv.classList.add('exhausted');
+          if (node.status === 'exhausted' || node.exhaustedIdxs.includes(vIdx)) itemDiv.classList.add('exhausted');
 
           // Apply highlights
           if (state.highlights.compare) {
