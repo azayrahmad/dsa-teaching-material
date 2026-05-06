@@ -61,6 +61,10 @@
     color: var(--bg);
     border-color: var(--accent);
   }
+  .array-item.exhausted {
+    text-decoration: line-through;
+    opacity: 0.3;
+  }
 
   .case-card {
     background: var(--surface);
@@ -155,7 +159,8 @@
     75% { transform: translateY(-60px) translateX(5px); }
     100% { transform: translateY(-60px) translateX(0); }
   }
-  .shell-status-box {
+  .shell-status-box,
+  .status-box {
     margin-top: 20px;
     padding: 15px;
     border-radius: 8px;
@@ -165,11 +170,19 @@
     text-align: center;
     font-family: 'JetBrains Mono', monospace;
   }
-  .shell-controls-row {
+  .shell-controls-row,
+  .controls-row {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 30px;
+  }
+  .tally-box {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .merge-tree {
+    min-height: 300px;
+    justify-content: center;
   }
 </style>
 </head>
@@ -438,12 +451,21 @@ n = 1.000.000 → ?
     <div class="corner corner-bl"></div><div class="corner corner-br"></div>
     <div class="section-badge"><span class="dot"></span>Visualisasi</div>
     <div class="slide-title">Visualisasi <span class="highlight">Merge Sort</span></div>
-    <div class="slide-body">
+    <div class="slide-body" style="max-width: 1000px;">
+      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+        Jumlah Data (3-10): <input type="number" id="merge-n" min="3" max="10" value="7" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+      </div>
       <div class="merge-tree" id="merge-tree-container">
         <!-- Rendered by JS -->
       </div>
-      <div style="text-align: center; margin-top: 20px;">
-        <button class="btn btn-primary" id="btn-merge-step">Langkah Berikutnya</button>
+      <div id="merge-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); margin-top: 10px; display: flex; justify-content: center; gap: 20px;">
+        <div>Perbandingan: <span class="compare-count">0</span></div>
+        <div>Perpindahan: <span class="move-count">0</span></div>
+      </div>
+      <div class="status-box" id="merge-status">Klik Mulai untuk simulasi.</div>
+      <div class="controls-row">
+        <button class="btn btn-primary" id="btn-merge-start">Mulai</button>
+        <button class="btn btn-outline" id="btn-merge-step" style="display:none">Langkah Lanjut (Next)</button>
         <button class="btn btn-outline" id="btn-merge-reset">Reset</button>
       </div>
     </div>
@@ -762,58 +784,246 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
   initApp();
   initSlides();
 
-  // --- MERGE SORT TREE VISUALIZATION ---
+  // --- MERGE SORT DYNAMIC VISUALIZATION ---
   const mergeTreeContainer = document.getElementById('merge-tree-container');
+  const mergeStatus = document.getElementById('merge-status');
+  const mergeTally = document.getElementById('merge-tally');
+  const mergeNInput = document.getElementById('merge-n');
+  const btnMergeStart = document.getElementById('btn-merge-start');
   const btnMergeStep = document.getElementById('btn-merge-step');
   const btnMergeReset = document.getElementById('btn-merge-reset');
 
-  const initialArray = [38, 27, 43, 3, 9, 82, 10];
-  let mergeStep = 0;
+  let mergeData = [];
+  let mergeSteps = [];
+  let currentMergeStepIdx = 0;
+  let compareCount = 0;
+  let moveCount = 0;
 
-  function renderMergeTree(step) {
+  function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  function initMerge() {
+    let n = parseInt(mergeNInput.value) || 7;
+    if (n < 3) n = 3;
+    if (n > 10) n = 10;
+    mergeNInput.value = n;
+    mergeData = Array.from({length: n}, () => getRandomInt(10, 99));
+
+    currentMergeStepIdx = 0;
+    compareCount = 0;
+    moveCount = 0;
+    mergeSteps = [];
+
+    generateMergeSteps(mergeData);
+
+    renderMergeState(0);
+
+    mergeStatus.textContent = "Data acak siap. Klik Mulai.";
+    mergeTally.style.visibility = 'hidden';
+    btnMergeStart.style.display = 'inline-block';
+    btnMergeStep.style.display = 'none';
+    mergeNInput.disabled = false;
+  }
+
+  function generateMergeSteps(data) {
+    // We want a structure that represents the levels of the tree
+    let levels = [];
+    function buildTree(arr, level) {
+      if (!levels[level]) levels[level] = [];
+      let node = { data: [...arr], sortedData: [], exhaustedIdxs: [], children: [], status: (level === 0 ? 'normal' : 'hidden') };
+      levels[level].push(node);
+
+      if (arr.length > 1) {
+        let mid = Math.ceil(arr.length / 2);
+        node.children.push(buildTree(arr.slice(0, mid), level + 1));
+        node.children.push(buildTree(arr.slice(mid), level + 1));
+      }
+      return node;
+    }
+
+    let root = buildTree(data, 0);
+
+    // Initial state
+    recordStep(levels, "Siap memulai Merge Sort. Kita akan membagi data menjadi bagian-bagian kecil.");
+
+    // Recursive sort to record steps
+    function sort(node, level) {
+      if (node.data.length <= 1) {
+        node.sortedData = [...node.data];
+        node.status = 'sorted';
+        return node.sortedData;
+      }
+
+      node.status = 'active';
+      let left = node.children[0];
+      let right = node.children[1];
+      left.status = 'normal';
+      right.status = 'normal';
+      recordStep(levels, `Bagi blok [${node.data.join(', ')}] menjadi dua.`);
+
+      let sLeft = sort(left, level + 1);
+      let sRight = sort(right, level + 1);
+
+      // Merging phase
+      node.status = 'merging';
+      node.sortedData = []; // Clear for animation
+      recordStep(levels, `Siap menggabungkan [${sLeft.join(', ')}] dan [${sRight.join(', ')}].`);
+
+      let i = 0, j = 0;
+      while (i < sLeft.length && j < sRight.length) {
+        compareCount++;
+        recordStep(levels, `Bandingkan ${sLeft[i]} dan ${sRight[j]}.`, {compare: [ {node: left, idx: i}, {node: right, idx: j} ]});
+        if (sLeft[i] <= sRight[j]) {
+          node.sortedData.push(sLeft[i]);
+          left.exhaustedIdxs.push(i);
+          i++;
+        } else {
+          node.sortedData.push(sRight[j]);
+          right.exhaustedIdxs.push(j);
+          j++;
+        }
+        moveCount++;
+        recordStep(levels, `Pindahkan ${node.sortedData[node.sortedData.length-1]} ke blok hasil.`);
+      }
+
+      while (i < sLeft.length) {
+        node.sortedData.push(sLeft[i]);
+        left.exhaustedIdxs.push(i);
+        i++;
+        moveCount++;
+        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
+      }
+      while (j < sRight.length) {
+        node.sortedData.push(sRight[j]);
+        right.exhaustedIdxs.push(j);
+        j++;
+        moveCount++;
+        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
+      }
+
+      node.status = 'sorted';
+      left.status = 'exhausted';
+      right.status = 'exhausted';
+      recordStep(levels, `Blok berhasil digabungkan dan terurut: [${node.sortedData.join(', ')}]`);
+      return node.sortedData;
+    }
+
+    sort(root, 0);
+    recordStep(levels, "Selesai! Seluruh data telah terurut.");
+
+    function recordStep(lvls, msg, highlights = {}) {
+      // Deep copy levels
+      let copy = lvls.map(l => l.map(n => ({
+        data: [...n.data],
+        sortedData: [...n.sortedData],
+        exhaustedIdxs: [...n.exhaustedIdxs],
+        status: n.status,
+        id: n // keep ref for comparison
+      })));
+
+      // Map highlights to copied nodes
+      let copiedHighlights = {};
+      if (highlights.compare) {
+        copiedHighlights.compare = highlights.compare.map(h => {
+          // Find the copied node by finding its position
+          let found = null;
+          copy.forEach((l, lIdx) => l.forEach((node, nIdx) => {
+             if (lvls[lIdx][nIdx] === h.node) found = node;
+          }));
+          return { node: found, idx: h.idx };
+        });
+      }
+
+      mergeSteps.push({
+        levels: copy,
+        msg: msg,
+        compareCount: compareCount,
+        moveCount: moveCount,
+        highlights: copiedHighlights
+      });
+    }
+  }
+
+  function renderMergeState(stepIdx) {
+    const state = mergeSteps[stepIdx];
     mergeTreeContainer.innerHTML = '';
-    const l0 = document.createElement('div');
-    l0.className = 'tree-level';
-    l0.innerHTML = renderBlock(initialArray);
-    mergeTreeContainer.appendChild(l0);
 
-    if (step >= 1) {
-      const l1 = document.createElement('div');
-      l1.className = 'tree-level';
-      l1.innerHTML = renderBlock([38, 27, 43, 3]) + renderBlock([9, 82, 10]);
-      mergeTreeContainer.appendChild(l1);
-    }
-    if (step >= 2) {
-      const l2 = document.createElement('div');
-      l2.className = 'tree-level';
-      l2.innerHTML = renderBlock([38, 27]) + renderBlock([43, 3]) + renderBlock([9, 82]) + renderBlock([10]);
-      mergeTreeContainer.appendChild(l2);
-    }
-    if (step >= 3) {
-      const l3 = document.createElement('div');
-      l3.className = 'tree-level';
-      l3.innerHTML = initialArray.map(n => renderBlock([n])).join('');
-      mergeTreeContainer.appendChild(l3);
-    }
-    if (step >= 4) {
-      const l4 = document.createElement('div');
-      l4.className = 'tree-level';
-      const sorted = [...initialArray].sort((a,b) => a-b);
-      l4.innerHTML = renderBlock(sorted, true);
-      mergeTreeContainer.appendChild(l4);
-    }
+    state.levels.forEach((level, lIdx) => {
+      const levelDiv = document.createElement('div');
+      levelDiv.className = 'tree-level';
+
+      level.forEach(node => {
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'array-block';
+        if (node.status === 'active') blockDiv.style.borderColor = 'var(--accent)';
+        if (node.status === 'merging') blockDiv.style.borderColor = 'var(--accent3)';
+        if (node.status === 'sorted') blockDiv.style.background = 'rgba(var(--accent2-rgb), 0.1)';
+        if (node.status === 'exhausted') blockDiv.style.opacity = '0.5';
+
+        // Determine what to show in the block
+        // If it's sorted (or merging), show sortedData. Else show data.
+        let displayData = (node.status === 'sorted' || node.status === 'merging') ? node.sortedData : node.data;
+
+        // If it's merging, but sortedData is empty, we might want to show empty slots or original?
+        // Let's show placeholders for merging
+        if (node.status === 'merging' && displayData.length < node.data.length) {
+            let temp = [...displayData];
+            while(temp.length < node.data.length) temp.push('?');
+            displayData = temp;
+        }
+
+        displayData.forEach((val, vIdx) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'array-item';
+          itemDiv.textContent = node.status === 'hidden' ? '?' : val;
+
+          if (node.status === 'sorted') itemDiv.classList.add('highlight');
+          if (node.status === 'exhausted' || node.exhaustedIdxs.includes(vIdx)) itemDiv.classList.add('exhausted');
+
+          // Apply highlights
+          if (state.highlights.compare) {
+            state.highlights.compare.forEach(h => {
+              if (h.node === node && h.idx === vIdx) {
+                itemDiv.style.background = 'var(--accent4)';
+                itemDiv.style.color = 'white';
+              }
+            });
+          }
+
+          blockDiv.appendChild(itemDiv);
+        });
+        levelDiv.appendChild(blockDiv);
+      });
+      mergeTreeContainer.appendChild(levelDiv);
+    });
+
+    mergeStatus.textContent = state.msg;
+    mergeTally.querySelector('.compare-count').textContent = state.compareCount;
+    mergeTally.querySelector('.move-count').textContent = state.moveCount;
   }
 
-  function renderBlock(arr, highlight=false) {
-    return `<div class="array-block">
-      ${arr.map(n => `<div class="array-item ${highlight ? 'highlight' : ''}">${n}</div>`).join('')}
-    </div>`;
-  }
+  btnMergeStart.onclick = () => {
+    btnMergeStart.style.display = 'none';
+    btnMergeStep.style.display = 'inline-block';
+    mergeNInput.disabled = true;
+    mergeTally.style.visibility = 'visible';
+    currentMergeStepIdx = 1;
+    renderMergeState(currentMergeStepIdx);
+  };
 
-  if (btnMergeStep) {
-    btnMergeStep.onclick = () => { if (mergeStep < 4) { mergeStep++; renderMergeTree(mergeStep); } };
-    btnMergeReset.onclick = () => { mergeStep = 0; renderMergeTree(mergeStep); };
-  }
+  btnMergeStep.onclick = () => {
+    if (currentMergeStepIdx < mergeSteps.length - 1) {
+      currentMergeStepIdx++;
+      renderMergeState(currentMergeStepIdx);
+    } else {
+      btnMergeStep.style.display = 'none';
+    }
+  };
+
+  btnMergeReset.onclick = () => {
+    initMerge();
+  };
+
+  mergeNInput.onchange = initMerge;
 
   // --- CHART ---
   let sortChart = null;
@@ -1053,9 +1263,9 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.target.classList.contains('active')) {
-        if (mutation.target.id === 'slide-14') { mergeStep = 0; renderMergeTree(0); }
         if (mutation.target.id === 'slide-20') { initShell(); }
         if (mutation.target.id === 'slide-29') { setTimeout(initSortChart, 100); }
+        if (mutation.target.id === 'slide-14') { initMerge(); }
       }
     });
   });
@@ -1064,6 +1274,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
 
   renderMergeTree(0);
   initShell();
+  initMerge();
 </script>
 </body>
 </html>
