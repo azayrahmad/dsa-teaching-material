@@ -1,990 +1,1614 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pertemuan 12 – Analisis & Pemilihan Sorting</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../src/style.css">
-<link rel="stylesheet" href="../src/slides.css">
-<style>
-  /* Base styles already in slides.css, adding specific ones */
-  .comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  .comparison-table th, .comparison-table td {
-    padding: 12px;
-    border: 1px solid var(--border);
-    text-align: left;
-  }
-  .comparison-table th {
-    background: rgba(var(--accent-rgb), 0.1);
-  }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pertemuan 12 – Analisis & Pemilihan Sorting</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../src/style.css" />
+        <link rel="stylesheet" href="../src/slides.css" />
+        <style>
+            /* Base styles already in slides.css, adding specific ones */
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+                border: 1px solid var(--border);
+                text-align: left;
+            }
+            .comparison-table th {
+                background: rgba(var(--accent-rgb), 0.1);
+            }
 
-  /* Merge Tree Styles */
-  .merge-tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  .tree-level {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    width: 100%;
-  }
-  .array-block {
-    display: flex;
-    gap: 4px;
-    padding: 6px;
-    border: 1px solid var(--border);
-    background: rgba(var(--accent-rgb), 0.05);
-    border-radius: 4px;
-  }
-  .array-item {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    font-size: 0.75rem;
-    font-weight: bold;
-  }
-  .array-item.highlight {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-  }
-  .array-item.exhausted {
-    text-decoration: line-through;
-    opacity: 0.3;
-  }
+            /* Merge Tree Styles */
+            .merge-tree {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                margin-top: 20px;
+            }
+            .tree-level {
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+                width: 100%;
+            }
+            .array-block {
+                display: flex;
+                gap: 4px;
+                padding: 6px;
+                border: 1px solid var(--border);
+                background: rgba(var(--accent-rgb), 0.05);
+                border-radius: 4px;
+            }
+            .array-item {
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                font-size: 0.75rem;
+                font-weight: bold;
+            }
+            .array-item.highlight {
+                background: var(--accent);
+                color: var(--bg);
+                border-color: var(--accent);
+            }
+            .array-item.exhausted {
+                text-decoration: line-through;
+                opacity: 0.3;
+            }
 
-  .case-card {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  .case-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-5px);
-  }
-  .case-card.selected {
-    border-color: var(--accent2);
-    background: rgba(var(--accent2-rgb), 0.05);
-  }
+            .case-card {
+                background: var(--surface);
+                border: 2px solid var(--border);
+                border-radius: 12px;
+                padding: 20px;
+                text-align: center;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            .case-card:hover {
+                border-color: var(--accent);
+                transform: translateY(-5px);
+            }
+            .case-card.selected {
+                border-color: var(--accent2);
+                background: rgba(var(--accent2-rgb), 0.05);
+            }
 
-  .chart-container {
-    height: 350px;
-    width: 100%;
-    background: var(--surface);
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
+            .chart-container {
+                height: 350px;
+                width: 100%;
+                background: var(--surface);
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+            }
 
-  .status-box {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    background: rgba(var(--accent-rgb), 0.05);
-    border: 1px solid var(--border);
-    min-height: 60px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .controls-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  .tally-box {
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .merge-tree {
-    min-height: 300px;
-    justify-content: center;
-  }
-</style>
-</head>
-<body>
+            /* Shell Sort Styles */
+            .shell-grid {
+                display: flex;
+                gap: 8px;
+                margin: 60px 0;
+                justify-content: center;
+                align-items: flex-end;
+                height: 200px;
+            }
+            .shell-cell {
+                width: 60px;
+                height: 60px;
+                border: 2px solid var(--border);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: "JetBrains Mono", monospace;
+                background: var(--surface);
+                position: relative;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .shell-cell .val {
+                font-size: 1.1rem;
+                font-weight: bold;
+                z-index: 2;
+            }
+            .shell-cell .bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(var(--accent-rgb), 0.2);
+                transition: height 0.3s ease;
+                z-index: 1;
+            }
+            .shell-cell.elevated {
+                transform: translateY(-60px);
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.05);
+            }
+            .shell-cell.active-compare {
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.15);
+                box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+                transform: translateY(-15px);
+            }
+            .shell-cell.elevated.active-compare {
+                transform: translateY(-90px);
+            }
+            .shell-cell.sorted {
+                border-color: var(--accent2);
+                background: rgba(var(--accent2-rgb), 0.1);
+            }
+            .shell-cell.sorted .bar {
+                background: rgba(var(--accent2-rgb), 0.3);
+            }
+            .shell-cell.swapping {
+                animation: shell-swap-shake 0.3s ease;
+            }
+            @keyframes shell-swap-shake {
+                0% {
+                    transform: translateY(-60px) translateX(0);
+                }
+                25% {
+                    transform: translateY(-60px) translateX(-5px);
+                }
+                75% {
+                    transform: translateY(-60px) translateX(5px);
+                }
+                100% {
+                    transform: translateY(-60px) translateX(0);
+                }
+            }
+            .shell-status-box,
+            .status-box {
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 8px;
+                background: rgba(var(--accent-rgb), 0.05);
+                border: 1px solid var(--border);
+                min-height: 60px;
+                text-align: center;
+                font-family: "JetBrains Mono", monospace;
+            }
+            .shell-controls-row,
+            .controls-row {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                margin-top: 30px;
+            }
+            .tally-box {
+                font-family: "JetBrains Mono", monospace;
+            }
+            .merge-tree {
+                min-height: 300px;
+                justify-content: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="progress" id="progress"></div>
 
-<div class="progress" id="progress"></div>
+        <nav class="top-nav slide-top-nav">
+            <div class="back-hotspot">
+                <a href="../topics/sorting.html" class="back-link" data-i18n="back">Kembali</a>
+            </div>
+            <div class="controls-hotspot">
+                <div class="controls slide-controls">
+                    <button class="control-btn" id="lang-toggle">ID / EN</button>
+                    <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+                </div>
+            </div>
+        </nav>
 
-<nav class="top-nav slide-top-nav">
-  <div class="back-hotspot">
-    <a href="../topics/sorting.html" class="back-link" data-i18n="back">Kembali</a>
-  </div>
-  <div class="controls-hotspot">
-    <div class="controls slide-controls">
-      <button class="control-btn" id="lang-toggle">ID / EN</button>
-      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
-    </div>
-  </div>
-</nav>
+        <div class="slides-wrapper" id="slidesWrapper">
+            <!-- BAGIAN 1: PEMBUKAAN & BRIDGING -->
 
-<div class="slides-wrapper" id="slidesWrapper">
-  <!-- BAGIAN 1: PEMBUKAAN & BRIDGING -->
+            <!-- SLIDE 1 -->
+            <div
+                class="slide active"
+                id="slide-0"
+                data-notes="“Kemarin kita belajar cara sorting. Hari ini: memilih yang tepat.” Tekankan perubahan mindset"
+            >
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="slide-num">PERTEMUAN 12</div>
+                <div class="section-badge"><span class="dot"></span>Sorting Lanjutan</div>
+                <div class="slide-title">
+                    SORTING LANJUTAN:<br /><span class="highlight">Memilih Algoritma yang Tepat</span>
+                </div>
+                <div class="subtitle">Dari “bisa” → “efisien”</div>
+            </div>
 
-  <!-- SLIDE 1 -->
-  <div class="slide active" id="slide-0" data-notes="“Kemarin kita belajar cara sorting. Hari ini: memilih yang tepat.” Tekankan perubahan mindset">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="slide-num">PERTEMUAN 12</div>
-    <div class="section-badge"><span class="dot"></span>Sorting Lanjutan</div>
-    <div class="slide-title">SORTING LANJUTAN:<br><span class="highlight">Memilih Algoritma yang Tepat</span></div>
-    <div class="subtitle">Dari “bisa” → “efisien”</div>
-  </div>
+            <!-- SLIDE 2 -->
+            <div class="slide" id="slide-1" data-notes="Ajak voting cepat (angkat tangan)">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Review</div>
+                <div class="slide-title">Review Cepat <span class="highlight">(Interactive)</span></div>
+                <div class="slide-body">
+                    <p>Algoritma sebelumnya:</p>
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🫧</span><span>Bubble Sort</span></div>
+                        <div class="kp-item"><span class="icon">📍</span><span>Selection Sort</span></div>
+                        <div class="kp-item"><span class="icon">📥</span><span>Insertion Sort</span></div>
+                    </div>
+                    <div class="cols" style="margin-top: 30px">
+                        <div class="col">
+                            <div class="tip-box">Mana paling mudah?</div>
+                        </div>
+                        <div class="col">
+                            <div class="tip-box" style="border-color: var(--accent2)">Mana paling cepat?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 2 -->
-  <div class="slide" id="slide-1" data-notes="Ajak voting cepat (angkat tangan)">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Review</div>
-    <div class="slide-title">Review Cepat <span class="highlight">(Interactive)</span></div>
-    <div class="slide-body">
-      <p>Algoritma sebelumnya:</p>
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🫧</span><span>Bubble Sort</span></div>
-        <div class="kp-item"><span class="icon">📍</span><span>Selection Sort</span></div>
-        <div class="kp-item"><span class="icon">📥</span><span>Insertion Sort</span></div>
-      </div>
-      <div class="cols" style="margin-top: 30px;">
-        <div class="col">
-          <div class="tip-box">Mana paling mudah?</div>
-        </div>
-        <div class="col">
-          <div class="tip-box" style="border-color: var(--accent2);">Mana paling cepat?</div>
-        </div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 3 -->
+            <div class="slide" id="slide-2" data-notes="Ini jadi “baseline pembanding”">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Recall</div>
+                <div class="slide-title">Recall <span class="highlight">Insight</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item">
+                            <span class="icon">🔄</span><span><strong>Bubble:</strong> Banyak swap.</span>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">🔎</span><span><strong>Selection:</strong> Minim swap.</span>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">🃏</span><span><strong>Insertion:</strong> Adaptif (mirip kartu).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 3 -->
-  <div class="slide" id="slide-2" data-notes="Ini jadi “baseline pembanding”">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Recall</div>
-    <div class="slide-title">Recall <span class="highlight">Insight</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🔄</span><span><strong>Bubble:</strong> Banyak swap.</span></div>
-        <div class="kp-item"><span class="icon">🔎</span><span><strong>Selection:</strong> Minim swap.</span></div>
-        <div class="kp-item"><span class="icon">🃏</span><span><strong>Insertion:</strong> Adaptif (mirip kartu).</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 4 -->
+            <div class="slide" id="slide-3" data-notes="Pause sejenak, biarkan mereka berpikir">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Problem</div>
+                <div class="slide-title">Masalah <span class="highlight">Inti</span></div>
+                <div
+                    class="slide-body"
+                    style="
+                        text-align: center;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        height: 100%;
+                    "
+                >
+                    <p style="font-size: 1.5rem">“Semua bisa sorting…”</p>
+                    <h2 style="color: var(--accent); margin-top: 20px">👉 Tapi mana yang harus dipakai?</h2>
+                </div>
+            </div>
 
-  <!-- SLIDE 4 -->
-  <div class="slide" id="slide-3" data-notes="Pause sejenak, biarkan mereka berpikir">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Problem</div>
-    <div class="slide-title">Masalah <span class="highlight">Inti</span></div>
-    <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <p style="font-size: 1.5rem;">“Semua bisa sorting…”</p>
-      <h2 style="color: var(--accent); margin-top: 20px;">👉 Tapi mana yang harus dipakai?</h2>
-    </div>
-  </div>
+            <!-- BAGIAN 2: DISCOVERY -->
 
-  <!-- BAGIAN 2: DISCOVERY -->
+            <!-- SLIDE 5 -->
+            <div class="slide" id="slide-4">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Discovery</div>
+                <div class="slide-title">Eksperimen <span class="highlight">Cepat</span></div>
+                <div class="slide-body">
+                    <p style="text-align: center">Urutkan angka berikut di otakmu:</p>
+                    <div class="cols">
+                        <div class="col">
+                            <div class="tip-box">
+                                <p>Kasus A:</p>
+                                <h3 style="color: var(--accent)">2, 3, 4, 5, 1</h3>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="tip-box" style="border-color: var(--accent3)">
+                                <p>Kasus B:</p>
+                                <h3 style="color: var(--accent3)">5, 4, 3, 2, 1</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin-top: 40px; font-size: 1.5rem; font-weight: bold">
+                        Mana yang lebih cepat?
+                    </p>
+                </div>
+            </div>
 
-  <!-- SLIDE 5 -->
-  <div class="slide" id="slide-4">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Discovery</div>
-    <div class="slide-title">Eksperimen <span class="highlight">Cepat</span></div>
-    <div class="slide-body">
-      <p style="text-align: center;">Urutkan angka berikut di otakmu:</p>
-      <div class="cols">
-        <div class="col">
-          <div class="tip-box">
-            <p>Kasus A:</p>
-            <h3 style="color: var(--accent);">2, 3, 4, 5, 1</h3>
-          </div>
-        </div>
-        <div class="col">
-          <div class="tip-box" style="border-color: var(--accent3);">
-            <p>Kasus B:</p>
-            <h3 style="color: var(--accent3);">5, 4, 3, 2, 1</h3>
-          </div>
-        </div>
-      </div>
-      <p style="text-align: center; margin-top: 40px; font-size: 1.5rem; font-weight: bold;">Mana yang lebih cepat?</p>
-    </div>
-  </div>
+            <!-- SLIDE 6 -->
+            <div class="slide" id="slide-5" data-notes="Kaitkan ke Insertion Sort">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Diskusi</div>
+                <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item">
+                            <span class="icon">✅</span><span><strong>Hampir terurut:</strong> Cepat.</span>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">❌</span><span><strong>Terbalik:</strong> Lambat.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 6 -->
-  <div class="slide" id="slide-5" data-notes="Kaitkan ke Insertion Sort">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Diskusi</div>
-    <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">✅</span><span><strong>Hampir terurut:</strong> Cepat.</span></div>
-        <div class="kp-item"><span class="icon">❌</span><span><strong>Terbalik:</strong> Lambat.</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 7 -->
+            <div class="slide" id="slide-6">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Insight</div>
+                <div class="slide-title">Insight <span class="highlight">Penting</span></div>
+                <div
+                    class="slide-body"
+                    style="display: flex; align-items: center; justify-content: center; height: 100%"
+                >
+                    <div class="quote" style="font-size: 2.5rem; text-align: center">
+                        👉 Performa tergantung kondisi data
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 7 -->
-  <div class="slide" id="slide-6">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Insight</div>
-    <div class="slide-title">Insight <span class="highlight">Penting</span></div>
-    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-      <div class="quote" style="font-size: 2.5rem; text-align: center;">
-        👉 Performa tergantung kondisi data
-      </div>
-    </div>
-  </div>
+            <!-- BAGIAN 3: KONSEP EFISIENSI -->
 
-  <!-- BAGIAN 3: KONSEP EFISIENSI -->
+            <!-- SLIDE 8 -->
+            <div class="slide" id="slide-7">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Efisiensi</div>
+                <div class="slide-title">Apa yang <span class="highlight">Kita Ukur?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🔎</span><span>Perbandingan</span></div>
+                        <div class="kp-item"><span class="icon">🔄</span><span>Perpindahan (swap/geser)</span></div>
+                        <div class="kp-item"><span class="icon">⏱️</span><span>Waktu eksekusi</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 8 -->
-  <div class="slide" id="slide-7">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Efisiensi</div>
-    <div class="slide-title">Apa yang <span class="highlight">Kita Ukur?</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🔎</span><span>Perbandingan</span></div>
-        <div class="kp-item"><span class="icon">🔄</span><span>Perpindahan (swap/geser)</span></div>
-        <div class="kp-item"><span class="icon">⏱️</span><span>Waktu eksekusi</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 9 -->
+            <div class="slide" id="slide-8" data-notes="Buat analogi rak buku">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Analogi</div>
+                <div class="slide-title">Analogi <span class="highlight">Nyata</span></div>
+                <div class="slide-body" style="text-align: center">
+                    <h2 style="margin-top: 50px">Tukar buku vs geser buku</h2>
+                    <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent)">Mana lebih mahal?</p>
+                </div>
+            </div>
 
-  <!-- SLIDE 9 -->
-  <div class="slide" id="slide-8" data-notes="Buat analogi rak buku">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Analogi</div>
-    <div class="slide-title">Analogi <span class="highlight">Nyata</span></div>
-    <div class="slide-body" style="text-align: center;">
-      <h2 style="margin-top: 50px;">Tukar buku vs geser buku</h2>
-      <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent);">Mana lebih mahal?</p>
-    </div>
-  </div>
+            <!-- SLIDE 10 -->
+            <div class="slide" id="slide-9">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Perbandingan</div>
+                <div class="slide-title">Perbandingan <span class="highlight">Intuitif</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Algoritma</th>
+                                <th>Kuat</th>
+                                <th>Lemah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Bubble</strong></td>
+                                <td>Mudah</td>
+                                <td>Lambat</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Selection</strong></td>
+                                <td>Swap sedikit</td>
+                                <td>Tetap lambat</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Insertion</strong></td>
+                                <td>Adaptif</td>
+                                <td>Buruk di acak besar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-  <!-- SLIDE 10 -->
-  <div class="slide" id="slide-9">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Perbandingan</div>
-    <div class="slide-title">Perbandingan <span class="highlight">Intuitif</span></div>
-    <div class="slide-body">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Algoritma</th>
-            <th>Kuat</th>
-            <th>Lemah</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Bubble</strong></td>
-            <td>Mudah</td>
-            <td>Lambat</td>
-          </tr>
-          <tr>
-            <td><strong>Selection</strong></td>
-            <td>Swap sedikit</td>
-            <td>Tetap lambat</td>
-          </tr>
-          <tr>
-            <td><strong>Insertion</strong></td>
-            <td>Adaptif</td>
-            <td>Buruk di acak besar</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+            <!-- BAGIAN 4: KEBUTUHAN LEBIH CEPAT -->
 
-  <!-- BAGIAN 4: KEBUTUHAN LEBIH CEPAT -->
-
-  <!-- SLIDE 11 -->
-  <div class="slide" id="slide-10" data-notes="Tekankan lonjakan skala">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Scaling</div>
-    <div class="slide-title">Scaling <span class="highlight">Problem</span></div>
-    <div class="slide-body">
-      <pre style="text-align: center; font-size: 2rem; margin-top: 50px;">
+            <!-- SLIDE 11 -->
+            <div class="slide" id="slide-10" data-notes="Tekankan lonjakan skala">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Scaling</div>
+                <div class="slide-title">Scaling <span class="highlight">Problem</span></div>
+                <div class="slide-body">
+                    <pre style="text-align: center; font-size: 2rem; margin-top: 50px">
 n = 10 → OK
 n = 1.000.000 → ?
-      </pre>
-    </div>
-  </div>
+      </pre
+                    >
+                </div>
+            </div>
 
-  <!-- SLIDE 12 -->
-  <div class="slide" id="slide-11">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Insight</div>
-    <div class="slide-title">Insight <span class="highlight">Penting</span></div>
-    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-      <div class="quote" style="font-size: 2.5rem; text-align: center;">
-        👉 Bandingkan satu-satu tidak cukup
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 12 -->
+            <div class="slide" id="slide-11">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Insight</div>
+                <div class="slide-title">Insight <span class="highlight">Penting</span></div>
+                <div
+                    class="slide-body"
+                    style="display: flex; align-items: center; justify-content: center; height: 100%"
+                >
+                    <div class="quote" style="font-size: 2.5rem; text-align: center">
+                        👉 Bandingkan satu-satu tidak cukup
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 13 -->
-  <div class="slide" id="slide-12">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Ide</div>
-    <div class="slide-title">Ide <span class="highlight">Baru</span></div>
-    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-      <div class="quote" style="font-size: 2.5rem; text-align: center;">
-        👉 Pecah masalah (Divide &amp; Conquer)
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 13 -->
+            <div class="slide" id="slide-12">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Ide</div>
+                <div class="slide-title">Ide <span class="highlight">Baru</span></div>
+                <div
+                    class="slide-body"
+                    style="display: flex; align-items: center; justify-content: center; height: 100%"
+                >
+                    <div class="quote" style="font-size: 2.5rem; text-align: center">
+                        👉 Pecah masalah (Divide &amp; Conquer)
+                    </div>
+                </div>
+            </div>
 
-  <!-- BAGIAN 5: MERGE SORT -->
+            <!-- BAGIAN 5: MERGE SORT -->
 
-  <!-- SLIDE 14 -->
-  <div class="slide" id="slide-13">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Merge Sort</div>
-    <div class="slide-title">Konsep <span class="highlight">Merge Sort</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">↔️</span><span>Bagi data jadi dua</span></div>
-        <div class="kp-item"><span class="icon">📈</span><span>Urutkan masing-masing</span></div>
-        <div class="kp-item"><span class="icon">🤝</span><span>Gabungkan</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 14 -->
+            <div class="slide" id="slide-13">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Merge Sort</div>
+                <div class="slide-title">Konsep <span class="highlight">Merge Sort</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">↔️</span><span>Bagi data jadi dua</span></div>
+                        <div class="kp-item"><span class="icon">📈</span><span>Urutkan masing-masing</span></div>
+                        <div class="kp-item"><span class="icon">🤝</span><span>Gabungkan</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 15 -->
-  <div class="slide" id="slide-14" data-notes="Jangan buru-buru. Ini momen “aha”">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Visualisasi</div>
-    <div class="slide-title">Visualisasi <span class="highlight">Merge Sort</span></div>
-    <div class="slide-body" style="max-width: 1000px;">
-      <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-        Jumlah Data (3-10): <input type="number" id="merge-n" min="3" max="10" value="7" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
-      </div>
-      <div class="merge-tree" id="merge-tree-container">
-        <!-- Rendered by JS -->
-      </div>
-      <div id="merge-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); margin-top: 10px; display: flex; justify-content: center; gap: 20px;">
-        <div>Perbandingan: <span class="compare-count">0</span></div>
-        <div>Perpindahan: <span class="move-count">0</span></div>
-      </div>
-      <div class="status-box" id="merge-status">Klik Mulai untuk simulasi.</div>
-      <div class="controls-row">
-        <button class="btn btn-primary" id="btn-merge-start">Mulai</button>
-        <button class="btn btn-outline" id="btn-merge-step" style="display:none">Langkah Lanjut (Next)</button>
-        <button class="btn btn-outline" id="btn-merge-reset">Reset</button>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 15 -->
+            <div class="slide" id="slide-14" data-notes="Jangan buru-buru. Ini momen “aha”">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Merge Sort</span></div>
+                <div class="slide-body" style="max-width: 1000px">
+                    <div
+                        style="
+                            text-align: center;
+                            margin-bottom: 20px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                        "
+                    >
+                        Jumlah Data (3-10):
+                        <input
+                            type="number"
+                            id="merge-n"
+                            min="3"
+                            max="10"
+                            value="7"
+                            style="
+                                width: 60px;
+                                padding: 5px;
+                                background: var(--surface);
+                                border: 1px solid var(--border);
+                                color: var(--text);
+                                border-radius: 4px;
+                            "
+                        />
+                    </div>
+                    <div class="merge-tree" id="merge-tree-container">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <div
+                        id="merge-tally"
+                        class="tally-box"
+                        style="
+                            text-align: center;
+                            visibility: hidden;
+                            color: var(--accent2);
+                            margin-top: 10px;
+                            display: flex;
+                            justify-content: center;
+                            gap: 20px;
+                        "
+                    >
+                        <div>Perbandingan: <span class="compare-count">0</span></div>
+                        <div>Perpindahan: <span class="move-count">0</span></div>
+                    </div>
+                    <div class="status-box" id="merge-status">Klik Mulai untuk simulasi.</div>
+                    <div class="controls-row">
+                        <button class="btn btn-primary" id="btn-merge-start">Mulai</button>
+                        <button class="btn btn-outline" id="btn-merge-step" style="display: none">
+                            Langkah Lanjut (Next)
+                        </button>
+                        <button class="btn btn-outline" id="btn-merge-reset">Reset</button>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 16 -->
-  <div class="slide" id="slide-15">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Analisis</div>
-    <div class="slide-title">Kenapa <span class="highlight">Cepat?</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🚫</span><span>Tidak bandingkan semua pasangan.</span></div>
-        <div class="kp-item"><span class="icon">📦</span><span>Bekerja dalam bagian kecil.</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 16 -->
+            <div class="slide" id="slide-15">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Analisis</div>
+                <div class="slide-title">Kenapa <span class="highlight">Cepat?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item">
+                            <span class="icon">🚫</span><span>Tidak bandingkan semua pasangan.</span>
+                        </div>
+                        <div class="kp-item"><span class="icon">📦</span><span>Bekerja dalam bagian kecil.</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 17 -->
-  <div class="slide" id="slide-16">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Analisis</div>
-    <div class="slide-title">Trade-off <span class="highlight">Merge Sort</span></div>
-    <div class="slide-body">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Kelebihan</th>
-            <th>Kekurangan</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Cepat untuk data besar</td>
-            <td>Butuh memori tambahan</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+            <!-- SLIDE 17 -->
+            <div class="slide" id="slide-16">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Analisis</div>
+                <div class="slide-title">Trade-off <span class="highlight">Merge Sort</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Kelebihan</th>
+                                <th>Kekurangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cepat untuk data besar</td>
+                                <td>Butuh memori tambahan</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-  <!-- SLIDE 18 -->
-  <div class="slide" id="slide-17">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Aplikasi</div>
-    <div class="slide-title">Kapan <span class="highlight">Dipakai?</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🏢</span><span>Data besar.</span></div>
-        <div class="kp-item"><span class="icon">⚖️</span><span>Sorting Stabil.</span></div>
-        <div class="kp-item"><span class="icon">💾</span><span>Tidak masalah tambahan memori.</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 18 -->
+            <div class="slide" id="slide-17">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Aplikasi</div>
+                <div class="slide-title">Kapan <span class="highlight">Dipakai?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🏢</span><span>Data besar.</span></div>
+                        <div class="kp-item"><span class="icon">⚖️</span><span>Sorting Stabil.</span></div>
+                        <div class="kp-item">
+                            <span class="icon">💾</span><span>Tidak masalah tambahan memori.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- BAGIAN 6: SHELL SORT (INSIGHT) -->
+            <!-- BAGIAN 6: SHELL SORT (INSIGHT) -->
 
-  <!-- SLIDE 19 -->
-  <div class="slide" id="slide-18">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
-    <div class="slide-title">Ide <span class="highlight">Shell Sort</span></div>
-    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-      <div class="quote" style="font-size: 2.2rem; text-align: center;">
-        “Bagaimana kalau insertion… tapi lompat jauh dulu?”
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 19 -->
+            <div class="slide" id="slide-18">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+                <div class="slide-title">Ide <span class="highlight">Shell Sort</span></div>
+                <div
+                    class="slide-body"
+                    style="display: flex; align-items: center; justify-content: center; height: 100%"
+                >
+                    <div class="quote" style="font-size: 2.2rem; text-align: center">
+                        “Bagaimana kalau insertion… tapi lompat jauh dulu?”
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 20 -->
-  <div class="slide" id="slide-19">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
-    <div class="slide-title">Intuisi <span class="highlight">Shell Sort</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🏃</span><span>Bandingkan elemen berjauhan.</span></div>
-        <div class="kp-item"><span class="icon">🤏</span><span>Lalu dipersempit secara bertahap.</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 20 -->
+            <div class="slide" id="slide-19">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+                <div class="slide-title">Intuisi <span class="highlight">Shell Sort</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🏃</span><span>Bandingkan elemen berjauhan.</span></div>
+                        <div class="kp-item">
+                            <span class="icon">🤏</span><span>Lalu dipersempit secara bertahap.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 21 -->
-  <div class="slide" id="slide-20" data-notes="Jangan masuk gap sequence detail">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Shell Sort</div>
-    <div class="slide-title">Posisi <span class="highlight">Shell Sort</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🚀</span><span>Lebih cepat dari Insertion.</span></div>
-        <div class="kp-item"><span class="icon">👌</span><span>Lebih sederhana dari Merge.</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 21: SHELL SORT VISUALIZATION -->
+            <div
+                class="slide"
+                id="slide-20"
+                data-notes="Fokus pada bagaimana elemen dibandingkan dengan jarak tertentu."
+            >
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Shell Sort</span></div>
+                <div class="slide-body">
+                    <div
+                        style="
+                            text-align: center;
+                            margin-bottom: 20px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                        "
+                    >
+                        Jumlah Data (3-10):
+                        <input
+                            type="number"
+                            id="shell-n"
+                            min="3"
+                            max="10"
+                            value="8"
+                            style="
+                                width: 60px;
+                                padding: 5px;
+                                background: var(--surface);
+                                border: 1px solid var(--border);
+                                color: var(--text);
+                                border-radius: 4px;
+                            "
+                        />
+                    </div>
+                    <div class="shell-grid" id="shell-grid"></div>
+                    <div
+                        id="shell-tally"
+                        class="tally-box"
+                        style="
+                            text-align: center;
+                            visibility: hidden;
+                            color: var(--accent2);
+                            font-family: &quot;JetBrains Mono&quot;, monospace;
+                            margin-top: 10px;
+                        "
+                    >
+                        Jumlah Pertukaran: <span class="count">0</span>
+                    </div>
+                    <div class="shell-status-box" id="shell-status">Klik Mulai untuk simulasi.</div>
+                    <div class="shell-controls-row">
+                        <button class="btn btn-primary" id="shell-start">Mulai</button>
+                        <button class="btn btn-outline" id="shell-next" style="display: none">
+                            Langkah Lanjut (Next)
+                        </button>
+                        <button class="btn btn-outline" id="shell-reset">Reset</button>
+                    </div>
+                </div>
+            </div>
 
-  <!-- BAGIAN 7: PERBANDINGAN BESAR -->
+            <!-- SLIDE 22 -->
+            <div class="slide" id="slide-21" data-notes="Jangan masuk gap sequence detail">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Shell Sort</div>
+                <div class="slide-title">Posisi <span class="highlight">Shell Sort</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🚀</span><span>Lebih cepat dari Insertion.</span></div>
+                        <div class="kp-item"><span class="icon">👌</span><span>Lebih sederhana dari Merge.</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 22 -->
-  <div class="slide" id="slide-21">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Ringkasan</div>
-    <div class="slide-title">Semua <span class="highlight">Algoritma</span></div>
-    <div class="slide-body">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Algoritma</th>
-            <th>Tipe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Bubble</td><td>sederhana</td></tr>
-          <tr><td>Selection</td><td>sederhana</td></tr>
-          <tr><td>Insertion</td><td>adaptif</td></tr>
-          <tr><td>Shell</td><td>optimasi</td></tr>
-          <tr><td>Merge</td><td>scalable</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+            <!-- BAGIAN 7: PERBANDINGAN BESAR -->
 
-  <!-- SLIDE 23 -->
-  <div class="slide" id="slide-22">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Studi Kasus 1</div>
-    <div class="slide-title">Kasus: <span class="highlight">Data Kecil</span></div>
-    <div class="slide-body" style="text-align: center;">
-      <p style="font-size: 1.5rem; margin-top: 50px;">Data kecil (n &lt; 20)</p>
-      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Insertion</h3>
-    </div>
-  </div>
+            <!-- SLIDE 23 -->
+            <div class="slide" id="slide-22">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Ringkasan</div>
+                <div class="slide-title">Semua <span class="highlight">Algoritma</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Algoritma</th>
+                                <th>Tipe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bubble</td>
+                                <td>sederhana</td>
+                            </tr>
+                            <tr>
+                                <td>Selection</td>
+                                <td>sederhana</td>
+                            </tr>
+                            <tr>
+                                <td>Insertion</td>
+                                <td>adaptif</td>
+                            </tr>
+                            <tr>
+                                <td>Shell</td>
+                                <td>optimasi</td>
+                            </tr>
+                            <tr>
+                                <td>Merge</td>
+                                <td>scalable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-  <!-- SLIDE 24 -->
-  <div class="slide" id="slide-23">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Studi Kasus 2</div>
-    <div class="slide-title">Kasus: <span class="highlight">Hampir Terurut</span></div>
-    <div class="slide-body" style="text-align: center;">
-      <p style="font-size: 1.5rem; margin-top: 50px;">Data sudah 90% terurut</p>
-      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Insertion</h3>
-    </div>
-  </div>
+            <!-- SLIDE 24 -->
+            <div class="slide" id="slide-23">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Studi Kasus 1</div>
+                <div class="slide-title">Kasus: <span class="highlight">Data Kecil</span></div>
+                <div class="slide-body" style="text-align: center">
+                    <p style="font-size: 1.5rem; margin-top: 50px">Data kecil (n &lt; 20)</p>
+                    <h3 style="color: var(--accent2); margin-top: 30px">👉 Jawaban: Insertion</h3>
+                </div>
+            </div>
 
-  <!-- SLIDE 25 -->
-  <div class="slide" id="slide-24">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Studi Kasus 3</div>
-    <div class="slide-title">Kasus: <span class="highlight">Data Besar</span></div>
-    <div class="slide-body" style="text-align: center;">
-      <p style="font-size: 1.5rem; margin-top: 50px;">Data 1 Juta elemen</p>
-      <h3 style="color: var(--accent2); margin-top: 30px;">👉 Jawaban: Merge</h3>
-    </div>
-  </div>
+            <!-- SLIDE 25 -->
+            <div class="slide" id="slide-24">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Studi Kasus 2</div>
+                <div class="slide-title">Kasus: <span class="highlight">Hampir Terurut</span></div>
+                <div class="slide-body" style="text-align: center">
+                    <p style="font-size: 1.5rem; margin-top: 50px">Data sudah 90% terurut</p>
+                    <h3 style="color: var(--accent2); margin-top: 30px">👉 Jawaban: Insertion</h3>
+                </div>
+            </div>
 
-  <!-- BAGIAN 8: PRAKTIKUM -->
+            <!-- SLIDE 26 -->
+            <div class="slide" id="slide-25">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Studi Kasus 3</div>
+                <div class="slide-title">Kasus: <span class="highlight">Data Besar</span></div>
+                <div class="slide-body" style="text-align: center">
+                    <p style="font-size: 1.5rem; margin-top: 50px">Data 1 Juta elemen</p>
+                    <h3 style="color: var(--accent2); margin-top: 30px">👉 Jawaban: Merge</h3>
+                </div>
+            </div>
 
-  <!-- SLIDE 26 -->
-  <div class="slide" id="slide-25">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Praktikum</div>
-    <div class="slide-title">Instruksi <span class="highlight">Praktikum</span></div>
-    <div class="slide-body">
-      <p>Implementasikan:</p>
-      <div class="kp">
-        <div class="kp-item"><span class="icon">💻</span><span>Bubble Sort</span></div>
-        <div class="kp-item"><span class="icon">💻</span><span>Insertion Sort</span></div>
-        <div class="kp-item"><span class="icon">💻</span><span>Merge Sort</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- BAGIAN 8: PRAKTIKUM -->
 
-  <!-- SLIDE 27 -->
-  <div class="slide" id="slide-26">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Eksperimen</div>
-    <div class="slide-title">Uji <span class="highlight">Data</span></div>
-    <div class="slide-body">
-      <p>Coba dengan:</p>
-      <div class="kp">
-        <div class="kp-item"><span class="icon">🤏</span><span>Data kecil</span></div>
-        <div class="kp-item"><span class="icon">🏢</span><span>Data besar (10.000+)</span></div>
-        <div class="kp-item"><span class="icon">📏</span><span>Hampir terurut</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 27 -->
+            <div class="slide" id="slide-26">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Praktikum</div>
+                <div class="slide-title">Instruksi <span class="highlight">Praktikum</span></div>
+                <div class="slide-body">
+                    <p>Implementasikan:</p>
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">💻</span><span>Bubble Sort</span></div>
+                        <div class="kp-item"><span class="icon">💻</span><span>Insertion Sort</span></div>
+                        <div class="kp-item"><span class="icon">💻</span><span>Merge Sort</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 28 -->
-  <div class="slide" id="slide-27">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Timer</div>
-    <div class="slide-title">Ukur <span class="highlight">Waktu</span></div>
-    <div class="slide-body">
-      <p>Gunakan library <code>&lt;chrono&gt;</code> di C++:</p>
-      <pre style="font-size: 0.8rem;"><code class="language-cpp">auto s = chrono::high_resolution_clock::now();
+            <!-- SLIDE 28 -->
+            <div class="slide" id="slide-27">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Eksperimen</div>
+                <div class="slide-title">Uji <span class="highlight">Data</span></div>
+                <div class="slide-body">
+                    <p>Coba dengan:</p>
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🤏</span><span>Data kecil</span></div>
+                        <div class="kp-item"><span class="icon">🏢</span><span>Data besar (10.000+)</span></div>
+                        <div class="kp-item"><span class="icon">📏</span><span>Hampir terurut</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 29 -->
+            <div class="slide" id="slide-28">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Timer</div>
+                <div class="slide-title">Ukur <span class="highlight">Waktu</span></div>
+                <div class="slide-body">
+                    <p>Gunakan library <code>&lt;chrono&gt;</code> di C++:</p>
+                    <pre
+                        style="font-size: 0.8rem"
+                    ><code class="language-cpp">auto s = chrono::high_resolution_clock::now();
 // sorting...
 auto e = chrono::high_resolution_clock::now();
 cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
-    </div>
-  </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 29 -->
-  <div class="slide" id="slide-28">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Diskusi</div>
-    <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
-    <div class="slide-body">
-      <div class="chart-container">
-        <canvas id="sortComparisonChart"></canvas>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 30 -->
+            <div class="slide" id="slide-29">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Diskusi</div>
+                <div class="slide-title">Diskusi <span class="highlight">Hasil</span></div>
+                <div class="slide-body">
+                    <div class="chart-container">
+                        <canvas id="sortComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-  <!-- BAGIAN 9: PENUTUP -->
+            <!-- BAGIAN 9: PENUTUP -->
 
-  <!-- SLIDE 30 -->
-  <div class="slide" id="slide-29">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Insight</div>
-    <div class="slide-title">Insight <span class="highlight">Utama</span></div>
-    <div class="slide-body" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-      <div class="quote" style="font-size: 2.2rem; text-align: center;">
-        👉 Tidak ada algoritma terbaik.<br>Yang ada: algoritma yang tepat.
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 31 -->
+            <div class="slide" id="slide-30">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Insight</div>
+                <div class="slide-title">Insight <span class="highlight">Utama</span></div>
+                <div
+                    class="slide-body"
+                    style="display: flex; align-items: center; justify-content: center; height: 100%"
+                >
+                    <div class="quote" style="font-size: 2.2rem; text-align: center">
+                        👉 Tidak ada algoritma terbaik.<br />Yang ada: algoritma yang tepat.
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 31 -->
-  <div class="slide" id="slide-30">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Aplikasi</div>
-    <div class="slide-title">Dunia <span class="highlight">Nyata</span></div>
-    <div class="slide-body">
-      <div class="kp">
-        <div class="kp-item"><span class="icon">📦</span><span>Library <code>sort()</code></span></div>
-        <div class="kp-item"><span class="icon">🗄️</span><span>Database Indexing</span></div>
-        <div class="kp-item"><span class="icon">🏆</span><span>Ranking System</span></div>
-      </div>
-    </div>
-  </div>
+            <!-- SLIDE 32 -->
+            <div class="slide" id="slide-31">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Aplikasi</div>
+                <div class="slide-title">Dunia <span class="highlight">Nyata</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item">
+                            <span class="icon">📦</span><span>Library <code>sort()</code></span>
+                        </div>
+                        <div class="kp-item"><span class="icon">🗄️</span><span>Database Indexing</span></div>
+                        <div class="kp-item"><span class="icon">🏆</span><span>Ranking System</span></div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- SLIDE 32 -->
-  <div class="slide" id="slide-31">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Refleksi</div>
-    <div class="slide-title">Waktunya <span class="highlight">Refleksi</span></div>
-    <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <p style="font-size: 1.5rem;">Pilihan kalian?</p>
-      <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent);">Kenapa?</p>
-    </div>
-  </div>
+            <!-- SLIDE 33 -->
+            <div class="slide" id="slide-32">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Refleksi</div>
+                <div class="slide-title">Waktunya <span class="highlight">Refleksi</span></div>
+                <div
+                    class="slide-body"
+                    style="
+                        text-align: center;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        height: 100%;
+                    "
+                >
+                    <p style="font-size: 1.5rem">Pilihan kalian?</p>
+                    <p style="font-size: 1.5rem; margin-top: 20px; color: var(--accent)">Kenapa?</p>
+                </div>
+            </div>
 
-  <!-- SLIDE 33 -->
-  <div class="slide" id="slide-32">
-    <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-    <div class="section-badge"><span class="dot"></span>Next</div>
-    <div class="slide-title">Preview <span class="highlight">Berikutnya</span></div>
-    <div class="slide-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%;">
-      <h2 style="color: var(--accent);">👉 Stack (LIFO)</h2>
-    </div>
-  </div>
-</div>
+            <!-- SLIDE 34 -->
+            <div class="slide" id="slide-33">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Next</div>
+                <div class="slide-title">Preview <span class="highlight">Berikutnya</span></div>
+                <div
+                    class="slide-body"
+                    style="
+                        text-align: center;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        height: 100%;
+                    "
+                >
+                    <h2 style="color: var(--accent)">👉 Stack (LIFO)</h2>
+                </div>
+            </div>
+        </div>
 
-<!-- Nav -->
-<div class="nav-slides-container">
-  <div class="nav-slides">
-    <button class="nav-btn" id="prevBtn">←</button>
-    <span class="nav-counter" id="counter">1 / 33</span>
-    <button class="nav-btn" id="nextBtn">→</button>
-  </div>
-</div>
+        <!-- Nav -->
+        <div class="nav-slides-container">
+            <div class="nav-slides">
+                <button class="nav-btn" id="prevBtn">←</button>
+                <span class="nav-counter" id="counter">1 / 34</span>
+                <button class="nav-btn" id="nextBtn">→</button>
+            </div>
+        </div>
 
-<script type="module">
-  import { initApp } from '../src/main.js';
-  import { initSlides } from '../src/slides.js';
-  import Chart from 'chart.js/auto';
+        <script type="module">
+            import { initApp } from "../src/main.js";
+            import { initSlides } from "../src/slides.js";
+            import Chart from "chart.js/auto";
 
-  initApp();
-  initSlides();
+            initApp();
+            initSlides();
 
-  // --- MERGE SORT DYNAMIC VISUALIZATION ---
-  const mergeTreeContainer = document.getElementById('merge-tree-container');
-  const mergeStatus = document.getElementById('merge-status');
-  const mergeTally = document.getElementById('merge-tally');
-  const mergeNInput = document.getElementById('merge-n');
-  const btnMergeStart = document.getElementById('btn-merge-start');
-  const btnMergeStep = document.getElementById('btn-merge-step');
-  const btnMergeReset = document.getElementById('btn-merge-reset');
+            // --- MERGE SORT DYNAMIC VISUALIZATION ---
+            const mergeTreeContainer = document.getElementById("merge-tree-container");
+            const mergeStatus = document.getElementById("merge-status");
+            const mergeTally = document.getElementById("merge-tally");
+            const mergeNInput = document.getElementById("merge-n");
+            const btnMergeStart = document.getElementById("btn-merge-start");
+            const btnMergeStep = document.getElementById("btn-merge-step");
+            const btnMergeReset = document.getElementById("btn-merge-reset");
 
-  let mergeData = [];
-  let mergeSteps = [];
-  let currentMergeStepIdx = 0;
-  let compareCount = 0;
-  let moveCount = 0;
+            let mergeData = [];
+            let mergeSteps = [];
+            let currentMergeStepIdx = 0;
+            let compareCount = 0;
+            let moveCount = 0;
 
-  function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
 
-  function initMerge() {
-    let n = parseInt(mergeNInput.value) || 7;
-    if (n < 3) n = 3;
-    if (n > 10) n = 10;
-    mergeNInput.value = n;
-    mergeData = Array.from({length: n}, () => getRandomInt(10, 99));
+            function initMerge() {
+                let n = parseInt(mergeNInput.value) || 7;
+                if (n < 3) n = 3;
+                if (n > 10) n = 10;
+                mergeNInput.value = n;
+                mergeData = Array.from({ length: n }, () => getRandomInt(10, 99));
 
-    currentMergeStepIdx = 0;
-    compareCount = 0;
-    moveCount = 0;
-    mergeSteps = [];
+                currentMergeStepIdx = 0;
+                compareCount = 0;
+                moveCount = 0;
+                mergeSteps = [];
 
-    generateMergeSteps(mergeData);
+                generateMergeSteps(mergeData);
 
-    renderMergeState(0);
+                renderMergeState(0);
 
-    mergeStatus.textContent = "Data acak siap. Klik Mulai.";
-    mergeTally.style.visibility = 'hidden';
-    btnMergeStart.style.display = 'inline-block';
-    btnMergeStep.style.display = 'none';
-    mergeNInput.disabled = false;
-  }
+                mergeStatus.textContent = "Data acak siap. Klik Mulai.";
+                mergeTally.style.visibility = "hidden";
+                btnMergeStart.style.display = "inline-block";
+                btnMergeStep.style.display = "none";
+                mergeNInput.disabled = false;
+            }
 
-  function generateMergeSteps(data) {
-    // We want a structure that represents the levels of the tree
-    let levels = [];
-    function buildTree(arr, level) {
-      if (!levels[level]) levels[level] = [];
-      let node = { data: [...arr], sortedData: [], exhaustedIdxs: [], children: [], status: (level === 0 ? 'normal' : 'hidden') };
-      levels[level].push(node);
+            function generateMergeSteps(data) {
+                // We want a structure that represents the levels of the tree
+                let levels = [];
+                function buildTree(arr, level) {
+                    if (!levels[level]) levels[level] = [];
+                    let node = {
+                        data: [...arr],
+                        sortedData: [],
+                        exhaustedIdxs: [],
+                        children: [],
+                        status: level === 0 ? "normal" : "hidden",
+                    };
+                    levels[level].push(node);
 
-      if (arr.length > 1) {
-        let mid = Math.ceil(arr.length / 2);
-        node.children.push(buildTree(arr.slice(0, mid), level + 1));
-        node.children.push(buildTree(arr.slice(mid), level + 1));
-      }
-      return node;
-    }
+                    if (arr.length > 1) {
+                        let mid = Math.ceil(arr.length / 2);
+                        node.children.push(buildTree(arr.slice(0, mid), level + 1));
+                        node.children.push(buildTree(arr.slice(mid), level + 1));
+                    }
+                    return node;
+                }
 
-    let root = buildTree(data, 0);
+                let root = buildTree(data, 0);
 
-    // Initial state
-    recordStep(levels, "Siap memulai Merge Sort. Kita akan membagi data menjadi bagian-bagian kecil.");
+                // Initial state
+                recordStep(levels, "Siap memulai Merge Sort. Kita akan membagi data menjadi bagian-bagian kecil.");
 
-    // Recursive sort to record steps
-    function sort(node, level) {
-      if (node.data.length <= 1) {
-        node.sortedData = [...node.data];
-        node.status = 'sorted';
-        return node.sortedData;
-      }
+                // Recursive sort to record steps
+                function sort(node, level) {
+                    if (node.data.length <= 1) {
+                        node.sortedData = [...node.data];
+                        node.status = "sorted";
+                        return node.sortedData;
+                    }
 
-      node.status = 'active';
-      let left = node.children[0];
-      let right = node.children[1];
-      left.status = 'normal';
-      right.status = 'normal';
-      recordStep(levels, `Bagi blok [${node.data.join(', ')}] menjadi dua.`);
+                    node.status = "active";
+                    let left = node.children[0];
+                    let right = node.children[1];
+                    left.status = "normal";
+                    right.status = "normal";
+                    recordStep(levels, `Bagi blok [${node.data.join(", ")}] menjadi dua.`);
 
-      let sLeft = sort(left, level + 1);
-      let sRight = sort(right, level + 1);
+                    let sLeft = sort(left, level + 1);
+                    let sRight = sort(right, level + 1);
 
-      // Merging phase
-      node.status = 'merging';
-      node.sortedData = []; // Clear for animation
-      recordStep(levels, `Siap menggabungkan [${sLeft.join(', ')}] dan [${sRight.join(', ')}].`);
+                    // Merging phase
+                    node.status = "merging";
+                    node.sortedData = []; // Clear for animation
+                    recordStep(levels, `Siap menggabungkan [${sLeft.join(", ")}] dan [${sRight.join(", ")}].`);
 
-      let i = 0, j = 0;
-      while (i < sLeft.length && j < sRight.length) {
-        compareCount++;
-        recordStep(levels, `Bandingkan ${sLeft[i]} dan ${sRight[j]}.`, {compare: [ {node: left, idx: i}, {node: right, idx: j} ]});
-        if (sLeft[i] <= sRight[j]) {
-          node.sortedData.push(sLeft[i]);
-          left.exhaustedIdxs.push(i);
-          i++;
-        } else {
-          node.sortedData.push(sRight[j]);
-          right.exhaustedIdxs.push(j);
-          j++;
-        }
-        moveCount++;
-        recordStep(levels, `Pindahkan ${node.sortedData[node.sortedData.length-1]} ke blok hasil.`);
-      }
+                    let i = 0,
+                        j = 0;
+                    while (i < sLeft.length && j < sRight.length) {
+                        compareCount++;
+                        recordStep(levels, `Bandingkan ${sLeft[i]} dan ${sRight[j]}.`, {
+                            compare: [
+                                { node: left, idx: i },
+                                { node: right, idx: j },
+                            ],
+                        });
+                        if (sLeft[i] <= sRight[j]) {
+                            node.sortedData.push(sLeft[i]);
+                            left.exhaustedIdxs.push(i);
+                            i++;
+                        } else {
+                            node.sortedData.push(sRight[j]);
+                            right.exhaustedIdxs.push(j);
+                            j++;
+                        }
+                        moveCount++;
+                        recordStep(levels, `Pindahkan ${node.sortedData[node.sortedData.length - 1]} ke blok hasil.`);
+                    }
 
-      while (i < sLeft.length) {
-        node.sortedData.push(sLeft[i]);
-        left.exhaustedIdxs.push(i);
-        i++;
-        moveCount++;
-        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
-      }
-      while (j < sRight.length) {
-        node.sortedData.push(sRight[j]);
-        right.exhaustedIdxs.push(j);
-        j++;
-        moveCount++;
-        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length-1]}.`);
-      }
+                    while (i < sLeft.length) {
+                        node.sortedData.push(sLeft[i]);
+                        left.exhaustedIdxs.push(i);
+                        i++;
+                        moveCount++;
+                        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length - 1]}.`);
+                    }
+                    while (j < sRight.length) {
+                        node.sortedData.push(sRight[j]);
+                        right.exhaustedIdxs.push(j);
+                        j++;
+                        moveCount++;
+                        recordStep(levels, `Pindahkan sisa elemen ${node.sortedData[node.sortedData.length - 1]}.`);
+                    }
 
-      node.status = 'sorted';
-      left.status = 'exhausted';
-      right.status = 'exhausted';
-      recordStep(levels, `Blok berhasil digabungkan dan terurut: [${node.sortedData.join(', ')}]`);
-      return node.sortedData;
-    }
+                    node.status = "sorted";
+                    left.status = "exhausted";
+                    right.status = "exhausted";
+                    recordStep(levels, `Blok berhasil digabungkan dan terurut: [${node.sortedData.join(", ")}]`);
+                    return node.sortedData;
+                }
 
-    sort(root, 0);
-    recordStep(levels, "Selesai! Seluruh data telah terurut.");
+                sort(root, 0);
+                recordStep(levels, "Selesai! Seluruh data telah terurut.");
 
-    function recordStep(lvls, msg, highlights = {}) {
-      // Deep copy levels
-      let copy = lvls.map(l => l.map(n => ({
-        data: [...n.data],
-        sortedData: [...n.sortedData],
-        exhaustedIdxs: [...n.exhaustedIdxs],
-        status: n.status,
-        id: n // keep ref for comparison
-      })));
+                function recordStep(lvls, msg, highlights = {}) {
+                    // Deep copy levels
+                    let copy = lvls.map((l) =>
+                        l.map((n) => ({
+                            data: [...n.data],
+                            sortedData: [...n.sortedData],
+                            exhaustedIdxs: [...n.exhaustedIdxs],
+                            status: n.status,
+                            id: n, // keep ref for comparison
+                        })),
+                    );
 
-      // Map highlights to copied nodes
-      let copiedHighlights = {};
-      if (highlights.compare) {
-        copiedHighlights.compare = highlights.compare.map(h => {
-          // Find the copied node by finding its position
-          let found = null;
-          copy.forEach((l, lIdx) => l.forEach((node, nIdx) => {
-             if (lvls[lIdx][nIdx] === h.node) found = node;
-          }));
-          return { node: found, idx: h.idx };
-        });
-      }
+                    // Map highlights to copied nodes
+                    let copiedHighlights = {};
+                    if (highlights.compare) {
+                        copiedHighlights.compare = highlights.compare.map((h) => {
+                            // Find the copied node by finding its position
+                            let found = null;
+                            copy.forEach((l, lIdx) =>
+                                l.forEach((node, nIdx) => {
+                                    if (lvls[lIdx][nIdx] === h.node) found = node;
+                                }),
+                            );
+                            return { node: found, idx: h.idx };
+                        });
+                    }
 
-      mergeSteps.push({
-        levels: copy,
-        msg: msg,
-        compareCount: compareCount,
-        moveCount: moveCount,
-        highlights: copiedHighlights
-      });
-    }
-  }
+                    mergeSteps.push({
+                        levels: copy,
+                        msg: msg,
+                        compareCount: compareCount,
+                        moveCount: moveCount,
+                        highlights: copiedHighlights,
+                    });
+                }
+            }
 
-  function renderMergeState(stepIdx) {
-    const state = mergeSteps[stepIdx];
-    mergeTreeContainer.innerHTML = '';
+            function renderMergeState(stepIdx) {
+                const state = mergeSteps[stepIdx];
+                mergeTreeContainer.innerHTML = "";
 
-    state.levels.forEach((level, lIdx) => {
-      const levelDiv = document.createElement('div');
-      levelDiv.className = 'tree-level';
+                state.levels.forEach((level, lIdx) => {
+                    const levelDiv = document.createElement("div");
+                    levelDiv.className = "tree-level";
 
-      level.forEach(node => {
-        const blockDiv = document.createElement('div');
-        blockDiv.className = 'array-block';
-        if (node.status === 'active') blockDiv.style.borderColor = 'var(--accent)';
-        if (node.status === 'merging') blockDiv.style.borderColor = 'var(--accent3)';
-        if (node.status === 'sorted') blockDiv.style.background = 'rgba(var(--accent2-rgb), 0.1)';
-        if (node.status === 'exhausted') blockDiv.style.opacity = '0.5';
+                    level.forEach((node) => {
+                        const blockDiv = document.createElement("div");
+                        blockDiv.className = "array-block";
+                        if (node.status === "active") blockDiv.style.borderColor = "var(--accent)";
+                        if (node.status === "merging") blockDiv.style.borderColor = "var(--accent3)";
+                        if (node.status === "sorted") blockDiv.style.background = "rgba(var(--accent2-rgb), 0.1)";
+                        if (node.status === "exhausted") blockDiv.style.opacity = "0.5";
 
-        // Determine what to show in the block
-        // If it's sorted (or merging), show sortedData. Else show data.
-        let displayData = (node.status === 'sorted' || node.status === 'merging') ? node.sortedData : node.data;
+                        // Determine what to show in the block
+                        // If it's sorted (or merging), show sortedData. Else show data.
+                        let displayData =
+                            node.status === "sorted" || node.status === "merging" ? node.sortedData : node.data;
 
-        // If it's merging, but sortedData is empty, we might want to show empty slots or original?
-        // Let's show placeholders for merging
-        if (node.status === 'merging' && displayData.length < node.data.length) {
-            let temp = [...displayData];
-            while(temp.length < node.data.length) temp.push('?');
-            displayData = temp;
-        }
+                        // If it's merging, but sortedData is empty, we might want to show empty slots or original?
+                        // Let's show placeholders for merging
+                        if (node.status === "merging" && displayData.length < node.data.length) {
+                            let temp = [...displayData];
+                            while (temp.length < node.data.length) temp.push("?");
+                            displayData = temp;
+                        }
 
-        displayData.forEach((val, vIdx) => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'array-item';
-          itemDiv.textContent = node.status === 'hidden' ? '?' : val;
+                        displayData.forEach((val, vIdx) => {
+                            const itemDiv = document.createElement("div");
+                            itemDiv.className = "array-item";
+                            itemDiv.textContent = node.status === "hidden" ? "?" : val;
 
-          if (node.status === 'sorted') itemDiv.classList.add('highlight');
-          if (node.status === 'exhausted' || node.exhaustedIdxs.includes(vIdx)) itemDiv.classList.add('exhausted');
+                            if (node.status === "sorted") itemDiv.classList.add("highlight");
+                            if (node.status === "exhausted" || node.exhaustedIdxs.includes(vIdx))
+                                itemDiv.classList.add("exhausted");
 
-          // Apply highlights
-          if (state.highlights.compare) {
-            state.highlights.compare.forEach(h => {
-              if (h.node === node && h.idx === vIdx) {
-                itemDiv.style.background = 'var(--accent4)';
-                itemDiv.style.color = 'white';
-              }
+                            // Apply highlights
+                            if (state.highlights.compare) {
+                                state.highlights.compare.forEach((h) => {
+                                    if (h.node === node && h.idx === vIdx) {
+                                        itemDiv.style.background = "var(--accent4)";
+                                        itemDiv.style.color = "white";
+                                    }
+                                });
+                            }
+
+                            blockDiv.appendChild(itemDiv);
+                        });
+                        levelDiv.appendChild(blockDiv);
+                    });
+                    mergeTreeContainer.appendChild(levelDiv);
+                });
+
+                mergeStatus.textContent = state.msg;
+                mergeTally.querySelector(".compare-count").textContent = state.compareCount;
+                mergeTally.querySelector(".move-count").textContent = state.moveCount;
+            }
+
+            btnMergeStart.onclick = () => {
+                btnMergeStart.style.display = "none";
+                btnMergeStep.style.display = "inline-block";
+                mergeNInput.disabled = true;
+                mergeTally.style.visibility = "visible";
+                currentMergeStepIdx = 1;
+                renderMergeState(currentMergeStepIdx);
+            };
+
+            btnMergeStep.onclick = () => {
+                if (currentMergeStepIdx < mergeSteps.length - 1) {
+                    currentMergeStepIdx++;
+                    renderMergeState(currentMergeStepIdx);
+                } else {
+                    btnMergeStep.style.display = "none";
+                }
+            };
+
+            btnMergeReset.onclick = () => {
+                initMerge();
+            };
+
+            mergeNInput.onchange = initMerge;
+
+            // --- CHART ---
+            let sortChart = null;
+            function initSortChart() {
+                const ctx = document.getElementById("sortComparisonChart");
+                if (!ctx) return;
+                if (sortChart) sortChart.destroy();
+
+                const labels = [10, 50, 100, 200, 500, 1000];
+                const n2 = labels.map((n) => n * n);
+                const nlogn = labels.map((n) => n * Math.log2(n));
+
+                const style = getComputedStyle(document.documentElement);
+                const accent = style.getPropertyValue("--accent").trim() || "#f0c040";
+                const accent2 = style.getPropertyValue("--accent2").trim() || "#4de8b0";
+                const textColor = style.getPropertyValue("--text-muted").trim() || "#94a3b8";
+
+                sortChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "Bubble/Insertion (N²)",
+                                data: n2,
+                                borderColor: accent,
+                                backgroundColor: accent + "22",
+                                tension: 0.3,
+                            },
+                            {
+                                label: "Merge Sort (N log N)",
+                                data: nlogn,
+                                borderColor: accent2,
+                                backgroundColor: accent2 + "22",
+                                tension: 0.3,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: { display: true, text: "Ukuran Data (N)", color: textColor },
+                                ticks: { color: textColor },
+                            },
+                            y: {
+                                title: { display: true, text: "Langkah", color: textColor },
+                                ticks: { color: textColor },
+                                type: "logarithmic",
+                            },
+                        },
+                        plugins: { legend: { labels: { color: textColor } } },
+                    },
+                });
+            }
+
+            // --- SHELL SORT LOGIC ---
+            let shellData = [];
+            let shellGaps = [];
+            let shellGapIdx = 0;
+            let shellGroupIdx = 0;
+            let shellI = 0;
+            let shellJ = 0;
+            let shellKey = 0;
+            let shellSwaps = 0;
+            let shellState = "init"; // 'init', 'nextGap', 'nextGroup', 'pickKey', 'compare', 'shifting', 'insert', 'downGroup', 'done'
+            const shellGrid = document.getElementById("shell-grid");
+            const shellStatus = document.getElementById("shell-status");
+            const shellTally = document.getElementById("shell-tally");
+            const shellNInput = document.getElementById("shell-n");
+            shellNInput.addEventListener("change", initShell);
+            const btnShellStart = document.getElementById("shell-start");
+            const btnShellNext = document.getElementById("shell-next");
+            const btnShellReset = document.getElementById("shell-reset");
+
+            function initShell() {
+                let n = parseInt(shellNInput.value) || 8;
+                if (n < 3) n = 3;
+                if (n > 10) n = 10;
+                shellNInput.value = n;
+                shellData = Array.from({ length: n }, () => getRandomInt(10, 90));
+                shellGaps = [];
+                for (let g = Math.floor(n / 2); g > 0; g = Math.floor(g / 2)) {
+                    shellGaps.push(g);
+                }
+                renderShellGrid(shellGrid, shellData);
+                shellGapIdx = 0;
+                shellGroupIdx = 0;
+                shellSwaps = 0;
+                shellState = "init";
+                shellStatus.textContent = "Data acak siap. Klik Mulai.";
+                shellTally.style.visibility = "hidden";
+                btnShellStart.style.display = "inline-block";
+                btnShellNext.style.display = "none";
+                shellNInput.disabled = false;
+            }
+
+            function renderShellGrid(
+                container,
+                data,
+                elevatedIdx = [],
+                activeIdx = [],
+                keyIdx = -1,
+                overrideKeyVal = null,
+                swappingIdx = -1,
+                sortedIdx = [],
+            ) {
+                container.innerHTML = "";
+                let maxVal = Math.max(...data);
+                if (overrideKeyVal !== null) maxVal = Math.max(maxVal, overrideKeyVal);
+
+                data.forEach((val, i) => {
+                    const cell = document.createElement("div");
+                    cell.className = "shell-cell";
+                    if (elevatedIdx.includes(i)) cell.classList.add("elevated");
+                    if (activeIdx.includes(i)) cell.classList.add("active-compare");
+                    if (i === swappingIdx) cell.classList.add("swapping");
+                    if (sortedIdx.includes(i)) cell.classList.add("sorted");
+
+                    const isKey = i === keyIdx && overrideKeyVal !== null;
+                    const displayVal = isKey ? overrideKeyVal : val;
+                    const barHeight = (displayVal / maxVal) * 100;
+                    cell.innerHTML = `
+        <div class="bar" style="height: ${barHeight}%"></div>
+        <div class="val">${displayVal}</div>
+      `;
+                    container.appendChild(cell);
+                });
+            }
+
+            btnShellStart.addEventListener("click", () => {
+                btnShellStart.style.display = "none";
+                btnShellNext.style.display = "inline-block";
+                shellNInput.disabled = true;
+                shellSwaps = 0;
+                shellTally.style.visibility = "visible";
+                shellTally.querySelector(".count").textContent = "0";
+                shellState = "nextGap";
+                shellStatus.textContent = "Mulai Shell Sort. Membagi data berdasarkan jarak (gap).";
             });
-          }
 
-          blockDiv.appendChild(itemDiv);
-        });
-        levelDiv.appendChild(blockDiv);
-      });
-      mergeTreeContainer.appendChild(levelDiv);
-    });
+            btnShellNext.addEventListener("click", () => {
+                const n = shellData.length;
+                const gap = shellGaps[shellGapIdx];
 
-    mergeStatus.textContent = state.msg;
-    mergeTally.querySelector('.compare-count').textContent = state.compareCount;
-    mergeTally.querySelector('.move-count').textContent = state.moveCount;
-  }
+                switch (shellState) {
+                    case "nextGap":
+                        if (shellGapIdx < shellGaps.length) {
+                            shellStatus.textContent = `Gunakan Jarak (Gap) = ${gap}.`;
+                            shellGroupIdx = 0;
+                            shellState = "nextGroup";
+                        } else {
+                            shellState = "done";
+                        }
+                        break;
 
-  btnMergeStart.onclick = () => {
-    btnMergeStart.style.display = 'none';
-    btnMergeStep.style.display = 'inline-block';
-    mergeNInput.disabled = true;
-    mergeTally.style.visibility = 'visible';
-    currentMergeStepIdx = 1;
-    renderMergeState(currentMergeStepIdx);
-  };
+                    case "nextGroup":
+                        if (shellGroupIdx < gap) {
+                            let group = [];
+                            for (let k = shellGroupIdx; k < n; k += gap) group.push(k);
+                            shellStatus.textContent = `Memproses grup dengan index awal ${shellGroupIdx}.`;
+                            // Elements in group that are already sorted (initially just the first element of group)
+                            renderShellGrid(shellGrid, shellData, group, [], -1, null, -1, [shellGroupIdx]);
+                            shellI = shellGroupIdx + gap;
+                            if (shellI < n) {
+                                shellState = "pickKey";
+                            } else {
+                                shellGroupIdx++;
+                                shellState = "nextGroup";
+                            }
+                        } else {
+                            shellGapIdx++;
+                            shellState = "nextGap";
+                        }
+                        break;
 
-  btnMergeStep.onclick = () => {
-    if (currentMergeStepIdx < mergeSteps.length - 1) {
-      currentMergeStepIdx++;
-      renderMergeState(currentMergeStepIdx);
-    } else {
-      btnMergeStep.style.display = 'none';
-    }
-  };
+                    case "pickKey":
+                        shellKey = shellData[shellI];
+                        shellJ = shellI - gap;
+                        shellStatus.textContent = `Insertion Sort di dalam grup: Ambil index ${shellI} (key = ${shellKey}).`;
+                        let groupForPick = [];
+                        let sortedInPick = [];
+                        for (let k = shellGroupIdx; k < n; k += gap) {
+                            groupForPick.push(k);
+                            if (k < shellI) sortedInPick.push(k);
+                        }
+                        renderShellGrid(
+                            shellGrid,
+                            shellData,
+                            groupForPick,
+                            [shellI],
+                            shellI,
+                            shellKey,
+                            -1,
+                            sortedInPick,
+                        );
+                        shellState = "compare";
+                        break;
 
-  btnMergeReset.onclick = () => {
-    initMerge();
-  };
+                    case "compare":
+                        let currentGroup = [];
+                        let sortedInComp = [];
+                        for (let k = shellGroupIdx; k < n; k += gap) {
+                            currentGroup.push(k);
+                            if (k < shellI) sortedInComp.push(k);
+                        }
+                        if (shellJ >= 0 && shellData[shellJ] > shellKey) {
+                            shellStatus.textContent = `Bandingkan: ${shellData[shellJ]} > ${shellKey}? Ya, geser ke kanan.`;
+                            renderShellGrid(
+                                shellGrid,
+                                shellData,
+                                currentGroup,
+                                [shellJ, shellJ + gap],
+                                shellJ + gap,
+                                shellKey,
+                                -1,
+                                sortedInComp,
+                            );
+                            shellState = "shifting";
+                        } else {
+                            shellStatus.textContent = `Bandingkan: ${shellJ >= 0 ? shellData[shellJ] : "Awal grup"} > ${shellKey}? Tidak.`;
+                            renderShellGrid(
+                                shellGrid,
+                                shellData,
+                                currentGroup,
+                                [shellJ + gap],
+                                shellJ + gap,
+                                shellKey,
+                                -1,
+                                sortedInComp,
+                            );
+                            shellState = "insert";
+                        }
+                        break;
 
-  mergeNInput.onchange = initMerge;
+                    case "shifting":
+                        shellSwaps++;
+                        shellTally.querySelector(".count").textContent = shellSwaps;
+                        shellData[shellJ + gap] = shellData[shellJ];
+                        let originalGapPos = shellJ + gap;
+                        shellJ -= gap;
+                        let shiftGroup = [];
+                        let sortedInShift = [];
+                        for (let k = shellGroupIdx; k < n; k += gap) {
+                            shiftGroup.push(k);
+                            if (k < shellI) sortedInShift.push(k);
+                        }
+                        renderShellGrid(shellGrid, shellData, shiftGroup, [], -1, null, originalGapPos, sortedInShift);
+                        shellState = "compare";
+                        break;
 
-  // --- CHART ---
-  let sortChart = null;
-  function initSortChart() {
-    const ctx = document.getElementById('sortComparisonChart');
-    if (!ctx) return;
-    if (sortChart) sortChart.destroy();
+                    case "insert":
+                        shellData[shellJ + gap] = shellKey;
+                        let insGroup = [];
+                        let sortedInIns = [];
+                        for (let k = shellGroupIdx; k < n; k += gap) {
+                            insGroup.push(k);
+                            if (k <= shellI) sortedInIns.push(k);
+                        }
+                        renderShellGrid(
+                            shellGrid,
+                            shellData,
+                            insGroup,
+                            [shellJ + gap],
+                            shellJ + gap,
+                            shellKey,
+                            -1,
+                            sortedInIns,
+                        );
+                        shellStatus.textContent = `Sisipkan ${shellKey} di posisi yang tepat.`;
+                        shellI += gap;
+                        if (shellI < n) {
+                            shellState = "pickKey";
+                        } else {
+                            shellState = "downGroup";
+                        }
+                        break;
 
-    const labels = [10, 50, 100, 200, 500, 1000];
-    const n2 = labels.map(n => n * n);
-    const nlogn = labels.map(n => n * Math.log2(n));
+                    case "downGroup":
+                        shellStatus.textContent = `Grup selesai. Geser kembali ke bawah.`;
+                        renderShellGrid(shellGrid, shellData); // No elevatedIdx means all down
+                        shellGroupIdx++;
+                        shellState = "nextGroup";
+                        break;
 
-    const style = getComputedStyle(document.documentElement);
-    const accent = style.getPropertyValue('--accent').trim() || '#f0c040';
-    const accent2 = style.getPropertyValue('--accent2').trim() || '#4de8b0';
-    const textColor = style.getPropertyValue('--text-muted').trim() || '#94a3b8';
+                    case "done":
+                        shellStatus.textContent = "Selesai! Seluruh data sudah terurut dengan Shell Sort.";
+                        renderShellGrid(shellGrid, shellData);
+                        btnShellNext.style.display = "none";
+                        break;
+                }
+            });
 
-    sortChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          { label: 'Bubble/Insertion (N²)', data: n2, borderColor: accent, backgroundColor: accent + '22', tension: 0.3 },
-          { label: 'Merge Sort (N log N)', data: nlogn, borderColor: accent2, backgroundColor: accent2 + '22', tension: 0.3 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { title: { display: true, text: 'Ukuran Data (N)', color: textColor }, ticks: { color: textColor } },
-          y: { title: { display: true, text: 'Langkah', color: textColor }, ticks: { color: textColor }, type: 'logarithmic' }
-        },
-        plugins: { legend: { labels: { color: textColor } } }
-      }
-    });
-  }
+            btnShellReset.addEventListener("click", () => {
+                initShell();
+            });
 
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.classList.contains('active')) {
-        if (mutation.target.id === 'slide-14') { initMerge(); }
-        if (mutation.target.id === 'slide-28') { setTimeout(initSortChart, 100); }
-      }
-    });
-  });
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.target.classList.contains("active")) {
+                        if (mutation.target.id === "slide-20") {
+                            initShell();
+                        }
+                        if (mutation.target.id === "slide-29") {
+                            setTimeout(initSortChart, 100);
+                        }
+                        if (mutation.target.id === "slide-14") {
+                            initMerge();
+                        }
+                    }
+                });
+            });
 
-  document.querySelectorAll('.slide').forEach(s => observer.observe(s, { attributes: true, attributeFilter: ['class'] }));
+            document
+                .querySelectorAll(".slide")
+                .forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
 
-  initMerge();
-</script>
-</body>
+            initShell();
+            initMerge();
+        </script>
+    </body>
 </html>
