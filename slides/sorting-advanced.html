@@ -861,7 +861,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
   let shellJ = 0;
   let shellKey = 0;
   let shellSwaps = 0;
-  let shellState = 'init'; // 'init', 'nextGap', 'nextGroup', 'pickKey', 'compare', 'shifting', 'insert', 'done'
+  let shellState = 'init'; // 'init', 'nextGap', 'nextGroup', 'pickKey', 'compare', 'shifting', 'insert', 'downGroup', 'done'
   const shellGrid = document.getElementById('shell-grid');
   const shellStatus = document.getElementById('shell-status');
   const shellTally = document.getElementById('shell-tally');
@@ -1027,9 +1027,15 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         if (shellI < n) {
           shellState = 'pickKey';
         } else {
-          shellGroupIdx++;
-          shellState = 'nextGroup';
+          shellState = 'downGroup';
         }
+        break;
+
+      case 'downGroup':
+        shellStatus.textContent = `Grup selesai. Geser kembali ke bawah.`;
+        renderShellGrid(shellGrid, shellData); // No elevatedIdx means all down
+        shellGroupIdx++;
+        shellState = 'nextGroup';
         break;
 
       case 'done':
