@@ -134,6 +134,17 @@
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.15);
     box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+    transform: translateY(-15px);
+  }
+  .shell-cell.elevated.active-compare {
+    transform: translateY(-90px);
+  }
+  .shell-cell.sorted {
+    border-color: var(--accent2);
+    background: rgba(var(--accent2-rgb), 0.1);
+  }
+  .shell-cell.sorted .bar {
+    background: rgba(var(--accent2-rgb), 0.3);
   }
   .shell-cell.swapping {
     animation: shell-swap-shake 0.3s ease;
@@ -884,7 +895,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
     shellNInput.disabled = false;
   }
 
-  function renderShellGrid(container, data, elevatedIdx = [], activeIdx = [], keyIdx = -1, overrideKeyVal = null, swappingIdx = -1) {
+  function renderShellGrid(container, data, elevatedIdx = [], activeIdx = [], keyIdx = -1, overrideKeyVal = null, swappingIdx = -1, sortedIdx = []) {
     container.innerHTML = '';
     let maxVal = Math.max(...data);
     if (overrideKeyVal !== null) maxVal = Math.max(maxVal, overrideKeyVal);
@@ -895,6 +906,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
       if (elevatedIdx.includes(i)) cell.classList.add('elevated');
       if (activeIdx.includes(i)) cell.classList.add('active-compare');
       if (i === swappingIdx) cell.classList.add('swapping');
+      if (sortedIdx.includes(i)) cell.classList.add('sorted');
 
       const isKey = (i === keyIdx && overrideKeyVal !== null);
       const displayVal = isKey ? overrideKeyVal : val;
@@ -938,7 +950,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
           let group = [];
           for (let k = shellGroupIdx; k < n; k += gap) group.push(k);
           shellStatus.textContent = `Memproses grup dengan index awal ${shellGroupIdx}.`;
-          renderShellGrid(shellGrid, shellData, group);
+          // Elements in group that are already sorted (initially just the first element of group)
+          renderShellGrid(shellGrid, shellData, group, [], -1, null, -1, [shellGroupIdx]);
           shellI = shellGroupIdx + gap;
           if (shellI < n) {
             shellState = 'pickKey';
@@ -957,21 +970,29 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         shellJ = shellI - gap;
         shellStatus.textContent = `Insertion Sort di dalam grup: Ambil index ${shellI} (key = ${shellKey}).`;
         let groupForPick = [];
-        for (let k = shellGroupIdx; k < n; k += gap) groupForPick.push(k);
-        renderShellGrid(shellGrid, shellData, groupForPick, [shellI], shellI, shellKey);
+        let sortedInPick = [];
+        for (let k = shellGroupIdx; k < n; k += gap) {
+          groupForPick.push(k);
+          if (k < shellI) sortedInPick.push(k);
+        }
+        renderShellGrid(shellGrid, shellData, groupForPick, [shellI], shellI, shellKey, -1, sortedInPick);
         shellState = 'compare';
         break;
 
       case 'compare':
         let currentGroup = [];
-        for (let k = shellGroupIdx; k < n; k += gap) currentGroup.push(k);
+        let sortedInComp = [];
+        for (let k = shellGroupIdx; k < n; k += gap) {
+          currentGroup.push(k);
+          if (k < shellI) sortedInComp.push(k);
+        }
         if (shellJ >= 0 && shellData[shellJ] > shellKey) {
           shellStatus.textContent = `Bandingkan: ${shellData[shellJ]} > ${shellKey}? Ya, geser ke kanan.`;
-          renderShellGrid(shellGrid, shellData, currentGroup, [shellJ, shellJ + gap], shellJ + gap, shellKey);
+          renderShellGrid(shellGrid, shellData, currentGroup, [shellJ, shellJ + gap], shellJ + gap, shellKey, -1, sortedInComp);
           shellState = 'shifting';
         } else {
           shellStatus.textContent = `Bandingkan: ${shellJ >= 0 ? shellData[shellJ] : 'Awal grup'} > ${shellKey}? Tidak.`;
-          renderShellGrid(shellGrid, shellData, currentGroup, [shellJ + gap], shellJ + gap, shellKey);
+          renderShellGrid(shellGrid, shellData, currentGroup, [shellJ + gap], shellJ + gap, shellKey, -1, sortedInComp);
           shellState = 'insert';
         }
         break;
@@ -983,16 +1004,24 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         let originalGapPos = shellJ + gap;
         shellJ -= gap;
         let shiftGroup = [];
-        for (let k = shellGroupIdx; k < n; k += gap) shiftGroup.push(k);
-        renderShellGrid(shellGrid, shellData, shiftGroup, [], -1, null, originalGapPos);
+        let sortedInShift = [];
+        for (let k = shellGroupIdx; k < n; k += gap) {
+          shiftGroup.push(k);
+          if (k < shellI) sortedInShift.push(k);
+        }
+        renderShellGrid(shellGrid, shellData, shiftGroup, [], -1, null, originalGapPos, sortedInShift);
         shellState = 'compare';
         break;
 
       case 'insert':
         shellData[shellJ + gap] = shellKey;
         let insGroup = [];
-        for (let k = shellGroupIdx; k < n; k += gap) insGroup.push(k);
-        renderShellGrid(shellGrid, shellData, insGroup, [shellJ + gap], shellJ + gap, shellKey);
+        let sortedInIns = [];
+        for (let k = shellGroupIdx; k < n; k += gap) {
+          insGroup.push(k);
+          if (k <= shellI) sortedInIns.push(k);
+        }
+        renderShellGrid(shellGrid, shellData, insGroup, [shellJ + gap], shellJ + gap, shellKey, -1, sortedInIns);
         shellStatus.textContent = `Sisipkan ${shellKey} di posisi yang tepat.`;
         shellI += gap;
         if (shellI < n) {
