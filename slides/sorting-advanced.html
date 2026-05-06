@@ -61,6 +61,10 @@
     color: var(--bg);
     border-color: var(--accent);
   }
+  .array-item.exhausted {
+    text-decoration: line-through;
+    opacity: 0.3;
+  }
 
   .case-card {
     background: var(--surface);
@@ -803,6 +807,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
       }
 
       node.status = 'sorted';
+      left.status = 'exhausted';
+      right.status = 'exhausted';
       recordStep(levels, `Blok berhasil digabungkan dan terurut: [${node.sortedData.join(', ')}]`);
       return node.sortedData;
     }
@@ -856,6 +862,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         if (node.status === 'active') blockDiv.style.borderColor = 'var(--accent)';
         if (node.status === 'merging') blockDiv.style.borderColor = 'var(--accent3)';
         if (node.status === 'sorted') blockDiv.style.background = 'rgba(var(--accent2-rgb), 0.1)';
+        if (node.status === 'exhausted') blockDiv.style.opacity = '0.5';
 
         // Determine what to show in the block
         // If it's sorted (or merging), show sortedData. Else show data.
@@ -875,6 +882,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
           itemDiv.textContent = val;
 
           if (node.status === 'sorted') itemDiv.classList.add('highlight');
+          if (node.status === 'exhausted') itemDiv.classList.add('exhausted');
 
           // Apply highlights
           if (state.highlights.compare) {
