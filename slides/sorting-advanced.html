@@ -740,7 +740,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
     let levels = [];
     function buildTree(arr, level) {
       if (!levels[level]) levels[level] = [];
-      let node = { data: [...arr], sortedData: [], children: [], status: 'normal' };
+      let node = { data: [...arr], sortedData: [], children: [], status: (level === 0 ? 'normal' : 'hidden') };
       levels[level].push(node);
 
       if (arr.length > 1) {
@@ -765,10 +765,11 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
       }
 
       node.status = 'active';
-      recordStep(levels, `Bagi blok [${node.data.join(', ')}] menjadi dua.`);
-
       let left = node.children[0];
       let right = node.children[1];
+      left.status = 'normal';
+      right.status = 'normal';
+      recordStep(levels, `Bagi blok [${node.data.join(', ')}] menjadi dua.`);
 
       let sLeft = sort(left, level + 1);
       let sRight = sort(right, level + 1);
@@ -879,7 +880,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         displayData.forEach((val, vIdx) => {
           const itemDiv = document.createElement('div');
           itemDiv.className = 'array-item';
-          itemDiv.textContent = val;
+          itemDiv.textContent = node.status === 'hidden' ? '?' : val;
 
           if (node.status === 'sorted') itemDiv.classList.add('highlight');
           if (node.status === 'exhausted') itemDiv.classList.add('exhausted');
