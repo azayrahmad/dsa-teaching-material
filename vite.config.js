@@ -23,6 +23,8 @@ export default defineConfig({
         sorting_topic: resolve(__dirname, 'topics/sorting.html'),
         sorting_basic_slides: resolve(__dirname, 'slides/sorting-basic.html'),
         sorting_advanced_slides: resolve(__dirname, 'slides/sorting-advanced.html'),
+        stack_topic: resolve(__dirname, 'topics/stack.html'),
+        stack_slides: resolve(__dirname, 'slides/stack.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
