@@ -15,41 +15,41 @@ int partition(int laci[], int depan, int belakang){
 	int isiPivot = laci[belakang];
 
 	//penanda posisi akhir pivot
-	int pivot = depan - 1;
+	int left = depan - 1;
 
 	//looping untuk menyusun array
-	for(int j = depan; j < belakang; j++){
+	for(int right = depan; right < belakang; right++){
 
-		//jika elemen lebih kecil dari elemen pivot
-		if(laci[j] <= isiPivot){
-			pivot++;
+		//jika elemen lebih kecil atau sama dengan elemen pivot
+		if(laci[right] <= isiPivot){
+			left++;
 
 			//tukar isi laci
-			int temp = laci[pivot];
-			laci[pivot] = laci[j];
-			laci[j] = temp;
+			int temp = laci[left];
+			laci[left] = laci[right];
+			laci[right] = temp;
 		}
 	}
-	pivot++;
+	left++;
 
 	//pindahkan elemen pivot dari belakang ke posisi pivot
-	int temp = laci[pivot];
-	laci[pivot] = laci[belakang];
+	int temp = laci[left];
+	laci[left] = laci[belakang];
 	laci[belakang] = temp;
 
 	//kembalikan indeks pivot
-	return pivot;
+	return left;
 }
 
 void quickSort(int laci[], int depan, int belakang)
 {
 	if(depan < belakang){
 		//tentukan indeks pivot
-		int pivot = partition(laci, depan, belakang);
+		int pivotIdx = partition(laci, depan, belakang);
 
 		//lakukan quicksort di kanan dan kiri pivot
-		quickSort(laci, depan, pivot - 1);
-		quickSort(laci, pivot + 1, belakang);
+		quickSort(laci, depan, pivotIdx - 1);
+		quickSort(laci, pivotIdx + 1, belakang);
 
 	}
 

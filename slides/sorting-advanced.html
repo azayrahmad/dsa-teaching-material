@@ -182,24 +182,24 @@
                 font-weight: bold;
             }
 
-            .quick-cell.pointer-i::before {
-                content: "i";
+            .quick-cell.pointer-left::before {
+                content: "left";
                 position: absolute;
                 bottom: -25px;
                 font-size: 0.8rem;
                 color: var(--accent);
                 font-weight: bold;
             }
-            .quick-cell.pointer-j::before {
-                content: "j";
+            .quick-cell.pointer-right::before {
+                content: "right";
                 position: absolute;
                 bottom: -25px;
                 font-size: 0.8rem;
                 color: var(--accent2);
                 font-weight: bold;
             }
-            .quick-cell.pointer-ij::before {
-                content: "i, j";
+            .quick-cell.pointer-left-right::before {
+                content: "left, right";
                 position: absolute;
                 bottom: -25px;
                 font-size: 0.8rem;
@@ -1744,8 +1744,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                         msg,
                         swaps: quickSwaps,
                         pivotIdx: highlights.pivotIdx ?? -1,
-                        i: highlights.i ?? -1,
-                        j: highlights.j ?? -1,
+                        left: highlights.left ?? -1,
+                        right: highlights.right ?? -1,
                         activeIdx: highlights.activeIdx ?? [],
                         sortedIdx: highlights.sortedIdx ?? [],
                         range: highlights.range ?? [0, arr.length - 1],
@@ -1774,24 +1774,25 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                         sortedIdx: [...sortedIdxs],
                     });
 
-                    let i = low - 1;
-                    for (let j = low; j < high; j++) {
-                        record(`Bandingkan elemen di j=${j} (${arr[j]}) dengan pivot (${pivot}).`, {
+                    let left = low - 1;
+                    for (let right = low; right < high; right++) {
+                        let currentVal = arr[right];
+                        record(`Bandingkan elemen di right=${right} (${currentVal}) dengan pivot (${pivot}).`, {
                             pivotIdx: high,
-                            i,
-                            j,
+                            left,
+                            right,
                             range: [low, high],
                             sortedIdx: [...sortedIdxs],
-                            activeIdx: [j, high],
+                            activeIdx: [right, high],
                         });
-                        if (arr[j] < pivot) {
-                            i++;
+                        if (currentVal <= pivot) {
+                            left++;
                             quickSwaps++;
-                            [arr[i], arr[j]] = [arr[j], arr[i]];
-                            record(`Karena ${arr[j]} < ${pivot}, geser i ke ${i} dan tukar elemen di i dan j.`, {
+                            [arr[left], arr[right]] = [arr[right], arr[left]];
+                            record(`Karena ${currentVal} <= ${pivot}, geser left ke ${left} dan tukar elemen di left dan right.`, {
                                 pivotIdx: high,
-                                i,
-                                j,
+                                left,
+                                right,
                                 range: [low, high],
                                 sortedIdx: [...sortedIdxs],
                                 swapping: true,
@@ -1799,14 +1800,14 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                         }
                     }
                     quickSwaps++;
-                    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-                    record(`Pindahkan pivot ke posisi yang benar (indeks ${i + 1}).`, {
-                        pivotIdx: i + 1,
+                    [arr[left + 1], arr[high]] = [arr[high], arr[left + 1]];
+                    record(`Pindahkan pivot ke posisi yang benar (indeks ${left + 1}).`, {
+                        pivotIdx: left + 1,
                         range: [low, high],
                         sortedIdx: [...sortedIdxs],
                         swapping: true,
                     });
-                    return i + 1;
+                    return left + 1;
                 }
 
                 quickSort(0, arr.length - 1);
@@ -1826,9 +1827,9 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                     if (step.sortedIdx.includes(i)) cell.classList.add("sorted");
 
                     // Pointers
-                    if (i === step.i && i === step.j) cell.classList.add("pointer-ij");
-                    else if (i === step.i) cell.classList.add("pointer-i");
-                    else if (i === step.j) cell.classList.add("pointer-j");
+                    if (i === step.left && i === step.right) cell.classList.add("pointer-left-right");
+                    else if (i === step.left) cell.classList.add("pointer-left");
+                    else if (i === step.right) cell.classList.add("pointer-right");
 
                     // Dim out elements outside current range
                     if (i < step.range[0] || i > step.range[1]) {
