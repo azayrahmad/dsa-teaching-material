@@ -97,8 +97,9 @@
                 border: 1px solid var(--border);
             }
 
-            /* Shell Sort Styles */
-            .shell-grid {
+            /* Shell Sort & Quick Sort Styles */
+            .shell-grid,
+            .quick-grid {
                 display: flex;
                 gap: 8px;
                 margin: 60px 0;
@@ -106,7 +107,8 @@
                 align-items: flex-end;
                 height: 200px;
             }
-            .shell-cell {
+            .shell-cell,
+            .quick-cell {
                 width: 60px;
                 height: 60px;
                 border: 2px solid var(--border);
@@ -119,12 +121,14 @@
                 position: relative;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .shell-cell .val {
+            .shell-cell .val,
+            .quick-cell .val {
                 font-size: 1.1rem;
                 font-weight: bold;
                 z-index: 2;
             }
-            .shell-cell .bar {
+            .shell-cell .bar,
+            .quick-cell .bar {
                 position: absolute;
                 bottom: 0;
                 left: 0;
@@ -133,30 +137,76 @@
                 transition: height 0.3s ease;
                 z-index: 1;
             }
-            .shell-cell.elevated {
+            .shell-cell.elevated,
+            .quick-cell.elevated {
                 transform: translateY(-60px);
                 border-color: var(--accent);
                 background: rgba(var(--accent-rgb), 0.05);
             }
-            .shell-cell.active-compare {
+            .shell-cell.active-compare,
+            .quick-cell.active-compare {
                 border-color: var(--accent);
                 background: rgba(var(--accent-rgb), 0.15);
                 box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
                 transform: translateY(-15px);
             }
-            .shell-cell.elevated.active-compare {
+            .shell-cell.elevated.active-compare,
+            .quick-cell.elevated.active-compare {
                 transform: translateY(-90px);
             }
-            .shell-cell.sorted {
+            .shell-cell.sorted,
+            .quick-cell.sorted {
                 border-color: var(--accent2);
                 background: rgba(var(--accent2-rgb), 0.1);
             }
-            .shell-cell.sorted .bar {
+            .shell-cell.sorted .bar,
+            .quick-cell.sorted .bar {
                 background: rgba(var(--accent2-rgb), 0.3);
             }
-            .shell-cell.swapping {
+            .shell-cell.swapping,
+            .quick-cell.swapping {
                 animation: shell-swap-shake 0.3s ease;
             }
+
+            .quick-cell.pivot {
+                border-color: var(--accent3);
+                background: rgba(var(--accent3-rgb), 0.2);
+                box-shadow: 0 0 15px rgba(var(--accent3-rgb), 0.4);
+            }
+            .quick-cell.pivot::after {
+                content: "PIVOT";
+                position: absolute;
+                top: -25px;
+                font-size: 0.7rem;
+                color: var(--accent3);
+                font-weight: bold;
+            }
+
+            .quick-cell.pointer-left::before {
+                content: "left";
+                position: absolute;
+                bottom: -25px;
+                font-size: 0.8rem;
+                color: var(--accent);
+                font-weight: bold;
+            }
+            .quick-cell.pointer-right::before {
+                content: "right";
+                position: absolute;
+                bottom: -25px;
+                font-size: 0.8rem;
+                color: var(--accent2);
+                font-weight: bold;
+            }
+            .quick-cell.pointer-left-right::before {
+                content: "left, right";
+                position: absolute;
+                bottom: -25px;
+                font-size: 0.8rem;
+                color: var(--text);
+                font-weight: bold;
+            }
+
             @keyframes shell-swap-shake {
                 0% {
                     transform: translateY(-60px) translateX(0);
@@ -769,10 +819,72 @@ n = 1.000.000 → ?
                 </div>
             </div>
 
-            <!-- BAGIAN 7: PERBANDINGAN BESAR -->
+            <!-- BAGIAN 7: QUICK SORT -->
 
             <!-- SLIDE 23 -->
             <div class="slide" id="slide-22">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Quick Sort</div>
+                <div class="slide-title">Konsep <span class="highlight">Quick Sort</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🎯</span><span>Pilih satu elemen sebagai <strong>Pivot</strong></span></div>
+                        <div class="kp-item"><span class="icon">↔️</span><span>Partisi: Kecil di kiri, Besar di kanan</span></div>
+                        <div class="kp-item"><span class="icon">🔁</span><span>Ulangi secara rekursif</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 24 -->
+            <div class="slide" id="slide-23">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Quick Sort</div>
+                <div class="slide-title">Kenapa <span class="highlight">Quick Sort?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">⚡</span><span>Sangat cepat di kasus rata-rata.</span></div>
+                        <div class="kp-item"><span class="icon">💾</span><span>In-place (tidak butuh array tambahan).</span></div>
+                        <div class="kp-item"><span class="icon">🌍</span><span>Paling banyak dipakai di library standar.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 25: QUICK SORT VISUALIZATION -->
+            <div class="slide" id="slide-24" data-notes="Jelaskan peran Pivot dan bagaimana pointer i dan j bekerja.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Quick Sort</span></div>
+                <div class="slide-body">
+                    <div style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        Jumlah Data (3-10):
+                        <input type="number" id="quick-n" min="3" max="10" value="8" style="width: 60px; padding: 5px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+                    </div>
+                    <div class="quick-grid" id="quick-grid"></div>
+                    <div id="quick-tally" class="tally-box" style="text-align: center; visibility: hidden; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-top: 25px;">
+                        Jumlah Pertukaran: <span class="count">0</span>
+                    </div>
+                    <div class="status-box" id="quick-status">Klik Mulai untuk simulasi.</div>
+                    <div class="controls-row">
+                        <button class="btn btn-primary" id="quick-start">Mulai</button>
+                        <button class="btn btn-outline" id="quick-next" style="display: none">Langkah Lanjut (Next)</button>
+                        <button class="btn btn-outline" id="quick-reset">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 8: PERBANDINGAN BESAR -->
+
+            <!-- SLIDE 26 -->
+            <div class="slide" id="slide-25">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -789,32 +901,28 @@ n = 1.000.000 → ?
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Bubble</td>
-                                <td>sederhana</td>
-                            </tr>
-                            <tr>
-                                <td>Selection</td>
-                                <td>sederhana</td>
-                            </tr>
-                            <tr>
-                                <td>Insertion</td>
-                                <td>adaptif</td>
+                                <td>Bubble/Selection/Insertion</td>
+                                <td>Sederhana (O(N²))</td>
                             </tr>
                             <tr>
                                 <td>Shell</td>
-                                <td>optimasi</td>
+                                <td>Optimasi Insertion</td>
                             </tr>
                             <tr>
                                 <td>Merge</td>
-                                <td>scalable</td>
+                                <td>Divide &amp; Conquer (Stabil)</td>
+                            </tr>
+                            <tr>
+                                <td>Quick</td>
+                                <td>Divide &amp; Conquer (Cepat)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- SLIDE 24 -->
-            <div class="slide" id="slide-23">
+            <!-- SLIDE 27 -->
+            <div class="slide" id="slide-26">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -827,8 +935,8 @@ n = 1.000.000 → ?
                 </div>
             </div>
 
-            <!-- SLIDE 25 -->
-            <div class="slide" id="slide-24">
+            <!-- SLIDE 28 -->
+            <div class="slide" id="slide-27">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -841,8 +949,8 @@ n = 1.000.000 → ?
                 </div>
             </div>
 
-            <!-- SLIDE 26 -->
-            <div class="slide" id="slide-25">
+            <!-- SLIDE 29 -->
+            <div class="slide" id="slide-28">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -855,10 +963,10 @@ n = 1.000.000 → ?
                 </div>
             </div>
 
-            <!-- BAGIAN 8: PRAKTIKUM -->
+            <!-- BAGIAN 9: PRAKTIKUM -->
 
-            <!-- SLIDE 27 -->
-            <div class="slide" id="slide-26">
+            <!-- SLIDE 30 -->
+            <div class="slide" id="slide-29">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -868,15 +976,24 @@ n = 1.000.000 → ?
                 <div class="slide-body">
                     <p>Implementasikan:</p>
                     <div class="kp">
-                        <div class="kp-item"><span class="icon">💻</span><span>Bubble Sort</span></div>
-                        <div class="kp-item"><span class="icon">💻</span><span>Insertion Sort</span></div>
-                        <div class="kp-item"><span class="icon">💻</span><span>Merge Sort</span></div>
+                        <div class="kp-item">
+                            <span class="icon">💻</span><span>Merge Sort</span>
+                            <a href="../public/11_Sorting/merge_sort.cpp" download class="download-link" style="font-size: 0.7rem; margin-left: 10px;">(Download)</a>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">💻</span><span>Shell Sort</span>
+                            <a href="../public/11_Sorting/shell_sort.cpp" download class="download-link" style="font-size: 0.7rem; margin-left: 10px;">(Download)</a>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">💻</span><span>Quick Sort</span>
+                            <a href="../public/11_Sorting/quick_sort.cpp" download class="download-link" style="font-size: 0.7rem; margin-left: 10px;">(Download)</a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SLIDE 28 -->
-            <div class="slide" id="slide-27">
+            <!-- SLIDE 31 -->
+            <div class="slide" id="slide-30">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -893,8 +1010,8 @@ n = 1.000.000 → ?
                 </div>
             </div>
 
-            <!-- SLIDE 29 -->
-            <div class="slide" id="slide-28">
+            <!-- SLIDE 32 -->
+            <div class="slide" id="slide-31">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -912,8 +1029,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 30 -->
-            <div class="slide" id="slide-29">
+            <!-- SLIDE 33 -->
+            <div class="slide" id="slide-32">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -927,10 +1044,10 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 </div>
             </div>
 
-            <!-- BAGIAN 9: PENUTUP -->
+            <!-- BAGIAN 10: PENUTUP -->
 
-            <!-- SLIDE 31 -->
-            <div class="slide" id="slide-30">
+            <!-- SLIDE 34 -->
+            <div class="slide" id="slide-33">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -947,8 +1064,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 32 -->
-            <div class="slide" id="slide-31">
+            <!-- SLIDE 35 -->
+            <div class="slide" id="slide-34">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -966,8 +1083,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 33 -->
-            <div class="slide" id="slide-32">
+            <!-- SLIDE 36 -->
+            <div class="slide" id="slide-35">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -989,8 +1106,8 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 34 -->
-            <div class="slide" id="slide-33">
+            <!-- SLIDE 37 -->
+            <div class="slide" id="slide-36">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1016,7 +1133,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
         <div class="nav-slides-container">
             <div class="nav-slides">
                 <button class="nav-btn" id="prevBtn">←</button>
-                <span class="nav-counter" id="counter">1 / 34</span>
+                <span class="nav-counter" id="counter">1 / 37</span>
                 <button class="nav-btn" id="nextBtn">→</button>
             </div>
         </div>
@@ -1587,13 +1704,184 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
                 initShell();
             });
 
+            // --- QUICK SORT LOGIC ---
+            let quickData = [];
+            let quickSteps = [];
+            let quickStepIdx = 0;
+            let quickSwaps = 0;
+            const quickGrid = document.getElementById("quick-grid");
+            const quickStatus = document.getElementById("quick-status");
+            const quickTally = document.getElementById("quick-tally");
+            const quickNInput = document.getElementById("quick-n");
+            const btnQuickStart = document.getElementById("quick-start");
+            const btnQuickNext = document.getElementById("quick-next");
+            const btnQuickReset = document.getElementById("quick-reset");
+
+            function initQuick() {
+                let n = parseInt(quickNInput.value) || 8;
+                if (n < 3) n = 3;
+                if (n > 10) n = 10;
+                quickNInput.value = n;
+                quickData = Array.from({ length: n }, () => getRandomInt(10, 90));
+                quickSwaps = 0;
+                quickSteps = [];
+                quickStepIdx = 0;
+
+                generateQuickSteps([...quickData]);
+                renderQuickStep(0);
+
+                quickStatus.textContent = "Data acak siap. Klik Mulai.";
+                quickTally.style.visibility = "hidden";
+                btnQuickStart.style.display = "inline-block";
+                btnQuickNext.style.display = "none";
+                quickNInput.disabled = false;
+            }
+
+            function generateQuickSteps(arr) {
+                function record(msg, highlights = {}) {
+                    quickSteps.push({
+                        data: [...arr],
+                        msg,
+                        swaps: quickSwaps,
+                        pivotIdx: highlights.pivotIdx ?? -1,
+                        left: highlights.left ?? -1,
+                        right: highlights.right ?? -1,
+                        activeIdx: highlights.activeIdx ?? [],
+                        sortedIdx: highlights.sortedIdx ?? [],
+                        range: highlights.range ?? [0, arr.length - 1],
+                    });
+                }
+
+                let sortedIdxs = [];
+
+                function quickSort(low, high) {
+                    if (low < high) {
+                        let pi = partition(low, high);
+                        sortedIdxs.push(pi);
+                        quickSort(low, pi - 1);
+                        quickSort(pi + 1, high);
+                    } else if (low === high) {
+                        sortedIdxs.push(low);
+                        record(`Elemen di indeks ${low} sudah pada posisi yang benar.`, { sortedIdx: [...sortedIdxs] });
+                    }
+                }
+
+                function partition(low, high) {
+                    let pivot = arr[high];
+                    record(`Pilih pivot: ${pivot} (elemen terakhir dalam rentang [${low}, ${high}]).`, {
+                        pivotIdx: high,
+                        range: [low, high],
+                        sortedIdx: [...sortedIdxs],
+                    });
+
+                    let left = low - 1;
+                    for (let right = low; right < high; right++) {
+                        let currentVal = arr[right];
+                        record(`Bandingkan elemen di right=${right} (${currentVal}) dengan pivot (${pivot}).`, {
+                            pivotIdx: high,
+                            left,
+                            right,
+                            range: [low, high],
+                            sortedIdx: [...sortedIdxs],
+                            activeIdx: [right, high],
+                        });
+                        if (currentVal <= pivot) {
+                            left++;
+                            quickSwaps++;
+                            [arr[left], arr[right]] = [arr[right], arr[left]];
+                            record(`Karena ${currentVal} <= ${pivot}, geser left ke ${left} dan tukar elemen di left dan right.`, {
+                                pivotIdx: high,
+                                left,
+                                right,
+                                range: [low, high],
+                                sortedIdx: [...sortedIdxs],
+                                swapping: true,
+                            });
+                        }
+                    }
+                    quickSwaps++;
+                    [arr[left + 1], arr[high]] = [arr[high], arr[left + 1]];
+                    record(`Pindahkan pivot ke posisi yang benar (indeks ${left + 1}).`, {
+                        pivotIdx: left + 1,
+                        range: [low, high],
+                        sortedIdx: [...sortedIdxs],
+                        swapping: true,
+                    });
+                    return left + 1;
+                }
+
+                quickSort(0, arr.length - 1);
+                record("Selesai! Seluruh data telah terurut dengan Quick Sort.", { sortedIdx: [...Array(arr.length).keys()] });
+            }
+
+            function renderQuickStep(idx) {
+                const step = quickSteps[idx];
+                quickGrid.innerHTML = "";
+                let maxVal = Math.max(...step.data);
+
+                step.data.forEach((val, i) => {
+                    const cell = document.createElement("div");
+                    cell.className = "quick-cell";
+                    if (i === step.pivotIdx) cell.classList.add("pivot");
+                    if (step.activeIdx.includes(i)) cell.classList.add("active-compare");
+                    if (step.sortedIdx.includes(i)) cell.classList.add("sorted");
+
+                    // Pointers
+                    if (i === step.left && i === step.right) cell.classList.add("pointer-left-right");
+                    else if (i === step.left) cell.classList.add("pointer-left");
+                    else if (i === step.right) cell.classList.add("pointer-right");
+
+                    // Dim out elements outside current range
+                    if (i < step.range[0] || i > step.range[1]) {
+                        cell.style.opacity = "0.3";
+                    }
+
+                    const barHeight = (val / maxVal) * 100;
+                    cell.innerHTML = `
+                        <div class="bar" style="height: ${barHeight}%"></div>
+                        <div class="val">${val}</div>
+                    `;
+                    quickGrid.appendChild(cell);
+                });
+
+                quickStatus.textContent = step.msg;
+                quickTally.querySelector(".count").textContent = step.swaps;
+            }
+
+            btnQuickStart.onclick = () => {
+                btnQuickStart.style.display = "none";
+                btnQuickNext.style.display = "inline-block";
+                quickNInput.disabled = true;
+                quickTally.style.visibility = "visible";
+                quickStepIdx = 1;
+                renderQuickStep(quickStepIdx);
+            };
+
+            btnQuickNext.onclick = () => {
+                if (quickStepIdx < quickSteps.length - 1) {
+                    quickStepIdx++;
+                    renderQuickStep(quickStepIdx);
+                } else {
+                    btnQuickNext.style.display = "none";
+                }
+            };
+
+            btnQuickReset.onclick = () => {
+                initQuick();
+            };
+
+            quickNInput.onchange = initQuick;
+
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     if (mutation.target.classList.contains("active")) {
                         if (mutation.target.id === "slide-20") {
                             initShell();
                         }
-                        if (mutation.target.id === "slide-29") {
+                        if (mutation.target.id === "slide-24") {
+                            initQuick();
+                        }
+                        if (mutation.target.id === "slide-32") {
                             setTimeout(initSortChart, 100);
                         }
                         if (mutation.target.id === "slide-14") {
@@ -1609,6 +1897,7 @@ cout &lt;&lt; chrono::duration&lt;double, milli&gt;(e-s).count();</code></pre>
 
             initShell();
             initMerge();
+            initQuick();
         </script>
     </body>
 </html>
