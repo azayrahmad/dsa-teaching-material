@@ -58,6 +58,16 @@ export function initSlides() {
 
   // Keyboard support
   document.addEventListener('keydown', e => {
+    // Ignore if user is typing in an input, textarea or contenteditable
+    const active = document.activeElement;
+    if (active && (
+      active.tagName === 'INPUT' ||
+      active.tagName === 'TEXTAREA' ||
+      active.isContentEditable
+    )) {
+      return;
+    }
+
     if (e.key === 'ArrowRight' || e.key === ' ') navigate(1);
     if (e.key === 'ArrowLeft') navigate(-1);
   });
