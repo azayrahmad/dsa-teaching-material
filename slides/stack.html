@@ -115,6 +115,33 @@
                 font-family: "JetBrains Mono", monospace;
                 font-size: 0.9rem;
             }
+
+            .status-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-top: 15px;
+            }
+            .status-item {
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                padding: 10px;
+                border-radius: 6px;
+                text-align: center;
+            }
+            .status-label {
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+            }
+            .status-value {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
+                font-weight: bold;
+                color: var(--accent);
+            }
         </style>
     </head>
     <body>
@@ -446,6 +473,20 @@ else
                                     <button class="btn btn-outline" id="btn-sim-reset">Reset</button>
                                 </div>
                                 <div class="status-box" id="sim-status">Siap simulasi.</div>
+                                <div class="status-grid">
+                                    <div class="status-item">
+                                        <div class="status-label">isEmpty</div>
+                                        <div id="status-empty" class="status-value">-</div>
+                                    </div>
+                                    <div class="status-item">
+                                        <div class="status-label">isFull</div>
+                                        <div id="status-full" class="status-value">-</div>
+                                    </div>
+                                    <div class="status-item">
+                                        <div class="status-label">Peek/Top</div>
+                                        <div id="status-peek" class="status-value">-</div>
+                                    </div>
+                                </div>
                             </div>
                             <p style="margin-top: 20px">Simulasikan:<br>Push 5, Push 7, Push 9, Pop, Push 2.</p>
                         </div>
@@ -931,25 +972,60 @@ Pop</pre>
             const simStackContainer = document.getElementById('sim-stack');
             const simInput = document.getElementById('sim-input');
             const simStatus = document.getElementById('sim-status');
+            const statusEmpty = document.getElementById('status-empty');
+            const statusFull = document.getElementById('status-full');
+            const statusPeek = document.getElementById('status-peek');
             let stackData = [];
 
+            function updateSimStatus() {
+                const isEmpty = stackData.length === 0;
+                const isFull = stackData.length >= 5;
+                const topVal = isEmpty ? "-" : stackData[stackData.length - 1];
+                const topIdx = isEmpty ? "-1" : stackData.length - 1;
+
+                statusEmpty.textContent = isEmpty ? "True" : "False";
+                statusFull.textContent = isFull ? "True" : "False";
+                statusPeek.textContent = isEmpty ? "-" : `${topVal} (idx: ${topIdx})`;
+
+                statusEmpty.style.color = isEmpty ? "var(--accent)" : "var(--text-muted)";
+                statusFull.style.color = isFull ? "var(--accent)" : "var(--text-muted)";
+            }
+
+            function getRandom99() {
+                return Math.floor(Math.random() * 99) + 1;
+            }
+
+            function resetSimInput() {
+                simInput.value = getRandom99();
+            }
+
             document.getElementById('btn-sim-push').onclick = () => {
-                if (stackData.length >= 5) simStatus.textContent = 'Overflow!';
-                else if (simInput.value) {
-                    stackData.push(simInput.value); simInput.value = '';
+                if (stackData.length >= 5) {
+                    simStatus.textContent = 'Overflow!';
+                } else if (simInput.value) {
+                    stackData.push(simInput.value);
+                    resetSimInput();
                     renderStackUI(simStackContainer, stackData);
                     simStatus.textContent = 'Push berhasil.';
+                    updateSimStatus();
                 }
             };
             document.getElementById('btn-sim-pop').onclick = () => {
-                if (stackData.length === 0) simStatus.textContent = 'Underflow!';
-                else {
-                    stackData.pop(); renderStackUI(simStackContainer, stackData);
+                if (stackData.length === 0) {
+                    simStatus.textContent = 'Underflow!';
+                } else {
+                    stackData.pop();
+                    renderStackUI(simStackContainer, stackData);
                     simStatus.textContent = 'Pop berhasil.';
+                    updateSimStatus();
                 }
             };
             document.getElementById('btn-sim-reset').onclick = () => {
-                stackData = []; renderStackUI(simStackContainer, stackData); simStatus.textContent = 'Reset.';
+                stackData = [];
+                resetSimInput();
+                renderStackUI(simStackContainer, stackData);
+                simStatus.textContent = 'Reset.';
+                updateSimStatus();
             };
 
             // --- UNDO REDO ---
@@ -999,15 +1075,25 @@ Pop</pre>
                 }
             };
 
-            const observer = new MutationObserver((m) => {
-                m.forEach((mu) => {
-                    if (mu.target.classList.contains("active")) {
-                        if (mu.target.id === "slide-15") renderStackUI(simStackContainer, stackData);
-                        if (mu.target.id === "slide-27") updateUR();
+            function handleSlideChange(slide) {
+                if (slide.classList.contains("active")) {
+                    if (slide.id === "slide-15") {
+                        if (simInput.value === "") resetSimInput();
+                        renderStackUI(simStackContainer, stackData);
+                        updateSimStatus();
                     }
-                });
+                    if (slide.id === "slide-27") updateUR();
+                }
+            }
+
+            const observer = new MutationObserver((m) => {
+                m.forEach((mu) => handleSlideChange(mu.target));
             });
-            document.querySelectorAll(".slide").forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
+
+            document.querySelectorAll(".slide").forEach((s) => {
+                observer.observe(s, { attributes: true, attributeFilter: ["class"] });
+                handleSlideChange(s);
+            });
         </script>
     </body>
 </html>
