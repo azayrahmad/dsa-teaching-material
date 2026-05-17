@@ -77,6 +77,24 @@
                 display: none;
             }
 
+            .bank-customer {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+            }
+            .bank-customer .ticket-label {
+                font-size: 0.7rem;
+                background: var(--accent);
+                color: white;
+                padding: 1px 4px;
+                border-radius: 3px;
+            }
+            .bank-customer .emoji {
+                font-size: 1.5rem;
+            }
+
             .circular-queue-visual {
                 position: relative;
                 width: 300px;
@@ -1265,8 +1283,40 @@ void display();</code></pre>
                 </div>
             </div>
 
+            <!-- SLIDE 55: Simulasi Antrean Bank -->
+            <div class="slide" id="slide-55" data-notes="Mari kita coba simulasi sistem antrean bank yang menggunakan Circular Queue. Perhatikan bagaimana nomor antrean (ticket) diberikan secara berurutan dan bagaimana Teller memanggil nasabah dari depan. Karena menggunakan Circular Queue, slot yang sudah kosong di depan dapat digunakan kembali saat antrean panjang.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Simulasi Kasus</div>
+                <div class="slide-title">Simulasi: <span class="highlight">Antrean Bank (Circular)</span></div>
+                <div class="slide-body">
+                    <div class="bank-view" style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px;">
+                         <div class="teller-station" style="text-align: center; border: 2px solid var(--accent); padding: 10px; border-radius: 10px; min-width: 150px; background: rgba(var(--accent-rgb), 0.05);">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">TELLER</div>
+                            <div id="serving-ticket" style="font-size: 1.5rem; font-weight: bold; color: var(--accent); font-family: 'JetBrains Mono', monospace;">--</div>
+                            <div style="font-size: 2.5rem;">👩‍💼</div>
+                         </div>
+                         <div class="ticket-machine" style="text-align: center; border: 2px solid var(--border); padding: 10px; border-radius: 10px; min-width: 150px;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">NOMOR BERIKUTNYA</div>
+                            <div id="next-ticket-label" style="font-size: 1.5rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; margin-bottom: 5px;">B-01</div>
+                            <button class="btn btn-primary" id="btn-bank-enqueue">Ambil Nomor</button>
+                         </div>
+                    </div>
+                    <div class="queue-container" id="sim-bank-queue" style="padding: 30px 20px; min-height: 140px;"></div>
+                    <div class="interactive-box">
+                        <div class="status-box" id="bank-status">Selamat datang di Bank FIFO. Silakan ambil nomor antrean.</div>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button class="btn btn-outline" id="btn-bank-dequeue">Panggil Antrean (Next)</button>
+                            <button class="btn btn-outline" id="btn-bank-reset">Reset Sistem</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- SLIDE 56: Queue pada Multiplayer Game -->
-            <div class="slide" id="slide-55" data-notes="Pernah main game online dan harus 'Queueing' untuk masuk match? Server menaruh Anda di Queue sampai jumlah pemain cukup. Siapa yang klik 'Find Match' duluan, masuk match duluan.">
+            <div class="slide" id="slide-56" data-notes="Pernah main game online dan harus 'Queueing' untuk masuk match? Server menaruh Anda di Queue sampai jumlah pemain cukup. Siapa yang klik 'Find Match' duluan, masuk match duluan.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1280,7 +1330,7 @@ void display();</code></pre>
             </div>
 
             <!-- SLIDE 57: Queue untuk BFS -->
-            <div class="slide" id="slide-56" data-notes="Ini adalah bocoran untuk materi algoritma lanjutan. Queue digunakan untuk menjelajahi Graf atau Tree secara 'melebar'. Kita akan bahas ini lebih dalam di pertemuan Tree.">
+            <div class="slide" id="slide-57" data-notes="Ini adalah bocoran untuk materi algoritma lanjutan. Queue digunakan untuk menjelajahi Graf atau Tree secara 'melebar'. Kita akan bahas ini lebih dalam di pertemuan Tree.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1297,7 +1347,7 @@ void display();</code></pre>
             <!-- SECTION 9: LATIHAN MANDIRI -->
 
             <!-- SLIDE 58: Latihan 1 -->
-            <div class="slide" id="slide-57" data-notes="Coba kerjakan ini tanpa bantuan komputer. Ini akan sangat membantu saat ujian nanti.">
+            <div class="slide" id="slide-58" data-notes="Coba kerjakan ini tanpa bantuan komputer. Ini akan sangat membantu saat ujian nanti.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1317,7 +1367,7 @@ void display();</code></pre>
             </div>
 
             <!-- SLIDE 59: Latihan 2 -->
-            <div class="slide" id="slide-58" data-notes="Tebak apa yang tampil di layar.">
+            <div class="slide" id="slide-59" data-notes="Tebak apa yang tampil di layar.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1335,7 +1385,7 @@ display();</code></pre>
             </div>
 
             <!-- SLIDE 60: Latihan 3 -->
-            <div class="slide" id="slide-59" data-notes="Cari letak kesalahannya.">
+            <div class="slide" id="slide-60" data-notes="Cari letak kesalahannya.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1353,7 +1403,7 @@ void enqueue(int data) {
             </div>
 
             <!-- SLIDE 61: Mini Challenge -->
-            <div class="slide" id="slide-60" data-notes="Tantang diri Anda untuk membuat sesuatu yang nyata.">
+            <div class="slide" id="slide-61" data-notes="Tantang diri Anda untuk membuat sesuatu yang nyata.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1369,7 +1419,7 @@ void enqueue(int data) {
             <!-- SECTION 10: RANGKUMAN -->
 
             <!-- SLIDE 62: Ringkasan Konsep -->
-            <div class="slide" id="slide-61" data-notes="Ingat poin-poin penting ini. Jika Anda paham ini, Anda sudah menguasai 80% materi Queue.">
+            <div class="slide" id="slide-62" data-notes="Ingat poin-poin penting ini. Jika Anda paham ini, Anda sudah menguasai 80% materi Queue.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1387,7 +1437,7 @@ void enqueue(int data) {
             </div>
 
             <!-- SLIDE 63: Kesalahan Umum -->
-            <div class="slide" id="slide-62" data-notes="Waspadai kesalahan-kesalahan ini saat coding nanti.">
+            <div class="slide" id="slide-63" data-notes="Waspadai kesalahan-kesalahan ini saat coding nanti.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1405,7 +1455,7 @@ void enqueue(int data) {
             </div>
 
             <!-- SLIDE 64: Koneksi ke Materi Berikutnya -->
-            <div class="slide" id="slide-63" data-notes="Minggu depan kita akan belajar Tree. Queue akan sangat kita butuhkan di sana untuk Level-Order Traversal.">
+            <div class="slide" id="slide-64" data-notes="Minggu depan kita akan belajar Tree. Queue akan sangat kita butuhkan di sana untuk Level-Order Traversal.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1420,7 +1470,7 @@ void enqueue(int data) {
             </div>
 
             <!-- SLIDE 65: Penutup -->
-            <div class="slide" id="slide-64" data-notes="Terima kasih sudah mengikuti materi asinkron ini. Tetap semangat berlatih coding!">
+            <div class="slide" id="slide-65" data-notes="Terima kasih sudah mengikuti materi asinkron ini. Tetap semangat berlatih coding!">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -1439,7 +1489,7 @@ void enqueue(int data) {
         <div class="nav-slides-container">
             <div class="nav-slides">
                 <button class="nav-btn" id="prevBtn">←</button>
-                <span class="nav-counter" id="counter">1 / 65</span>
+                <span class="nav-counter" id="counter">1 / 66</span>
                 <button class="nav-btn" id="nextBtn">→</button>
             </div>
         </div>
@@ -1449,6 +1499,10 @@ void enqueue(int data) {
             import { initSlides } from "../src/slides.js";
             initApp();
             initSlides();
+
+            function getRandom99() {
+                return Math.floor(Math.random() * 99) + 1;
+            }
 
             function renderLinearQueue(container, data, front, rear, maxSize = 5, isOverflowSim = false) {
                 container.innerHTML = '';
@@ -1484,6 +1538,10 @@ void enqueue(int data) {
             const linStatus = document.getElementById('linear-status');
             const linInput = document.getElementById('linear-input');
 
+            function resetLinInput() {
+                linInput.value = getRandom99();
+            }
+
             document.getElementById('btn-linear-enqueue').onclick = () => {
                 const val = linInput.value;
                 if (!val) return;
@@ -1493,7 +1551,7 @@ void enqueue(int data) {
                     if (linFront === -1) linFront = 0;
                     linRear++;
                     linData[linRear] = val;
-                    linInput.value = '';
+                    resetLinInput();
                     renderLinearQueue(linContainer, linData, linFront, linRear);
                     linStatus.textContent = `Enqueue ${val} berhasil.`;
                 }
@@ -1515,6 +1573,7 @@ void enqueue(int data) {
             };
             document.getElementById('btn-linear-reset').onclick = () => {
                 linData.fill(null); linFront = -1; linRear = -1;
+                resetLinInput();
                 renderLinearQueue(linContainer, linData, linFront, linRear);
                 linStatus.textContent = "Reset.";
             };
@@ -1524,16 +1583,20 @@ void enqueue(int data) {
             let ovFront = -1, ovRear = -1;
             const ovContainer = document.getElementById('sim-overflow-queue');
             const ovStatus = document.getElementById('overflow-status');
+            let nextOvVal = getRandom99();
 
             document.getElementById('btn-ov-enqueue').onclick = () => {
                 if (ovRear === 4) {
                     ovStatus.innerHTML = "<span style='color:var(--accent)'>OVERFLOW!</span> Rear=4. Program menolak Enqueue meskipun ada slot kosong.";
                 } else {
+                    const val = nextOvVal;
                     if (ovFront === -1) ovFront = 0;
                     ovRear++;
-                    ovData[ovRear] = 55;
+                    ovData[ovRear] = val;
+                    nextOvVal = getRandom99();
+                    document.getElementById('btn-ov-enqueue').textContent = `Enqueue ${nextOvVal}`;
                     renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
-                    ovStatus.textContent = "Berhasil Enqueue.";
+                    ovStatus.textContent = `Berhasil Enqueue ${val}.`;
                 }
             };
             document.getElementById('btn-ov-dequeue').onclick = () => {
@@ -1555,6 +1618,10 @@ void enqueue(int data) {
             const circContainer = document.getElementById('sim-circular-container');
             const circStatus = document.getElementById('circular-status');
             const circInput = document.getElementById('circular-input');
+
+            function resetCircInput() {
+                circInput.value = getRandom99();
+            }
 
             function renderCircular() {
                 circContainer.innerHTML = '';
@@ -1599,7 +1666,7 @@ void enqueue(int data) {
                     if (circFront === -1) circFront = 0;
                     circRear = (circRear + 1) % 5;
                     circData[circRear] = val;
-                    circInput.value = '';
+                    resetCircInput();
                     renderCircular();
                     circStatus.textContent = `Enqueue ${val} ke index ${circRear}.`;
                 }
@@ -1621,15 +1688,118 @@ void enqueue(int data) {
             };
             document.getElementById('btn-circular-reset').onclick = () => {
                 circData.fill(null); circFront = -1; circRear = -1;
+                resetCircInput();
                 renderCircular(); circStatus.textContent = "Reset.";
+            };
+
+            // --- SIM 4: BANK QUEUE (CIRCULAR LOGIC) ---
+            let bankData = new Array(5).fill(null);
+            let bankFront = -1, bankRear = -1;
+            let nextTicketNum = 1;
+            const bankContainer = document.getElementById('sim-bank-queue');
+            const bankStatus = document.getElementById('bank-status');
+            const servingLabel = document.getElementById('serving-ticket');
+            const nextTicketLabel = document.getElementById('next-ticket-label');
+            const bankEmojis = ['🧍', '🧍‍♂️', '🧍‍♀️', '🚶‍♂️', '🚶‍♀️'];
+
+            function renderBankQueue() {
+                bankContainer.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'queue-element';
+                    if (bankData[i] !== null) {
+                        cell.classList.add('active');
+                        const customer = document.createElement('div');
+                        customer.className = 'bank-customer';
+
+                        const ticket = document.createElement('span');
+                        ticket.className = 'ticket-label';
+                        ticket.textContent = bankData[i].ticket;
+
+                        const emoji = document.createElement('span');
+                        emoji.className = 'emoji';
+                        emoji.textContent = bankData[i].emoji;
+
+                        customer.appendChild(ticket);
+                        customer.appendChild(emoji);
+                        cell.appendChild(customer);
+                    } else {
+                        cell.textContent = '-';
+                    }
+
+                    const idxLabel = document.createElement('span');
+                    idxLabel.className = 'index'; idxLabel.textContent = `Slot ${i}`;
+                    cell.appendChild(idxLabel);
+
+                    if (i === bankFront) cell.classList.add('is-front');
+                    if (i === bankRear) cell.classList.add('is-rear');
+
+                    bankContainer.appendChild(cell);
+                }
+            }
+
+            document.getElementById('btn-bank-enqueue').onclick = () => {
+                if ((bankRear + 1) % 5 === bankFront) {
+                    bankStatus.textContent = "Antrean penuh! Harap tunggu beberapa saat.";
+                } else {
+                    if (bankFront === -1) bankFront = 0;
+                    bankRear = (bankRear + 1) % 5;
+                    const ticketStr = "B-" + String(nextTicketNum).padStart(2, '0');
+                    bankData[bankRear] = {
+                        ticket: ticketStr,
+                        emoji: bankEmojis[Math.floor(Math.random() * bankEmojis.length)]
+                    };
+                    nextTicketNum++;
+                    nextTicketLabel.textContent = "B-" + String(nextTicketNum).padStart(2, '0');
+                    renderBankQueue();
+                    bankStatus.textContent = `Nomor ${ticketStr} silakan mengantre.`;
+                }
+            };
+
+            document.getElementById('btn-bank-dequeue').onclick = () => {
+                if (bankFront === -1) {
+                    bankStatus.textContent = "Antrean kosong.";
+                    servingLabel.textContent = "--";
+                } else {
+                    const customer = bankData[bankFront];
+                    servingLabel.textContent = customer.ticket;
+                    bankStatus.textContent = `Memanggil nomor ${customer.ticket} ke Teller.`;
+                    bankData[bankFront] = null;
+                    if (bankFront === bankRear) {
+                        bankFront = bankRear = -1;
+                    } else {
+                        bankFront = (bankFront + 1) % 5;
+                    }
+                    renderBankQueue();
+                }
+            };
+
+            document.getElementById('btn-bank-reset').onclick = () => {
+                bankData.fill(null); bankFront = -1; bankRear = -1; nextTicketNum = 1;
+                servingLabel.textContent = "--";
+                nextTicketLabel.textContent = "B-01";
+                renderBankQueue();
+                bankStatus.textContent = "Sistem antrean di-reset.";
             };
 
             const observer = new MutationObserver((m) => {
                 m.forEach((mu) => {
                     if (mu.target.classList.contains("active")) {
-                        if (mu.target.id === "slide-17") renderLinearQueue(linContainer, linData, linFront, linRear);
-                        if (mu.target.id === "slide-36") renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
-                        if (mu.target.id === "slide-45") renderCircular();
+                        if (mu.target.id === "slide-17") {
+                            if (linInput.value === "") resetLinInput();
+                            renderLinearQueue(linContainer, linData, linFront, linRear);
+                        }
+                        if (mu.target.id === "slide-36") {
+                            document.getElementById('btn-ov-enqueue').textContent = `Enqueue ${nextOvVal}`;
+                            renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
+                        }
+                        if (mu.target.id === "slide-45") {
+                            if (circInput.value === "") resetCircInput();
+                            renderCircular();
+                        }
+                        if (mu.target.id === "slide-55") {
+                            renderBankQueue();
+                        }
                     }
                 });
             });
