@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pertemuan 14 – Queue dan Karakteristiknya</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../src/style.css" />
+        <link rel="stylesheet" href="../src/slides.css" />
+        <style>
+            .queue-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 5px;
+                margin: 20px 0;
+                padding: 40px 20px;
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                background: rgba(var(--accent-rgb), 0.05);
+                min-height: 120px;
+                width: 100%;
+                overflow-x: auto;
+                position: relative;
+            }
+            .queue-element {
+                min-width: 80px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--surface);
+                border: 2px solid var(--border);
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 1rem;
+                font-weight: bold;
+                position: relative;
+                transition: all 0.3s ease;
+            }
+            .queue-element.active {
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.1);
+            }
+            .queue-element .index {
+                position: absolute;
+                top: -25px;
+                font-size: 0.75rem;
+                color: var(--text-muted);
+            }
+            .queue-element.is-front::after {
+                content: '↑ front';
+                position: absolute;
+                bottom: -30px;
+                color: var(--accent);
+                font-size: 0.8rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+            .queue-element.is-rear::before {
+                content: '↑ rear';
+                position: absolute;
+                bottom: -30px;
+                color: var(--accent2);
+                font-size: 0.8rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+            /* If both front and rear at same element */
+            .queue-element.is-front.is-rear::after {
+                content: '↑ front & rear';
+                bottom: -30px;
+            }
+            .queue-element.is-front.is-rear::before {
+                display: none;
+            }
+
+            .circular-queue-visual {
+                position: relative;
+                width: 300px;
+                height: 300px;
+                margin: 40px auto;
+                border: 2px dashed var(--border);
+                border-radius: 50%;
+            }
+            .circular-node {
+                position: absolute;
+                width: 60px;
+                height: 60px;
+                background: var(--surface);
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .circular-node.active {
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.1);
+            }
+            .circular-node .idx {
+                position: absolute;
+                font-size: 0.7rem;
+                color: var(--text-muted);
+            }
+            .circular-node.is-front { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+            .circular-node.is-rear { border-color: var(--accent2); box-shadow: 0 0 10px var(--accent2); }
+
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 12px;
+                border: 1px solid var(--border);
+                text-align: center;
+            }
+            .comparison-table th { background: rgba(var(--accent-rgb), 0.1); }
+
+            .status-box {
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 8px;
+                background: rgba(var(--accent-rgb), 0.05);
+                border: 1px solid var(--border);
+                min-height: 60px;
+                text-align: center;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.9rem;
+            }
+            .checkpoint-box {
+                background: rgba(255, 204, 51, 0.1);
+                border-left: 5px solid #ffcc33;
+                padding: 20px;
+                margin: 20px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="progress" id="progress"></div>
+
+        <nav class="top-nav slide-top-nav">
+            <div class="back-hotspot">
+                <a href="../topics/queue.html" class="back-link" data-i18n="back">Kembali</a>
+            </div>
+            <div class="controls-hotspot">
+                <div class="controls slide-controls">
+                    <button class="control-btn" id="lang-toggle">ID / EN</button>
+                    <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="slides-wrapper" id="slidesWrapper">
+            <!-- SLIDE 1: Cover -->
+            <div class="slide active" id="slide-0" data-notes="Selamat datang di Pertemuan 14. Hari ini kita akan membahas Queue atau Antrean. Ini adalah struktur data yang sangat dekat dengan kehidupan sehari-hari. Bayangkan antrean di kasir atau printer, itulah konsep dasar yang akan kita pelajari secara teknis di sini.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="slide-num">PERTEMUAN 14</div>
+                <div class="section-badge"><span class="dot"></span>Struktur Data dan Algoritma</div>
+                <div class="slide-title">Queue dan <span class="highlight">Karakteristiknya</span></div>
+                <div class="slide-body" style="text-align: center;">
+                    <div style="font-size: 5rem; margin-bottom: 20px;">🧍🧍‍♂️🧍‍♀️🧍‍♂️</div>
+                    <p style="font-size: 1.2rem; color: var(--text-muted);">"First In, First Out"</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Cara Menggunakan -->
+            <div class="slide" id="slide-1" data-notes="Karena materi ini bersifat asinkron, sangat penting bagi mahasiswa untuk tidak terburu-buru. Ikuti setiap langkah tracing dan pastikan mencoba simulator interaktif yang tersedia agar pemahaman logikanya terbentuk dengan kuat.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Panduan Belajar</div>
+                <div class="slide-title">Cara Menggunakan <span class="highlight">Materi Ini</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">📖</span><span>Baca slide secara berurutan, jangan melompat.</span></div>
+                        <div class="kp-item"><span class="icon">✍️</span><span>Ikuti setiap langkah tracing visual dengan teliti.</span></div>
+                        <div class="kp-item"><span class="icon">🤔</span><span>Kerjakan checkpoint sebelum melihat jawaban.</span></div>
+                        <div class="kp-item"><span class="icon">💻</span><span>Jalankan contoh kode di compiler Anda sendiri.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Learning Outcomes -->
+            <div class="slide" id="slide-2" data-notes="Inilah target kita hari ini. Di akhir sesi, Anda diharapkan bukan hanya tahu definisi Queue, tapi bisa mengimplementasikannya, terutama memahami Circular Queue yang sering menjadi tantangan bagi mahasiswa.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Target</div>
+                <div class="slide-title">Learning <span class="highlight">Outcomes</span></div>
+                <div class="slide-body">
+                    <p>Mahasiswa mampu:</p>
+                    <ul class="task-list">
+                        <li>Memahami konsep dasar dan prinsip FIFO pada Queue</li>
+                        <li>Membedakan mekanisme kerja Stack vs Queue</li>
+                        <li>Melakukan operasi Enqueue dan Dequeue secara manual</li>
+                        <li>Memahami dan mengatasi masalah Linear Queue dengan Circular Queue</li>
+                        <li>Mengimplementasikan Queue menggunakan array dalam C++</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Hubungan dengan Stack -->
+            <div class="slide" id="slide-3" data-notes="Minggu lalu kita belajar Stack yang sifatnya LIFO (Last In First Out). Stack seperti tumpukan buku, yang terakhir ditaruh adalah yang pertama diambil. Tapi bagaimana jika kita butuh data diproses sesuai urutan kedatangannya? Itulah peran Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Review & Context</div>
+                <div class="slide-title">Stack vs <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <h3 style="color: var(--accent);">Stack (LIFO)</h3>
+                            <p>Data terakhir masuk, keluar pertama.</p>
+                            <div style="font-size: 2rem;">📚</div>
+                        </div>
+                        <div class="col" style="border-left: 1px solid var(--border); padding-left: 20px;">
+                            <h3 style="color: var(--accent2);">Queue (FIFO)</h3>
+                            <p>Data pertama masuk, keluar pertama.</p>
+                            <div style="font-size: 2rem;">🧍🧍‍♂️🧍‍♀️</div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        "Bagaimana jika data diproses berdasarkan urutan kedatangan?"
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Apa Itu Queue? -->
+            <div class="slide" id="slide-4" data-notes="Queue secara harfiah berarti antrean. Dalam struktur data, Queue adalah list linear di mana penambahan elemen dilakukan di satu ujung (rear) dan penghapusan dilakukan di ujung lainnya (front).">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Definisi</div>
+                <div class="slide-title">Apa Itu <span class="highlight">Queue?</span></div>
+                <div class="slide-body">
+                    <p>Queue adalah struktur data linear yang bekerja berdasarkan prinsip:</p>
+                    <div class="equation" style="text-align: center; font-size: 4rem;">FIFO</div>
+                    <h3 style="text-align: center; color: var(--accent2);">First In First Out</h3>
+                    <p style="text-align: center; margin-top: 20px;">Elemen yang <strong>pertama kali masuk</strong> akan menjadi yang <strong>pertama kali keluar</strong>.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Konsep FIFO -->
+            <div class="slide" id="slide-5" data-notes="Bayangkan Anda sedang mengantre tiket. Jika A datang duluan, lalu B, lalu C. Maka A lah yang akan dilayani dan keluar dari antrean terlebih dahulu. Tidak adil bukan jika C yang baru datang langsung dilayani? Itulah esensi FIFO.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>FIFO</div>
+                <div class="slide-title">Konsep <span class="highlight">FIFO</span></div>
+                <div class="slide-body">
+                    <div class="interactive-box" style="text-align: center;">
+                        <div style="margin-bottom: 20px;">
+                            <strong>Urutan Masuk:</strong><br>
+                            <span style="font-size: 2rem; border: 2px solid var(--border); padding: 5px 15px; margin: 5px;">A</span>
+                            <span style="font-size: 2rem; border: 2px solid var(--border); padding: 5px 15px; margin: 5px;">B</span>
+                            <span style="font-size: 2rem; border: 2px solid var(--border); padding: 5px 15px; margin: 5px;">C</span>
+                        </div>
+                        <div style="font-size: 2rem; margin: 10px;">⬇️</div>
+                        <div>
+                            <strong>Urutan Keluar:</strong><br>
+                            <span style="font-size: 2rem; border: 2px solid var(--accent); padding: 5px 15px; margin: 5px; color: var(--accent);">A dulu</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Analogi Dunia Nyata -->
+            <div class="slide" id="slide-6" data-notes="Analogi ini membantu kita memahami bahwa Queue ada di mana-mana. Antrean kasir di supermarket, antrean dokumen di printer, antrean panggilan di customer service, hingga proses upload file yang mengantre satu per satu.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Analogi</div>
+                <div class="slide-title">Analogi <span class="highlight">Dunia Nyata</span></div>
+                <div class="slide-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="kp-item"><span class="icon">🛒</span><span>Antrean Kasir</span></div>
+                        <div class="kp-item"><span class="icon">🖨️</span><span>Antrean Printer</span></div>
+                        <div class="kp-item"><span class="icon">🎧</span><span>Customer Service</span></div>
+                        <div class="kp-item"><span class="icon">📤</span><span>Upload File Berurutan</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: Queue dalam Sistem Komputer -->
+            <div class="slide" id="slide-7" data-notes="Dalam ilmu komputer, Queue sangat kritikal. Sistem operasi menggunakannya untuk menjadwalkan proses (job scheduling). Buffer video (seperti saat nonton YouTube) menggunakan queue agar video tetap jalan lancar. Algoritma BFS dalam graf juga sangat bergantung pada Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Penerapan IT</div>
+                <div class="slide-title">Queue dalam <span class="highlight">Sistem Komputer</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li><strong>Job Scheduling:</strong> OS mengatur antrean proses yang akan dieksekusi CPU.</li>
+                        <li><strong>Print Spooling:</strong> Dokumen mengantre untuk dicetak printer.</li>
+                        <li><strong>Breadth-First Search (BFS):</strong> Algoritma pencarian graf/tree.</li>
+                        <li><strong>Buffering:</strong> Menampung data sementara sebelum diproses (streaming video/audio).</li>
+                    </ul>
+                    <p style="margin-top: 20px; font-style: italic;">"Queue memastikan keadilan (fairness) dalam pemrosesan data."</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: Stack vs Queue Table -->
+            <div class="slide" id="slide-8" data-notes="Mari kita bandingkan secara head-to-head. Stack itu LIFO, Queue itu FIFO. Stack aksesnya hanya di satu ujung (Top), sedangkan Queue di dua ujung (Front untuk ambil, Rear untuk tambah).">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Perbandingan</div>
+                <div class="slide-title">Stack vs <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Karakteristik</th>
+                                <th style="color: var(--accent);">Stack</th>
+                                <th style="color: var(--accent2);">Queue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Prinsip</td>
+                                <td>LIFO (Last In First Out)</td>
+                                <td>FIFO (First In First Out)</td>
+                            </tr>
+                            <tr>
+                                <td>Titik Akses</td>
+                                <td>1 Ujung (Top)</td>
+                                <td>2 Ujung (Front & Rear)</td>
+                            </tr>
+                            <tr>
+                                <td>Analogi</td>
+                                <td>Tumpukan Piring</td>
+                                <td>Antrean Tiket</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Visual Stack -->
+            <div class="slide" id="slide-9" data-notes="Ingat kembali visual Stack minggu lalu. Data masuk dari atas, dan jika mau keluar, data terataslah yang harus pergi dulu.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+                <div class="slide-title">Mengingat Kembali: <span class="highlight">Stack</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                        <div style="width: 100px; height: 30px; border: 2px solid var(--accent); text-align: center;">C (Top)</div>
+                        <div style="width: 100px; height: 30px; border: 2px solid var(--border); text-align: center;">B</div>
+                        <div style="width: 100px; height: 30px; border: 2px solid var(--border); text-align: center;">A</div>
+                        <div style="margin-top: 10px;">Arah Keluar: ⬆️ (dari atas)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Visual Queue -->
+            <div class="slide" id="slide-10" data-notes="Sekarang lihat Queue. Data baru masuk dari belakang (Rear), tapi kalau mau keluar, dia keluar dari depan (Front). Ini seperti pipa terbuka di kedua ujungnya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visualisasi</div>
+                <div class="slide-title">Visualisasi Baru: <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 40px;">
+                        <div>Keluar (Front) ←</div>
+                        <div style="width: 60px; height: 60px; border: 2px solid var(--accent); text-align: center; line-height: 60px;">A</div>
+                        <div style="width: 60px; height: 60px; border: 2px solid var(--border); text-align: center; line-height: 60px;">B</div>
+                        <div style="width: 60px; height: 60px; border: 2px solid var(--accent2); text-align: center; line-height: 60px;">C</div>
+                        <div>← Masuk (Rear)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: Checkpoint #1 -->
+            <div class="slide" id="slide-11" data-notes="Waktunya uji pemahaman. Jika ada data masuk A, lalu B, lalu C ke dalam Queue. Kemudian kita melakukan operasi 'Keluar' (Dequeue) sebanyak dua kali. Kira-kira data apa yang tersisa di dalam antrean? Jangan langsung lanjut, coba coret-coret dulu di kertas.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Checkpoint</div>
+                <div class="slide-title">Checkpoint <span class="highlight">#1</span></div>
+                <div class="slide-body">
+                    <div class="checkpoint-box">
+                        <h3>Pertanyaan:</h3>
+                        <p>Jika data masuk berurutan: <strong>A, B, C</strong>.</p>
+                        <p>Lalu dilakukan operasi "Keluar" (Dequeue) sebanyak <strong>2 kali</strong>.</p>
+                        <p><strong>Data apa yang keluar pertama? Dan data apa yang tersisa di Queue?</strong></p>
+                    </div>
+                    <p style="text-align: center; margin-top: 40px; color: var(--text-muted);">Pikirkan sejenak sebelum ke slide berikutnya...</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: Jawaban Checkpoint #1 -->
+            <div class="slide" id="slide-12" data-notes="Inilah jawabannya. Karena prinsipnya FIFO, maka yang masuk duluan (A) harus keluar duluan. Dequeue pertama mengeluarkan A, Dequeue kedua mengeluarkan B. Maka yang tersisa di antrean hanyalah C.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Jawaban</div>
+                <div class="slide-title">Jawaban <span class="highlight">Checkpoint #1</span></div>
+                <div class="slide-body">
+                    <ol>
+                        <li>Masuk A, B, C &rarr; Queue: [A, B, C]</li>
+                        <li>Keluar 1 (Dequeue) &rarr; <strong>A keluar</strong>. Queue: [B, C]</li>
+                        <li>Keluar 2 (Dequeue) &rarr; <strong>B keluar</strong>. Queue: [C]</li>
+                    </ol>
+                    <div class="tip-box">
+                        <strong>Hasil Akhir:</strong> Data yang keluar adalah A lalu B. Yang tersisa adalah <strong>C</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 14: Operasi Queue -->
+            <div class="slide" id="slide-13" data-notes="Ada empat istilah teknis yang harus Anda hafal. Enqueue untuk menambah data, Dequeue untuk menghapus data, Front untuk menunjuk depan, dan Rear untuk menunjuk belakang.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Terminologi</div>
+                <div class="slide-title">Operasi Dasar <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">➕</span><span><strong>Enqueue:</strong> Menambah elemen ke belakang (Rear).</span></div>
+                        <div class="kp-item"><span class="icon">➖</span><span><strong>Dequeue:</strong> Menghapus elemen dari depan (Front).</span></div>
+                        <div class="kp-item"><span class="icon">📍</span><span><strong>Front:</strong> Pointer ke elemen terdepan.</span></div>
+                        <div class="kp-item"><span class="icon">🔚</span><span><strong>Rear:</strong> Pointer ke elemen terakhir.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 15: Enqueue -->
+            <div class="slide" id="slide-14" data-notes="Mari kita lihat Enqueue. Bayangkan antrean kosong. Kita masukkan 'X'. X jadi Front sekaligus Rear. Kita masukkan 'Y', Rear pindah ke Y. Kita masukkan 'Z', Rear pindah ke Z. Ingat: Enqueue selalu menggerakkan pointer REAR.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Operasi</div>
+                <div class="slide-title">Enqueue: <span class="highlight">Menambah Data</span></div>
+                <div class="slide-body">
+                    <p>Setiap data baru masuk melalui ujung <strong>Rear</strong>.</p>
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 30px; gap: 10px;">
+                        <div style="border: 2px dashed var(--border); padding: 10px;">Lama</div>
+                        <div style="font-size: 1.5rem;">➡️</div>
+                        <div style="border: 2px solid var(--accent2); padding: 10px; background: rgba(var(--accent-rgb), 0.1);">DATA BARU (Rear)</div>
+                    </div>
+                    <p style="text-align: center; margin-top: 20px;">Pointer <strong>Rear</strong> akan bertambah (maju).</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 16: Dequeue -->
+            <div class="slide" id="slide-15" data-notes="Dequeue adalah mengambil data dari depan. Saat kita Dequeue, elemen di Front akan dihapus atau dilewati, dan pointer FRONT akan bertambah untuk menunjuk ke elemen berikutnya. Ingat: Dequeue selalu menggerakkan pointer FRONT.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Operasi</div>
+                <div class="slide-title">Dequeue: <span class="highlight">Menghapus Data</span></div>
+                <div class="slide-body">
+                    <p>Penghapusan data dilakukan pada ujung <strong>Front</strong>.</p>
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 30px; gap: 10px;">
+                        <div style="border: 2px solid var(--accent); padding: 10px; background: rgba(var(--accent-rgb), 0.1);">KELUAR (Front)</div>
+                        <div style="font-size: 1.5rem;">➡️</div>
+                        <div style="border: 2px dashed var(--border); padding: 10px;">Sisa Antrean</div>
+                    </div>
+                    <p style="text-align: center; margin-top: 20px;">Pointer <strong>Front</strong> akan bertambah (maju).</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 17: Front dan Rear -->
+            <div class="slide" id="slide-16" data-notes="Visualisasi ini penting. Front adalah 'mulai' dari antrean, Rear adalah 'akhir'. Di implementasi array nanti, kita akan menggunakan index untuk kedua pointer ini.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visual</div>
+                <div class="slide-title">Front dan <span class="highlight">Rear</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; justify-content: center; gap: 5px; margin-top: 50px;">
+                        <div class="queue-element active is-front">A <span class="index">[0]</span></div>
+                        <div class="queue-element active">B <span class="index">[1]</span></div>
+                        <div class="queue-element active is-rear">C <span class="index">[2]</span></div>
+                    </div>
+                    <p style="text-align: center; margin-top: 60px;">Front menunjuk ke index elemen pertama.<br>Rear menunjuk ke index elemen terakhir.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 18: Simulasi Lengkap Queue -->
+            <div class="slide" id="slide-17" data-notes="Mari kita coba simulator ini. Masukkan beberapa angka, lalu perhatikan bagaimana Front dan Rear bergerak. Perhatikan bahwa saat Enqueue, Rear yang bergerak ke kanan. Saat Dequeue, Front yang bergerak ke kanan menyusul Rear.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Simulator</div>
+                <div class="slide-title">Simulasi <span class="highlight">Linear Queue</span></div>
+                <div class="slide-body">
+                    <div class="queue-container" id="sim-linear-queue"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <input type="number" id="linear-input" placeholder="Data" style="width: 80px">
+                            <button class="btn btn-primary" id="btn-linear-enqueue">Enqueue</button>
+                            <button class="btn btn-outline" id="btn-linear-dequeue">Dequeue</button>
+                            <button class="btn btn-outline" id="btn-linear-reset">Reset</button>
+                        </div>
+                        <div class="status-box" id="linear-status">Siap simulasi.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 19: Checkpoint #2 -->
+            <div class="slide" id="slide-18" data-notes="Coba tebak state akhirnya. Lakukan operasi ini di kertas: Enqueue 10, Enqueue 20, Dequeue, Enqueue 30. Di mana posisi Front dan Rear? Apa isi array-nya?">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Checkpoint</div>
+                <div class="slide-title">Checkpoint <span class="highlight">#2</span></div>
+                <div class="slide-body">
+                    <div class="checkpoint-box">
+                        <p>Operasi:</p>
+                        <ol>
+                            <li>Enqueue 10</li>
+                            <li>Enqueue 20</li>
+                            <li>Dequeue</li>
+                            <li>Enqueue 30</li>
+                        </ol>
+                        <p><strong>Tentukan isi Queue, posisi Front, dan posisi Rear!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 20: Jawaban Checkpoint #2 -->
+            <div class="slide" id="slide-19" data-notes="Ini hasilnya. Front ada di index 1 (angka 20), dan Rear ada di index 2 (angka 30). Angka 10 di index 0 sebenarnya masih ada di memori, tapi secara logika sudah keluar karena Front sudah melewatinya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Jawaban</div>
+                <div class="slide-title">Jawaban <span class="highlight">Checkpoint #2</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; justify-content: center; gap: 5px; margin-top: 50px;">
+                        <div class="queue-element" style="opacity: 0.3;">10 <span class="index">[0]</span></div>
+                        <div class="queue-element active is-front">20 <span class="index">[1]</span></div>
+                        <div class="queue-element active is-rear">30 <span class="index">[2]</span></div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 60px;">
+                        <ul>
+                            <li>Isi Queue: <strong>20, 30</strong></li>
+                            <li>Front: <strong>1</strong></li>
+                            <li>Rear: <strong>2</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 21: Implementasi Array -->
+            <div class="slide" id="slide-20" data-notes="Kita akan menggunakan array untuk menyimpan data Queue. Karena array ukurannya tetap (static), kita harus mendefinisikan MAX size di awal.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Implementasi</div>
+                <div class="slide-title">Queue dengan <span class="highlight">Array</span></div>
+                <div class="slide-body">
+                    <p>Kita butuh tiga hal utama:</p>
+                    <ol>
+                        <li><strong>Array:</strong> Untuk menyimpan data.</li>
+                        <li><strong>Variabel Front:</strong> Menyimpan index depan.</li>
+                        <li><strong>Variabel Rear:</strong> Menyimpan index belakang.</li>
+                    </ol>
+                    <pre><code class="language-cpp">#define MAX 5
+int queue[MAX];
+int front = -1;
+int rear = -1;</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 22: Variabel Front dan Rear -->
+            <div class="slide" id="slide-21" data-notes="Ingat aturan mainnya: Front menunjuk siapa yang akan keluar selanjutnya. Rear menunjuk siapa yang terakhir masuk.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Logika</div>
+                <div class="slide-title">Fungsi <span class="highlight">Front & Rear</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item">
+                            <span class="icon">📍</span>
+                            <div>
+                                <strong>Front:</strong> Berfungsi sebagai jalur keluar.<br>
+                                <small>Hanya berubah saat Dequeue.</small>
+                            </div>
+                        </div>
+                        <div class="kp-item">
+                            <span class="icon">🔚</span>
+                            <div>
+                                <strong>Rear:</strong> Berfungsi sebagai jalur masuk.<br>
+                                <small>Hanya berubah saat Enqueue.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 23: Kondisi Awal Queue -->
+            <div class="slide" id="slide-22" data-notes="Saat baru dibuat, Queue kosong. Kita tandai dengan Front = -1 dan Rear = -1. Ini adalah indikator standar bahwa belum ada data di dalam array tersebut.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Awal</div>
+                <div class="slide-title">Kondisi Awal <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <p>Queue dikatakan <strong>KOSONG</strong> jika:</p>
+                    <div class="equation" style="text-align: center;">front == -1</div>
+                    <p style="text-align: center; margin-top: 20px;">Atau pada Linear Queue, bisa juga saat <code>front &gt; rear</code>.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 24: Struktur Program Queue -->
+            <div class="slide" id="slide-23" data-notes="Inilah kerangka besar program kita. Ada variabel global dan fungsi-fungsi operasional.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Struktur</div>
+                <div class="slide-title">Struktur Program <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">// Global
+int queue[MAX];
+int front = -1, rear = -1;
+
+// Prototipe Fungsi
+void enqueue(int data);
+void dequeue();
+bool isFull();
+bool isEmpty();
+void display();</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 25: Pseudocode Enqueue -->
+            <div class="slide" id="slide-24" data-notes="Langkah Enqueue: 1. Cek apa penuh? (rear == MAX-1). 2. Jika pertama kali masuk, set front=0. 3. Naikkan rear. 4. Masukkan data ke queue[rear].">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Algoritma</div>
+                <div class="slide-title">Pseudocode <span class="highlight">Enqueue</span></div>
+                <div class="slide-body">
+                    <ol>
+                        <li>Jika <code>rear == MAX - 1</code>, cetak "Overflow"</li>
+                        <li>Jika <code>front == -1</code>, set <code>front = 0</code></li>
+                        <li>Naikkan <code>rear</code> (<code>rear++</code>)</li>
+                        <li><code>queue[rear] = data</code></li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SLIDE 26: Tracing Enqueue -->
+            <div class="slide" id="slide-25" data-notes="Lihat tracing-nya. Saat kita enqueue 5, rear jadi 0. Enqueue 10, rear jadi 1. Rear selalu mengikuti data terbaru.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tracing</div>
+                <div class="slide-title">Tracing <span class="highlight">Enqueue</span></div>
+                <div class="slide-body">
+                    <p>Awal: <code>front = -1, rear = -1</code></p>
+                    <div style="margin-top: 20px;">
+                        <p>1. Enqueue(5)</p>
+                        <div style="display: flex; gap: 5px;">
+                            <div class="queue-element active is-front is-rear">5 <span class="index">[0]</span></div>
+                            <div class="queue-element">? <span class="index">[1]</span></div>
+                        </div>
+                        <p><code>front = 0, rear = 0</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 27: Kode Enqueue -->
+            <div class="slide" id="slide-26" data-notes="Ini adalah implementasi C++ untuk fungsi Enqueue. Perhatikan validasi isFull() di awal untuk mencegah error saat array sudah penuh.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Fungsi <span class="highlight">Enqueue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void enqueue(int data) {
+    if (rear == MAX - 1) {
+        cout &lt;&lt; "Queue Penuh!";
+    } else {
+        if (front == -1) front = 0;
+        rear++;
+        queue[rear] = data;
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 28: Penjelasan Baris per Baris -->
+            <div class="slide" id="slide-27" data-notes="Kenapa front diset ke 0? Karena saat data pertama masuk, front yang tadinya -1 harus menunjuk ke index 0 agar kita tahu di mana antrean dimulai.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Detail</div>
+                <div class="slide-title">Penjelasan <span class="highlight">Enqueue</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li><code>rear == MAX - 1</code>: Mengecek apakah index terakhir sudah tercapai.</li>
+                        <li><code>if (front == -1) front = 0;</code>: Menghidupkan pointer front hanya pada elemen pertama.</li>
+                        <li><code>rear++</code>: Mempersiapkan slot kosong berikutnya.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 29: Pseudocode Dequeue -->
+            <div class="slide" id="slide-28" data-notes="Langkah Dequeue: 1. Cek apa kosong? 2. Ambil data di front. 3. Naikkan front (front++). 4. Jika front sudah melewati rear, berarti queue kosong lagi, reset front & rear ke -1.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Algoritma</div>
+                <div class="slide-title">Pseudocode <span class="highlight">Dequeue</span></div>
+                <div class="slide-body">
+                    <ol>
+                        <li>Jika <code>front == -1</code>, cetak "Underflow"</li>
+                        <li>Ambil data <code>queue[front]</code></li>
+                        <li>Naikkan <code>front</code> (<code>front++</code>)</li>
+                        <li>Jika <code>front &gt; rear</code>, set <code>front = rear = -1</code></li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SLIDE 30: Tracing Dequeue -->
+            <div class="slide" id="slide-29" data-notes="Lihat bagaimana Front bergerak meninggalkan index 0. Meskipun angka 5 masih ada di array, karena Front ada di index 1, angka 5 dianggap sudah tidak ada dalam Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tracing</div>
+                <div class="slide-title">Tracing <span class="highlight">Dequeue</span></div>
+                <div class="slide-body">
+                    <p>Queue: [5, 10, 15], front=0, rear=2</p>
+                    <div style="margin-top: 20px;">
+                        <p>1. Dequeue()</p>
+                        <div style="display: flex; gap: 5px;">
+                            <div class="queue-element" style="opacity: 0.3;">5 <span class="index">[0]</span></div>
+                            <div class="queue-element active is-front">10 <span class="index">[1]</span></div>
+                            <div class="queue-element active is-rear">15 <span class="index">[2]</span></div>
+                        </div>
+                        <p><code>front = 1, rear = 2</code></p>
+                        <p>Data keluar: <strong>5</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 31: Kode Dequeue -->
+            <div class="slide" id="slide-30" data-notes="Ini kode C++ untuk Dequeue. Perhatikan logika reset di bagian bawah. Itu penting agar jika semua data sudah diambil, Queue kembali ke state -1, -1.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Fungsi <span class="highlight">Dequeue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void dequeue() {
+    if (front == -1) {
+        cout &lt;&lt; "Queue Kosong!";
+    } else {
+        cout &lt;&lt; "Keluar: " &lt;&lt; queue[front];
+        front++;
+        if (front &gt; rear) {
+            front = rear = -1;
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 32: Penjelasan Baris per Baris -->
+            <div class="slide" id="slide-31" data-notes="Menaikkan Front (front++) secara efektif 'menghapus' elemen di depan tanpa perlu benar-benar mengubah nilai di dalam memori array.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Detail</div>
+                <div class="slide-title">Penjelasan <span class="highlight">Dequeue</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li><code>front++</code>: Kita hanya memajukan pointer. Data lama tetap di memori tapi tidak bisa diakses via queue.</li>
+                        <li><code>if (front &gt; rear)</code>: Kondisi di mana semua elemen sudah diambil. Kita reset agar index bisa mulai dari 0 lagi nanti.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 33: Display Queue -->
+            <div class="slide" id="slide-32" data-notes="Untuk menampilkan isi Queue, kita melakukan perulangan dari Front sampai Rear.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Menampilkan <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void display() {
+    if (front == -1) return;
+    for (int i = front; i &lt;= rear; i++) {
+        cout &lt;&lt; queue[i] &lt;&lt; " ";
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 34: Demo Output Program -->
+            <div class="slide" id="slide-33" data-notes="Inilah tampilan yang akan Anda lihat di terminal jika menjalankan kode secara benar.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Output</div>
+                <div class="slide-title">Demo <span class="highlight">Output</span></div>
+                <div class="slide-body">
+                    <div class="interactive-box" style="background: #000; color: #0f0; font-family: monospace; padding: 20px;">
+                        --- Menu Queue ---<br>
+                        1. Enqueue<br>
+                        2. Dequeue<br>
+                        Pilih: 1<br>
+                        Data: 50<br>
+                        Berhasil masuk!<br>
+                        Isi: 50 [F:0, R:0]
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 6: MASALAH QUEUE LINEAR -->
+
+            <!-- SLIDE 35: Permasalahan Baru -->
+            <div class="slide" id="slide-34" data-notes="Namun, ada masalah besar dengan Linear Queue yang kita buat tadi. Perhatikan baik-baik slide berikutnya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Problem</div>
+                <div class="slide-title">Apakah Linear Queue <span class="highlight">Efisien?</span></div>
+                <div class="slide-body">
+                    <div class="tip-box" style="text-align: center; padding: 40px;">
+                        <h2>Masalah: <span class="highlight">False Overflow</span></h2>
+                        <p>Apa yang terjadi jika Rear sudah di akhir array, tapi di depan banyak slot kosong (sudah di-dequeue)?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 36: False Overflow -->
+            <div class="slide" id="slide-35" data-notes="Inilah False Overflow. Rear sudah di index 4 (terakhir), tapi index 0 sampai 3 kosong karena sudah di-dequeue. Program akan bilang 'Penuh', padahal masih ada tempat. Boros memori, bukan?">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visual</div>
+                <div class="slide-title">False <span class="highlight">Overflow</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; justify-content: center; gap: 5px; margin-top: 50px;">
+                        <div class="queue-element" style="opacity: 0.2;">X <span class="index">[0]</span></div>
+                        <div class="queue-element" style="opacity: 0.2;">X <span class="index">[1]</span></div>
+                        <div class="queue-element" style="opacity: 0.2;">X <span class="index">[2]</span></div>
+                        <div class="queue-element" style="opacity: 0.2;">X <span class="index">[3]</span></div>
+                        <div class="queue-element active is-front is-rear">99 <span class="index">[4]</span></div>
+                    </div>
+                    <p style="color: var(--accent); text-align: center; margin-top: 40px; font-weight: bold;">
+                        Rear = 4 (MAX-1) &rarr; Program menganggap PENUH!<br>
+                        Padahal index 0-3 kosong melompong.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SLIDE 37: Simulasi False Overflow -->
+            <div class="slide" id="slide-36" data-notes="Gunakan simulator ini untuk memicu False Overflow. Enqueue sampai penuh, lalu Dequeue beberapa kali. Coba Enqueue lagi. Anda akan melihat pesan 'Queue Penuh' meskipun ada slot kosong di depan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tracing</div>
+                <div class="slide-title">Simulasi <span class="highlight">False Overflow</span></div>
+                <div class="slide-body">
+                    <div class="queue-container" id="sim-overflow-queue"></div>
+                    <div class="interactive-box">
+                        <div class="status-box" id="overflow-status">1. Enqueue sampai index 4. <br> 2. Dequeue 3x. <br> 3. Coba Enqueue lagi.</div>
+                        <div class="form-row" style="margin-top: 10px;">
+                            <button class="btn btn-primary" id="btn-ov-enqueue">Enqueue 55</button>
+                            <button class="btn btn-outline" id="btn-ov-dequeue">Dequeue</button>
+                            <button class="btn btn-outline" id="btn-ov-reset">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 38: Mengapa Ini Terjadi? -->
+            <div class="slide" id="slide-37" data-notes="Ini terjadi karena Front dan Rear hanya bergerak maju ke satu arah. Mereka tidak pernah kembali ke index 0 kecuali Queue benar-benar dikosongkan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Penyebab</div>
+                <div class="slide-title">Mengapa Ini <span class="highlight">Terjadi?</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li>Pointer <strong>Rear</strong> hanya bertambah (maju).</li>
+                        <li>Kondisi penuh hanya mengecek <code>rear == MAX - 1</code>.</li>
+                        <li>Slot kosong di depan tidak bisa digunakan kembali secara otomatis.</li>
+                    </ul>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        Solusinya? Buat antrean itu <strong>Melingkar</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 39: Solusi: Circular Queue -->
+            <div class="slide" id="slide-38" data-notes="Bayangkan array kita tidak lurus, tapi melingkar. Ujung belakang terhubung kembali ke ujung depan. Inilah Circular Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Solusi</div>
+                <div class="slide-title">Solusi: <span class="highlight">Circular Queue</span></div>
+                <div class="slide-body" style="text-align: center;">
+                    <div style="font-size: 5rem;">🔄</div>
+                    <h3>Circular Queue (Antrean Melingkar)</h3>
+                    <p>Memungkinkan penggunaan kembali slot kosong di depan.</p>
+                </div>
+            </div>
+
+            <!-- SECTION 7: CIRCULAR QUEUE -->
+
+            <!-- SLIDE 40: Apa Itu Circular Queue? -->
+            <div class="slide" id="slide-39" data-notes="Dalam Circular Queue, setelah index terakhir (misal 4), data berikutnya akan masuk ke index 0 jika index 0 kosong.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Definisi</div>
+                <div class="slide-title">Apa Itu <span class="highlight">Circular Queue?</span></div>
+                <div class="slide-body">
+                    <p>Varian Queue di mana elemen terakhir terhubung kembali ke elemen pertama.</p>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <div class="circular-node active" style="top: 0; left: 120px;">0</div>
+                        <div class="circular-node active" style="top: 80px; left: 220px;">1</div>
+                        <div class="circular-node active" style="top: 200px; left: 180px;">2</div>
+                        <div class="circular-node active" style="top: 200px; left: 60px;">3</div>
+                        <div class="circular-node active" style="top: 80px; left: 20px;">4</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 41: Konsep Circular -->
+            <div class="slide" id="slide-40" data-notes="Kuncinya adalah pergerakan index: 0 ke 1, 1 ke 2, ..., 4 kembali ke 0.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Konsep</div>
+                <div class="slide-title">Konsep <span class="highlight">Circular</span></div>
+                <div class="slide-body">
+                    <p style="text-align: center; font-size: 1.5rem;">
+                        0 &rarr; 1 &rarr; 2 &rarr; 3 &rarr; 4 &rarr; <strong>0 (Lagi)</strong>
+                    </p>
+                    <div class="interactive-box">
+                        <p>Bagaimana cara komputer melakukan ini secara otomatis?</p>
+                        <h2 style="text-align: center; color: var(--accent2);">Operator MODULO (%)</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 42: Operasi Modulo -->
+            <div class="slide" id="slide-41" data-notes="Modulo memberikan sisa bagi. Jika MAX=5, maka 4+1=5. 5 modulo 5 adalah 0. Jadi index otomatis balik ke 0. Ajaib, bukan?">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Matematika</div>
+                <div class="slide-title">Operasi <span class="highlight">Modulo</span></div>
+                <div class="slide-body">
+                    <p>Rumus sakti Circular Queue:</p>
+                    <div class="equation" style="text-align: center; font-size: 2.5rem; margin: 40px 0;">
+                        index = (index + 1) % MAX
+                    </div>
+                    <p>Contoh (MAX = 5):</p>
+                    <ul>
+                        <li>(0 + 1) % 5 = <strong>1</strong></li>
+                        <li>(3 + 1) % 5 = <strong>4</strong></li>
+                        <li>(4 + 1) % 5 = <strong>0</strong> &larr; Balik!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 43: Contoh Modulo -->
+            <div class="slide" id="slide-42" data-notes="Ini tabel lengkapnya. Perhatikan saat Rear sudah di 4, operasi berikutnya menjadikannya 0. Ini memungkinkan kita mengisi slot kosong di depan tadi.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tabel</div>
+                <div class="slide-title">Contoh Pergerakan <span class="highlight">Index</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <tr><th>Index Sekarang</th><th>(Index + 1) % 5</th><th>Index Baru</th></tr>
+                        <tr><td>0</td><td>1 % 5</td><td>1</td></tr>
+                        <tr><td>1</td><td>2 % 5</td><td>2</td></tr>
+                        <tr><td>2</td><td>3 % 5</td><td>3</td></tr>
+                        <tr><td>3</td><td>4 % 5</td><td>4</td></tr>
+                        <tr><td>4</td><td>5 % 5</td><td><strong>0</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SLIDE 44: Kondisi Queue Penuh -->
+            <div class="slide" id="slide-43" data-notes="Dalam Circular Queue, kondisi penuh adalah saat Rear tepat satu langkah di belakang Front. Jika Rear maju sekali lagi pakai modulo dan dia malah menabrak Front, berarti sudah penuh.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Logika</div>
+                <div class="slide-title">Kondisi Queue <span class="highlight">Penuh</span></div>
+                <div class="slide-body">
+                    <p>Queue dikatakan <strong>PENUH</strong> jika:</p>
+                    <div class="equation" style="text-align: center; font-size: 2rem;">
+                        (rear + 1) % MAX == front
+                    </div>
+                    <p style="margin-top: 30px;">Artinya, Rear sudah "mengejar" Front dari belakang.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 45: Kondisi Queue Kosong -->
+            <div class="slide" id="slide-44" data-notes="Kondisi kosong tetap sama sederhananya: Front masih di -1.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Logika</div>
+                <div class="slide-title">Kondisi Queue <span class="highlight">Kosong</span></div>
+                <div class="slide-body">
+                    <p>Queue dikatakan <strong>KOSONG</strong> jika:</p>
+                    <div class="equation" style="text-align: center; font-size: 2.5rem;">
+                        front == -1
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 46: Tracing Circular Queue -->
+            <div class="slide" id="slide-45" data-notes="Mari kita simulasi. Enqueue 5 data, lalu Dequeue 2 data. Sekarang Front di 2, Rear di 4. Jika kita Enqueue lagi, Rear akan jadi (4+1)%5 = 0. Data masuk ke index 0! Inilah kehebatan Circular Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tracing</div>
+                <div class="slide-title">Simulasi <span class="highlight">Circular Queue</span></div>
+                <div class="slide-body">
+                    <div style="position: relative; height: 320px; width: 100%;">
+                        <div class="circular-queue-visual" id="sim-circular-container"></div>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <input type="number" id="circular-input" placeholder="Data" style="width: 80px">
+                            <button class="btn btn-primary" id="btn-circular-enqueue">Enqueue</button>
+                            <button class="btn btn-outline" id="btn-circular-dequeue">Dequeue</button>
+                            <button class="btn btn-outline" id="btn-circular-reset">Reset</button>
+                        </div>
+                        <div class="status-box" id="circular-status">Masukan data untuk melihat pergerakan melingkar.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 47: Kode Circular Enqueue -->
+            <div class="slide" id="slide-46" data-notes="Lihat kodenya. Perbedaannya hanya pada cara update Rear. Kita gunakan modulo. Sisanya mirip dengan linear queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Circular <span class="highlight">Enqueue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void enqueue(int data) {
+    if ((rear + 1) % MAX == front) {
+        cout &lt;&lt; "Queue Penuh!";
+    } else {
+        if (front == -1) front = 0;
+        rear = (rear + 1) % MAX; // MANTRA SAKTI
+        queue[rear] = data;
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 48: Penjelasan Kode -->
+            <div class="slide" id="slide-47" data-notes="Baris 'rear = (rear+1)%MAX' adalah inti dari materi hari ini. Pastikan Anda paham kenapa modulo digunakan di sini.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Detail</div>
+                <div class="slide-title">Bedah Kode <span class="highlight">Circular Enqueue</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li><code>(rear + 1) % MAX == front</code>: Cek apakah slot berikutnya adalah Front. Jika iya, berarti sudah melingkar penuh.</li>
+                        <li><code>rear = (rear + 1) % MAX</code>: Menggerakkan rear secara melingkar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 49: Kode Circular Dequeue -->
+            <div class="slide" id="slide-48" data-notes="Dequeue juga menggunakan modulo saat memajukan Front. Khusus saat elemen terakhir diambil (front == rear), kita reset keduanya ke -1.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Circular <span class="highlight">Dequeue</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void dequeue() {
+    if (front == -1) {
+        cout &lt;&lt; "Kosong!";
+    } else {
+        cout &lt;&lt; "Keluar: " &lt;&lt; queue[front];
+        if (front == rear) { // Tinggal 1 data
+            front = rear = -1;
+        } else {
+            front = (front + 1) % MAX; // MAJU MELINGKAR
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 50: Penjelasan Circular Dequeue -->
+            <div class="slide" id="slide-49" data-notes="Kondisi 'front == rear' sangat penting. Itu artinya antrean tinggal berisi 1 orang. Setelah dia keluar, antrean jadi benar-benar kosong, maka kita balikkan ke -1.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Detail</div>
+                <div class="slide-title">Bedah Kode <span class="highlight">Circular Dequeue</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li><code>front == rear</code>: Indikator elemen terakhir dalam queue.</li>
+                        <li><code>front = (front + 1) % MAX</code>: Front juga bergerak melingkar mengikuti Rear.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 51: Visualisasi Lengkap -->
+            <div class="slide" id="slide-50" data-notes="Gunakan slide ini untuk merenungkan perbedaan keduanya. Linear Queue membuang space di depan, Circular Queue memanfaatkannya kembali.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Review</div>
+                <div class="slide-title">Linear vs <span class="highlight">Circular</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <h3>Linear</h3>
+                            <p>Sederhana, tapi rentan False Overflow.</p>
+                        </div>
+                        <div class="col" style="border-left: 1px solid var(--border); padding-left: 20px;">
+                            <h3>Circular</h3>
+                            <p>Sedikit lebih kompleks (modulo), tapi efisien memori.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 52: Checkpoint #3 -->
+            <div class="slide" id="slide-51" data-notes="Coba tracing manual. MAX=3. Enqueue 1, Enqueue 2, Dequeue, Enqueue 3, Enqueue 4. Di mana posisi data 4?">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Checkpoint</div>
+                <div class="slide-title">Checkpoint <span class="highlight">#3</span></div>
+                <div class="slide-body">
+                    <div class="checkpoint-box">
+                        <p>Circular Queue (MAX = 3):</p>
+                        <ol>
+                            <li>Enqueue 1</li>
+                            <li>Enqueue 2</li>
+                            <li>Dequeue (1 keluar)</li>
+                            <li>Enqueue 3</li>
+                            <li>Enqueue 4</li>
+                        </ol>
+                        <p><strong>Di index berapakah angka 4 disimpan?</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 53: Jawaban Checkpoint #3 -->
+            <div class="slide" id="slide-52" data-notes="Angka 4 akan disimpan di index 0! Karena setelah Enqueue 3, Rear ada di index 2. Langkah berikutnya adalah (2+1)%3 = 0. Dan karena index 0 kosong (sudah di-dequeue), angka 4 bisa masuk ke sana.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Jawaban</div>
+                <div class="slide-title">Jawaban <span class="highlight">Checkpoint #3</span></div>
+                <div class="slide-body">
+                    <p>Langkah demi langkah:</p>
+                    <ul>
+                        <li>Q: [1, 2, _], F:0, R:1</li>
+                        <li>Dequeue &rarr; Q: [_, 2, _], F:1, R:1</li>
+                        <li>Enqueue 3 &rarr; Q: [_, 2, 3], F:1, R:2</li>
+                        <li>Enqueue 4 &rarr; <strong>Index = (2+1)%3 = 0</strong></li>
+                        <li>Hasil: Q: [4, 2, 3], F:1, R:0</li>
+                    </ul>
+                    <div class="tip-box">Data 4 masuk ke <strong>index 0</strong>.</div>
+                </div>
+            </div>
+
+            <!-- SECTION 8: STUDI KASUS -->
+
+            <!-- SLIDE 54: Queue pada Printer -->
+            <div class="slide" id="slide-53" data-notes="Printer menggunakan Queue (spooling). Jika Anda nge-print Tugas A lalu Tugas B, printer tidak akan mencampur halamannya. Dia selesaikan A dulu sampai habis (First In), baru mulai B (First Out).">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kasus</div>
+                <div class="slide-title">Studi Kasus: <span class="highlight">Printer Spooling</span></div>
+                <div class="slide-body">
+                    <div style="text-align: center; font-size: 4rem;">🖨️</div>
+                    <p>OS menaruh semua dokumen cetak ke dalam Queue. Printer mengambil satu per satu dari Front. Jika koneksi printer putus, antrean tetap tersimpan rapi.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 55: Queue pada Customer Service -->
+            <div class="slide" id="slide-54" data-notes="Sistem nomor antrean di Bank menggunakan Queue. Siapa yang ambil nomor duluan, dialah yang dipanggil CS duluan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kasus</div>
+                <div class="slide-title">Sistem <span class="highlight">Antrean Bank</span></div>
+                <div class="slide-body">
+                    <div style="text-align: center; font-size: 4rem;">🏦</div>
+                    <p>Setiap nasabah yang datang melakukan Enqueue. Setiap CS yang kosong melakukan Dequeue.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 56: Queue pada Multiplayer Game -->
+            <div class="slide" id="slide-55" data-notes="Pernah main game online dan harus 'Queueing' untuk masuk match? Server menaruh Anda di Queue sampai jumlah pemain cukup. Siapa yang klik 'Find Match' duluan, masuk match duluan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kasus</div>
+                <div class="slide-title">Multiplayer <span class="highlight">Matchmaking</span></div>
+                <div class="slide-body">
+                    <div style="text-align: center; font-size: 4rem;">🎮</div>
+                    <p>Mekanisme "Waiting Room" atau "Matchmaking Queue" memastikan pemain diproses sesuai urutan waktu tunggu.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 57: Queue untuk BFS -->
+            <div class="slide" id="slide-56" data-notes="Ini adalah bocoran untuk materi algoritma lanjutan. Queue digunakan untuk menjelajahi Graf atau Tree secara 'melebar'. Kita akan bahas ini lebih dalam di pertemuan Tree.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Teori</div>
+                <div class="slide-title">Queue untuk <span class="highlight">BFS</span></div>
+                <div class="slide-body">
+                    <p><strong>Breadth-First Search (BFS)</strong></p>
+                    <p>Algoritma ini menggunakan Queue untuk menyimpan daftar node yang harus dikunjungi selanjutnya secara teratur.</p>
+                    <div style="font-size: 3rem; text-align: center;">🕸️ &rarr; 🧍🧍🧍</div>
+                </div>
+            </div>
+
+            <!-- SECTION 9: LATIHAN MANDIRI -->
+
+            <!-- SLIDE 58: Latihan 1 -->
+            <div class="slide" id="slide-57" data-notes="Coba kerjakan ini tanpa bantuan komputer. Ini akan sangat membantu saat ujian nanti.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Latihan</div>
+                <div class="slide-title">Latihan 1: <span class="highlight">Tracing Manual</span></div>
+                <div class="slide-body">
+                    <p>Lakukan operasi berikut pada Queue kosong (MAX=5):</p>
+                    <ol>
+                        <li>Enqueue(12), Enqueue(24), Enqueue(36)</li>
+                        <li>Dequeue()</li>
+                        <li>Enqueue(48)</li>
+                        <li>Dequeue()</li>
+                    </ol>
+                    <p><strong>Berapakah nilai Front dan Rear sekarang?</strong></p>
+                </div>
+            </div>
+
+            <!-- SLIDE 59: Latihan 2 -->
+            <div class="slide" id="slide-58" data-notes="Tebak apa yang tampil di layar.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Latihan</div>
+                <div class="slide-title">Latihan 2: <span class="highlight">Output Kode</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">enqueue(5);
+enqueue(10);
+dequeue();
+enqueue(15);
+display();</code></pre>
+                    <p><strong>Apa output dari display()?</strong></p>
+                </div>
+            </div>
+
+            <!-- SLIDE 60: Latihan 3 -->
+            <div class="slide" id="slide-59" data-notes="Cari letak kesalahannya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Latihan</div>
+                <div class="slide-title">Latihan 3: <span class="highlight">Bug Hunting</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">// Ada yang salah di sini:
+void enqueue(int data) {
+    rear++;
+    queue[rear] = data;
+}</code></pre>
+                    <p><strong>Sebutkan 2 masalah pada potongan kode di atas!</strong></p>
+                </div>
+            </div>
+
+            <!-- SLIDE 61: Mini Challenge -->
+            <div class="slide" id="slide-60" data-notes="Tantang diri Anda untuk membuat sesuatu yang nyata.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Challenge</div>
+                <div class="slide-title">Mini <span class="highlight">Challenge</span></div>
+                <div class="slide-body">
+                    <p>Modifikasi kode Queue Anda agar bisa menyimpan <strong>Nama Pasien</strong> (string) di sebuah Klinik.</p>
+                    <p>Gunakan konsep Circular Queue agar efisien!</p>
+                </div>
+            </div>
+
+            <!-- SECTION 10: RANGKUMAN -->
+
+            <!-- SLIDE 62: Ringkasan Konsep -->
+            <div class="slide" id="slide-61" data-notes="Ingat poin-poin penting ini. Jika Anda paham ini, Anda sudah menguasai 80% materi Queue.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Rangkuman</div>
+                <div class="slide-title">Ringkasan <span class="highlight">Konsep</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">📌</span><span><strong>FIFO:</strong> Elemen pertama masuk adalah yang pertama keluar.</span></div>
+                        <div class="kp-item"><span class="icon">📍</span><span><strong>Front & Rear:</strong> Dua pointer utama navigasi antrean.</span></div>
+                        <div class="kp-item"><span class="icon">🔄</span><span><strong>Circular Queue:</strong> Solusi cerdas mengatasi False Overflow.</span></div>
+                        <div class="kp-item"><span class="icon">➗</span><span><strong>Modulo:</strong> Kunci pergerakan melingkar pada array.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 63: Kesalahan Umum -->
+            <div class="slide" id="slide-62" data-notes="Waspadai kesalahan-kesalahan ini saat coding nanti.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Warning</div>
+                <div class="slide-title">Kesalahan <span class="highlight">Umum</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li>Lupa mengecek kondisi Penuh (Overflow) saat Enqueue.</li>
+                        <li>Lupa mengecek kondisi Kosong (Underflow) saat Dequeue.</li>
+                        <li>Salah rumus Modulo (terbalik atau lupa tanda kurung).</li>
+                        <li>Lupa mereset Front dan Rear ke -1 saat data terakhir habis.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 64: Koneksi ke Materi Berikutnya -->
+            <div class="slide" id="slide-63" data-notes="Minggu depan kita akan belajar Tree. Queue akan sangat kita butuhkan di sana untuk Level-Order Traversal.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Next</div>
+                <div class="slide-title">Materi <span class="highlight">Berikutnya</span></div>
+                <div class="slide-body">
+                    <p>Persiapkan diri untuk: <strong>Tree & Graph Traversal</strong></p>
+                    <p>Kita akan menggunakan Queue untuk algoritma Breadth-First Search (BFS) dan Level-Order pada Tree.</p>
+                    <div style="font-size: 3rem; text-align: center;">🌳 🔜 ⛓️</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 65: Penutup -->
+            <div class="slide" id="slide-64" data-notes="Terima kasih sudah mengikuti materi asinkron ini. Tetap semangat berlatih coding!">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tutup</div>
+                <div class="slide-title">Selamat <span class="highlight">Belajar!</span></div>
+                <div class="slide-body" style="text-align: center;">
+                    <h2 style="color: var(--accent);">Queue: Be Fair, Be FIFO!</h2>
+                    <p style="margin-top: 40px;">Jangan lupa kerjakan tugas praktikum di LMS.</p>
+                    <div style="font-size: 4rem; margin-top: 20px;">🚀</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="nav-slides-container">
+            <div class="nav-slides">
+                <button class="nav-btn" id="prevBtn">←</button>
+                <span class="nav-counter" id="counter">1 / 65</span>
+                <button class="nav-btn" id="nextBtn">→</button>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initApp } from "../src/main.js";
+            import { initSlides } from "../src/slides.js";
+            initApp();
+            initSlides();
+
+            function renderLinearQueue(container, data, front, rear, maxSize = 5, isOverflowSim = false) {
+                container.innerHTML = '';
+                for (let i = 0; i < maxSize; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'queue-element';
+                    if (data[i] !== undefined && data[i] !== null) {
+                        cell.textContent = data[i];
+                        cell.classList.add('active');
+                    } else {
+                        cell.textContent = '?';
+                    }
+
+                    const idxLabel = document.createElement('span');
+                    idxLabel.className = 'index'; idxLabel.textContent = `[${i}]`;
+                    cell.appendChild(idxLabel);
+
+                    if (i === front) cell.classList.add('is-front');
+                    if (i === rear) cell.classList.add('is-rear');
+
+                    if (isOverflowSim && i < front && data[i] !== undefined) {
+                        cell.style.opacity = '0.3';
+                    }
+
+                    container.appendChild(cell);
+                }
+            }
+
+            // --- SIM 1: BASIC LINEAR ---
+            let linData = new Array(5).fill(null);
+            let linFront = -1, linRear = -1;
+            const linContainer = document.getElementById('sim-linear-queue');
+            const linStatus = document.getElementById('linear-status');
+            const linInput = document.getElementById('linear-input');
+
+            document.getElementById('btn-linear-enqueue').onclick = () => {
+                const val = linInput.value;
+                if (!val) return;
+                if (linRear === 4) {
+                    linStatus.textContent = "Overflow! Rear sudah di ujung.";
+                } else {
+                    if (linFront === -1) linFront = 0;
+                    linRear++;
+                    linData[linRear] = val;
+                    linInput.value = '';
+                    renderLinearQueue(linContainer, linData, linFront, linRear);
+                    linStatus.textContent = `Enqueue ${val} berhasil.`;
+                }
+            };
+            document.getElementById('btn-linear-dequeue').onclick = () => {
+                if (linFront === -1) {
+                    linStatus.textContent = "Underflow! Queue kosong.";
+                } else {
+                    const val = linData[linFront];
+                    linData[linFront] = null;
+                    linStatus.textContent = `Dequeue ${val} berhasil.`;
+                    linFront++;
+                    if (linFront > linRear) {
+                        linFront = linRear = -1;
+                        linData.fill(null);
+                    }
+                    renderLinearQueue(linContainer, linData, linFront, linRear);
+                }
+            };
+            document.getElementById('btn-linear-reset').onclick = () => {
+                linData.fill(null); linFront = -1; linRear = -1;
+                renderLinearQueue(linContainer, linData, linFront, linRear);
+                linStatus.textContent = "Reset.";
+            };
+
+            // --- SIM 2: FALSE OVERFLOW ---
+            let ovData = new Array(5).fill(null);
+            let ovFront = -1, ovRear = -1;
+            const ovContainer = document.getElementById('sim-overflow-queue');
+            const ovStatus = document.getElementById('overflow-status');
+
+            document.getElementById('btn-ov-enqueue').onclick = () => {
+                if (ovRear === 4) {
+                    ovStatus.innerHTML = "<span style='color:var(--accent)'>OVERFLOW!</span> Rear=4. Program menolak Enqueue meskipun ada slot kosong.";
+                } else {
+                    if (ovFront === -1) ovFront = 0;
+                    ovRear++;
+                    ovData[ovRear] = 55;
+                    renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
+                    ovStatus.textContent = "Berhasil Enqueue.";
+                }
+            };
+            document.getElementById('btn-ov-dequeue').onclick = () => {
+                if (ovFront === -1) return;
+                ovFront++;
+                if (ovFront > ovRear) { ovFront = ovRear = -1; ovData.fill(null); }
+                renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
+                ovStatus.textContent = "Berhasil Dequeue.";
+            };
+            document.getElementById('btn-ov-reset').onclick = () => {
+                ovData.fill(null); ovFront = -1; ovRear = -1;
+                renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
+                ovStatus.textContent = "Reset.";
+            };
+
+            // --- SIM 3: CIRCULAR ---
+            let circData = new Array(5).fill(null);
+            let circFront = -1, circRear = -1;
+            const circContainer = document.getElementById('sim-circular-container');
+            const circStatus = document.getElementById('circular-status');
+            const circInput = document.getElementById('circular-input');
+
+            function renderCircular() {
+                circContainer.innerHTML = '';
+                const radius = 110;
+                const centerX = 150, centerY = 150;
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * (360 / 5) - 90) * (Math.PI / 180);
+                    const x = centerX + radius * Math.cos(angle) - 30;
+                    const y = centerY + radius * Math.sin(angle) - 30;
+
+                    const node = document.createElement('div');
+                    node.className = 'circular-node';
+                    node.style.left = `${x}px`;
+                    node.style.top = `${y}px`;
+
+                    if (circData[i] !== null) {
+                        node.textContent = circData[i];
+                        node.classList.add('active');
+                    } else {
+                        node.textContent = '';
+                    }
+
+                    const idx = document.createElement('span');
+                    idx.className = 'idx';
+                    idx.textContent = i;
+                    idx.style.top = '-15px';
+                    node.appendChild(idx);
+
+                    if (i === circFront) node.classList.add('is-front');
+                    if (i === circRear) node.classList.add('is-rear');
+
+                    circContainer.appendChild(node);
+                }
+            }
+
+            document.getElementById('btn-circular-enqueue').onclick = () => {
+                const val = circInput.value;
+                if (!val) return;
+                if ((circRear + 1) % 5 === circFront) {
+                    circStatus.textContent = "Circular Overflow! Penuh melingkar.";
+                } else {
+                    if (circFront === -1) circFront = 0;
+                    circRear = (circRear + 1) % 5;
+                    circData[circRear] = val;
+                    circInput.value = '';
+                    renderCircular();
+                    circStatus.textContent = `Enqueue ${val} ke index ${circRear}.`;
+                }
+            };
+            document.getElementById('btn-circular-dequeue').onclick = () => {
+                if (circFront === -1) {
+                    circStatus.textContent = "Empty!";
+                } else {
+                    const val = circData[circFront];
+                    circData[circFront] = null;
+                    circStatus.textContent = `Dequeue ${val} dari index ${circFront}.`;
+                    if (circFront === circRear) {
+                        circFront = circRear = -1;
+                    } else {
+                        circFront = (circFront + 1) % 5;
+                    }
+                    renderCircular();
+                }
+            };
+            document.getElementById('btn-circular-reset').onclick = () => {
+                circData.fill(null); circFront = -1; circRear = -1;
+                renderCircular(); circStatus.textContent = "Reset.";
+            };
+
+            const observer = new MutationObserver((m) => {
+                m.forEach((mu) => {
+                    if (mu.target.classList.contains("active")) {
+                        if (mu.target.id === "slide-17") renderLinearQueue(linContainer, linData, linFront, linRear);
+                        if (mu.target.id === "slide-36") renderLinearQueue(ovContainer, ovData, ovFront, ovRear, 5, true);
+                        if (mu.target.id === "slide-45") renderCircular();
+                    }
+                });
+            });
+            document.querySelectorAll(".slide").forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
+        </script>
+    </body>
+</html>
