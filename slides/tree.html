@@ -263,7 +263,7 @@
             </div>
 
             <!-- SLIDE 6: Visualisasi Tree -->
-            <div class="slide" id="slide-5" data-notes="Tunjukkan node, edge, arah hubungan. Tanyakan: Mana node paling atas? Node mana yang tidak punya anak? Buat mahasiswa aktif menjawab.">
+            <div class="slide" id="slide-5" data-notes="Tunjukkan node, edge, arah hubungan. Tanyakan: Mana node paling atas? Mana yang bukan tree? Tekankan bahwa tree tidak boleh memiliki cycle atau multiple parent.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -271,8 +271,21 @@
                 <div class="section-badge"><span class="dot"></span>Visual</div>
                 <div class="slide-title">Visualisasi <span class="highlight">Tree</span></div>
                 <div class="slide-body">
-                    <div id="visual-tree-intro" class="tree-container"></div>
-                    <p style="text-align: center; color: var(--text-muted);">Sebuah struktur hierarki yang terdiri dari node dan edge.</p>
+                    <div class="cols" style="align-items: flex-start; gap: 10px;">
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px;">Binary Tree</h4>
+                            <div id="tree-binary-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px;">General Tree</h4>
+                            <div id="tree-general-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px; color: #ff5555;">Bukan Tree (Cycle)</h4>
+                            <div id="tree-not-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Tree adalah struktur hierarki tanpa siklus (cycle) dan setiap node (kecuali root) hanya punya satu parent.</p>
                 </div>
             </div>
 
@@ -529,7 +542,7 @@ root-&gt;right = newNode(20);</code></pre>
             </div>
 
             <!-- SLIDE 19: Preorder Traversal -->
-            <div class="slide" id="slide-18" data-notes="Gunakan animasi langkah demi langkah. Tekankan: root selalu duluan. Tips hafalan: Pre = parent dulu.">
+            <div class="slide" id="slide-18" data-notes="Gunakan simulator untuk demonstrasi. Tekankan: root selalu duluan. Tips hafalan: Pre = parent dulu.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -538,9 +551,15 @@ root-&gt;right = newNode(20);</code></pre>
                 <div class="slide-title"><span class="highlight">Preorder</span> Traversal</div>
                 <div class="slide-body">
                     <h3 style="color: var(--accent);">Root &rarr; Left &rarr; Right</h3>
-                    <p>Kunjungi <strong>Parent</strong> terlebih dahulu sebelum anak-anaknya.</p>
-                    <div id="visual-preorder" class="tree-container" style="height: 250px;"></div>
-                    <div class="traversal-output" id="preorder-output">Output: </div>
+                    <div id="visual-preorder" class="tree-container" style="height: 220px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('preorder', 'visual-preorder', 'pre-out', 'next-pre')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-pre" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-preorder', 'pre-out', 'next-pre')">Reset</button>
+                        </div>
+                        <div class="traversal-output" id="pre-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
+                    </div>
                 </div>
             </div>
 
@@ -554,9 +573,15 @@ root-&gt;right = newNode(20);</code></pre>
                 <div class="slide-title"><span class="highlight">Inorder</span> Traversal</div>
                 <div class="slide-body">
                     <h3 style="color: var(--accent);">Left &rarr; Root &rarr; Right</h3>
-                    <p>Kunjungi Root di <strong>tengah</strong> (antara anak kiri dan kanan).</p>
-                    <div id="visual-inorder" class="tree-container" style="height: 250px;"></div>
-                    <div class="traversal-output" id="inorder-output">Output: </div>
+                    <div id="visual-inorder" class="tree-container" style="height: 220px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('inorder', 'visual-inorder', 'in-out', 'next-in')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-in" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-inorder', 'in-out', 'next-in')">Reset</button>
+                        </div>
+                        <div class="traversal-output" id="in-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
+                    </div>
                 </div>
             </div>
 
@@ -570,34 +595,14 @@ root-&gt;right = newNode(20);</code></pre>
                 <div class="slide-title"><span class="highlight">Postorder</span> Traversal</div>
                 <div class="slide-body">
                     <h3 style="color: var(--accent);">Left &rarr; Right &rarr; Root</h3>
-                    <p>Kunjungi <strong>Parent terakhir</strong> setelah semua anaknya diproses.</p>
-                    <div id="visual-postorder" class="tree-container" style="height: 250px;"></div>
-                    <div class="traversal-output" id="postorder-output">Output: </div>
-                </div>
-            </div>
-
-            <!-- SLIDE 22: Simulasi Traversal -->
-            <div class="slide" id="slide-21" data-notes="Lakukan bersama-sama. Jangan langsung tampilkan jawaban. Gunakan pointer/laser.">
-                <div class="corner corner-tl"></div>
-                <div class="corner corner-tr"></div>
-                <div class="corner corner-bl"></div>
-                <div class="corner corner-br"></div>
-                <div class="section-badge"><span class="dot"></span>Simulator</div>
-                <div class="slide-title">Simulasi <span class="highlight">Lengkap</span></div>
-                <div class="slide-body">
-                    <div id="visual-traversal-sim" class="tree-container" style="height: 280px;"></div>
+                    <div id="visual-postorder" class="tree-container" style="height: 220px;"></div>
                     <div class="interactive-box">
                         <div class="form-row">
-                            <button class="btn btn-primary" id="btn-start-traversal">Mulai</button>
-                            <button class="btn btn-outline" id="btn-next-step">Langkah Lanjut</button>
-                            <select id="traversal-type" class="btn btn-outline" style="background: var(--surface);">
-                                <option value="preorder">Preorder</option>
-                                <option value="inorder">Inorder</option>
-                                <option value="postorder">Postorder</option>
-                            </select>
-                            <button class="btn btn-outline" id="btn-reset-sim">Reset</button>
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('postorder', 'visual-postorder', 'post-out', 'next-post')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-post" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-postorder', 'post-out', 'next-post')">Reset</button>
                         </div>
-                        <div class="traversal-output" id="sim-output">Hasil: </div>
+                        <div class="traversal-output" id="post-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
                     </div>
                 </div>
             </div>
@@ -790,7 +795,7 @@ root-&gt;right = newNode(20);</code></pre>
         <div class="nav-slides-container">
             <div class="nav-slides">
                 <button class="nav-btn" id="prevBtn">←</button>
-                <span class="nav-counter" id="counter">1 / 31</span>
+                <span class="nav-counter" id="counter">1 / 30</span>
                 <button class="nav-btn" id="nextBtn">→</button>
             </div>
         </div>
@@ -803,9 +808,10 @@ root-&gt;right = newNode(20);</code></pre>
 
             // Tree Visualization Engine
             class TreeVisualizer {
-                constructor(containerId, data) {
+                constructor(containerId, data, options = {}) {
                     this.container = document.getElementById(containerId);
                     this.data = data;
+                    this.options = options;
                     this.nodes = [];
                     this.edges = [];
                 }
@@ -813,29 +819,61 @@ root-&gt;right = newNode(20);</code></pre>
                 render() {
                     if (!this.container) return;
                     this.container.innerHTML = '';
+                    this.nodes = [];
+                    this.edges = [];
                     const width = this.container.clientWidth;
-                    this.renderNode(this.data, width / 2, 40, width / 4);
+                    if (this.options.manualNodes) {
+                        this.options.manualNodes.forEach(n => this.drawNode(n.val, n.x, n.y, n.id));
+                        if (this.options.manualEdges) {
+                            this.options.manualEdges.forEach(e => {
+                                const fromNode = this.nodes.find(n => n.id === e.from);
+                                const toNode = this.nodes.find(n => n.id === e.to);
+                                if (fromNode && toNode) {
+                                    this.renderEdge(fromNode.x, fromNode.y + 25, toNode.x, toNode.y);
+                                }
+                            });
+                        }
+                    } else {
+                        this.renderNode(this.data, width / 2, 30, width / 4);
+                    }
+                }
+
+                drawNode(val, x, y, id) {
+                    const div = document.createElement('div');
+                    div.className = 'tree-node';
+                    div.id = `node-${this.container.id}-${id}`;
+                    div.textContent = val;
+                    div.style.left = `${x - 25}px`;
+                    div.style.top = `${y}px`;
+                    div.style.width = '40px';
+                    div.style.height = '40px';
+                    div.style.fontSize = '0.8rem';
+                    this.container.appendChild(div);
+                    this.nodes.push({ id, x, y, el: div });
                 }
 
                 renderNode(node, x, y, offset) {
                     if (!node) return;
+                    this.drawNode(node.val, x, y, node.id);
 
-                    const div = document.createElement('div');
-                    div.className = 'tree-node';
-                    div.id = `node-${this.container.id}-${node.id}`;
-                    div.textContent = node.val;
-                    div.style.left = `${x - 25}px`;
-                    div.style.top = `${y}px`;
-                    this.container.appendChild(div);
-                    this.nodes.push({ id: node.id, x, y, el: div });
-
-                    if (node.left) {
-                        this.renderEdge(x, y + 25, x - offset, y + 80);
-                        this.renderNode(node.left, x - offset, y + 80, offset / 1.8);
-                    }
-                    if (node.right) {
-                        this.renderEdge(x, y + 25, x + offset, y + 80);
-                        this.renderNode(node.right, x + offset, y + 80, offset / 1.8);
+                    if (node.children) {
+                        const count = node.children.length;
+                        const startX = x - (offset * (count - 1)) / 2;
+                        node.children.forEach((child, i) => {
+                            const childX = startX + i * offset;
+                            const childY = y + 70;
+                            this.renderEdge(x, y + 20, childX, childY);
+                            this.renderNode(child, childX, childY, offset / 1.5);
+                        });
+                    } else {
+                        if (node.left) {
+                            this.renderEdge(x, y + 20, x - offset, y + 70);
+                            this.renderNode(node.left, x - offset, y + 70, offset / 1.8);
+                        }
+                        if (node.right) {
+                            this.renderEdge(x, y + 20, x + offset, y + 70);
+                            this.renderNode(node.right, x + offset, y + 70, offset / 1.8);
+                        }
                     }
                 }
 
@@ -882,7 +920,29 @@ root-&gt;right = newNode(20);</code></pre>
                 mutations.forEach((m) => {
                     if (m.target.classList.contains("active")) {
                         const id = m.target.id;
-                        if (id === "slide-5") new TreeVisualizer('visual-tree-intro', sampleTree).render();
+                        if (id === "slide-5") {
+                             new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                             new TreeVisualizer('tree-general-intro', {
+                                 id: 'R', val: '1',
+                                 children: [
+                                     { id: 'C1', val: '2' },
+                                     { id: 'C2', val: '3' },
+                                     { id: 'C3', val: '4' }
+                                 ]
+                             }).render();
+                             new TreeVisualizer('tree-not-intro', null, {
+                                 manualNodes: [
+                                     { id: 'N1', val: 'A', x: 100, y: 30 },
+                                     { id: 'N2', val: 'B', x: 50, y: 100 },
+                                     { id: 'N3', val: 'C', x: 150, y: 100 }
+                                 ],
+                                 manualEdges: [
+                                     { from: 'N1', to: 'N2' },
+                                     { from: 'N2', to: 'N3' },
+                                     { from: 'N3', to: 'N1' }
+                                 ]
+                             }).render();
+                        }
                         if (id === "slide-7") {
                             const v = new TreeVisualizer('visual-tree-components', sampleTree);
                             v.render();
@@ -895,33 +955,19 @@ root-&gt;right = newNode(20);</code></pre>
                         if (id === "slide-9") {
                             const v = new TreeVisualizer('visual-tree-levels', sampleTree);
                             v.render();
-                            // Levels logic could be added here
                         }
                         if (id === "slide-12") new TreeVisualizer('visual-binary-tree', sampleTree).render();
                         if (id === "slide-18") {
-                            const v = new TreeVisualizer('visual-preorder', sampleTree);
-                            v.render();
-                            const steps = []; generateSteps(sampleTree, 'preorder', steps);
-                            document.getElementById('preorder-output').textContent = 'Output: ' + steps.map(id => window.sampleTreeNodes[id]).join(' ');
-                            steps.forEach(id => v.highlight(id, 'visited'));
+                            window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                            window.preVis.render();
                         }
                         if (id === "slide-19") {
-                            const v = new TreeVisualizer('visual-inorder', sampleTree);
-                            v.render();
-                            const steps = []; generateSteps(sampleTree, 'inorder', steps);
-                            document.getElementById('inorder-output').textContent = 'Output: ' + steps.map(id => window.sampleTreeNodes[id]).join(' ');
-                            steps.forEach(id => v.highlight(id, 'visited'));
+                            window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                            window.inVis.render();
                         }
                         if (id === "slide-20") {
-                            const v = new TreeVisualizer('visual-postorder', sampleTree);
-                            v.render();
-                            const steps = []; generateSteps(sampleTree, 'postorder', steps);
-                            document.getElementById('postorder-output').textContent = 'Output: ' + steps.map(id => window.sampleTreeNodes[id]).join(' ');
-                            steps.forEach(id => v.highlight(id, 'visited'));
-                        }
-                        if (id === "slide-21") {
-                            window.simVis = new TreeVisualizer('visual-traversal-sim', sampleTree);
-                            window.simVis.render();
+                            window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                            window.postVis.render();
                         }
                         if (id === "slide-23") {
                              window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
@@ -933,9 +979,47 @@ root-&gt;right = newNode(20);</code></pre>
             });
             document.querySelectorAll(".slide").forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
 
-            // Traversal Simulator Logic
-            let simSteps = [];
-            let currentStepIdx = -1;
+            // Traversal Simulator Logic (Local)
+            const localSimStates = {};
+
+            window.initLocalSim = (type, visId, outId, nextBtnId) => {
+                const vis = (visId === 'visual-preorder') ? window.preVis : (visId === 'visual-inorder') ? window.inVis : window.postVis;
+                vis.resetHighlights();
+                const steps = [];
+                generateSteps(sampleTree, type, steps);
+                localSimStates[visId] = { steps, current: -1, outId, nextBtnId, vis };
+                document.getElementById(outId).textContent = 'Hasil: ';
+                document.getElementById(nextBtnId).disabled = false;
+            };
+
+            window.resetLocalSim = (visId, outId, nextBtnId) => {
+                const state = localSimStates[visId];
+                if (state) {
+                    state.vis.resetHighlights();
+                    state.current = -1;
+                    document.getElementById(outId).textContent = 'Hasil: ';
+                    document.getElementById(nextBtnId).disabled = true;
+                }
+            };
+
+            function handleNextStep(visId) {
+                const state = localSimStates[visId];
+                if (!state) return;
+                if (state.current < state.steps.length - 1) {
+                    state.current++;
+                    const nodeId = state.steps[state.current];
+                    state.vis.highlight(nodeId, 'visited');
+                    const nodeVal = window.sampleTreeNodes[nodeId];
+                    document.getElementById(state.outId).textContent += nodeVal + ' ';
+                    if (state.current === state.steps.length - 1) {
+                        document.getElementById(state.nextBtnId).disabled = true;
+                    }
+                }
+            }
+
+            document.getElementById('next-pre').onclick = () => handleNextStep('visual-preorder');
+            document.getElementById('next-in').onclick = () => handleNextStep('visual-inorder');
+            document.getElementById('next-post').onclick = () => handleNextStep('visual-postorder');
 
             function generateSteps(node, type, steps) {
                 if (!node) return;
@@ -953,34 +1037,6 @@ root-&gt;right = newNode(20);</code></pre>
                     steps.push(node.id);
                 }
             }
-
-            document.getElementById('btn-start-traversal').onclick = () => {
-                const type = document.getElementById('traversal-type').value;
-                simSteps = [];
-                generateSteps(sampleTree, type, simSteps);
-                currentStepIdx = -1;
-                window.simVis.resetHighlights();
-                document.getElementById('sim-output').textContent = 'Hasil: ';
-                document.getElementById('btn-next-step').disabled = false;
-            };
-
-            document.getElementById('btn-next-step').onclick = () => {
-                if (currentStepIdx < simSteps.length - 1) {
-                    currentStepIdx++;
-                    const nodeId = simSteps[currentStepIdx];
-                    window.simVis.highlight(nodeId, 'visited');
-                    const nodeVal = window.simVis.nodes.find(n => n.id === nodeId).el.textContent;
-                    document.getElementById('sim-output').textContent += nodeVal + ' ';
-                } else {
-                    document.getElementById('btn-next-step').disabled = true;
-                }
-            };
-
-            document.getElementById('btn-reset-sim').onclick = () => {
-                window.simVis.resetHighlights();
-                document.getElementById('sim-output').textContent = 'Hasil: ';
-                currentStepIdx = -1;
-            };
 
             // Recursive Call Stack Simulation
             let recSteps = [];
