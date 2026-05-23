@@ -27,6 +27,8 @@ export default defineConfig({
         stack_slides: resolve(__dirname, 'slides/stack.html'),
         queue_topic: resolve(__dirname, 'topics/queue.html'),
         queue_slides: resolve(__dirname, 'slides/queue.html'),
+        tree_topic: resolve(__dirname, 'topics/tree.html'),
+        tree_slides: resolve(__dirname, 'slides/tree.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
