@@ -112,6 +112,28 @@
                 min-height: 50px;
             }
 
+            .term-list {
+                list-style: none;
+                padding: 0;
+                font-size: 0.9rem;
+            }
+            .term-list li {
+                cursor: help;
+                padding: 8px;
+                margin-bottom: 5px;
+                border-radius: 4px;
+                border: 1px solid transparent;
+                transition: all 0.2s;
+            }
+            .term-list li:hover {
+                background: rgba(var(--accent-rgb), 0.1);
+                border-color: var(--accent);
+                transform: translateX(5px);
+            }
+            .term-list li strong {
+                color: var(--accent);
+            }
+
             .comparison-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -324,13 +346,13 @@
                             <div id="visual-tree-components" class="tree-container" style="height: 300px;"></div>
                         </div>
                         <div class="col" style="flex: 0.6;">
-                            <ul style="font-size: 0.9rem;">
-                                <li><strong>Root:</strong> Node paling atas</li>
-                                <li><strong>Parent:</strong> Node induk</li>
-                                <li><strong>Child:</strong> Node anak</li>
-                                <li><strong>Sibling:</strong> Saudara satu parent</li>
-                                <li><strong>Leaf:</strong> Node tanpa child</li>
-                                <li><strong>Internal:</strong> Node dengan child</li>
+                            <ul class="term-list">
+                                <li data-term="root"><strong>Root:</strong> Node paling atas</li>
+                                <li data-term="parent"><strong>Parent:</strong> Node induk (punya anak)</li>
+                                <li data-term="child"><strong>Child:</strong> Node anak</li>
+                                <li data-term="sibling"><strong>Sibling:</strong> Saudara satu parent</li>
+                                <li data-term="leaf"><strong>Leaf:</strong> Node tanpa child</li>
+                                <li data-term="internal"><strong>Internal Node:</strong> Node dengan child (bukan root)</li>
                             </ul>
                         </div>
                     </div>
@@ -821,7 +843,8 @@ root-&gt;right = newNode(20);</code></pre>
                     this.container.innerHTML = '';
                     this.nodes = [];
                     this.edges = [];
-                    const width = this.container.clientWidth;
+                    let width = this.container.clientWidth;
+                    if (width === 0) width = 600; // Fallback for hidden containers
                     if (this.options.manualNodes) {
                         this.options.manualNodes.forEach(n => this.drawNode(n.val, n.x, n.y, n.id));
                         if (this.options.manualEdges) {
@@ -896,6 +919,10 @@ root-&gt;right = newNode(20);</code></pre>
                     if (node) node.el.classList.add(className);
                 }
 
+                highlightMany(nodeIds, className = 'active') {
+                    nodeIds.forEach(id => this.highlight(id, className));
+                }
+
                 resetHighlights() {
                     this.nodes.forEach(n => n.el.classList.remove('active', 'visited', 'highlight-root', 'highlight-leaf'));
                 }
@@ -944,12 +971,13 @@ root-&gt;right = newNode(20);</code></pre>
                              }).render();
                         }
                         if (id === "slide-7") {
-                            const v = new TreeVisualizer('visual-tree-components', sampleTree);
-                            v.render();
-                            v.highlight('A', 'highlight-root');
-                            v.highlight('D', 'highlight-leaf');
-                            v.highlight('E', 'highlight-leaf');
-                            v.highlight('F', 'highlight-leaf');
+                            // Ensure cleanup of previous instances if needed, though here we just re-render
+                            setTimeout(() => {
+                                if (!window.compVis) {
+                                    window.compVis = new TreeVisualizer('visual-tree-components', sampleTree);
+                                }
+                                window.compVis.render();
+                            }, 300);
                         }
                         if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
                         if (id === "slide-9") {
@@ -978,6 +1006,67 @@ root-&gt;right = newNode(20);</code></pre>
                 });
             });
             document.querySelectorAll(".slide").forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
+
+            // Initial check for already active slides
+            document.querySelectorAll(".slide.active").forEach(s => {
+                observer.takeRecords(); // Clear records
+                const id = s.id;
+                // Reuse the same logic as observer
+                if (id === "slide-5") {
+                     new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                     new TreeVisualizer('tree-general-intro', {
+                         id: 'R', val: '1',
+                         children: [
+                             { id: 'C1', val: '2' },
+                             { id: 'C2', val: '3' },
+                             { id: 'C3', val: '4' }
+                         ]
+                     }).render();
+                     new TreeVisualizer('tree-not-intro', null, {
+                         manualNodes: [
+                             { id: 'N1', val: 'A', x: 100, y: 30 },
+                             { id: 'N2', val: 'B', x: 50, y: 100 },
+                             { id: 'N3', val: 'C', x: 150, y: 100 }
+                         ],
+                         manualEdges: [
+                             { from: 'N1', to: 'N2' },
+                             { from: 'N2', to: 'N3' },
+                             { from: 'N3', to: 'N1' }
+                         ]
+                     }).render();
+                }
+                if (id === "slide-7") {
+                    setTimeout(() => {
+                        if (!window.compVis) {
+                            window.compVis = new TreeVisualizer('visual-tree-components', sampleTree);
+                        }
+                        window.compVis.render();
+                    }, 300);
+                }
+                if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
+                if (id === "slide-9") {
+                    const v = new TreeVisualizer('visual-tree-levels', sampleTree);
+                    v.render();
+                }
+                if (id === "slide-12") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                if (id === "slide-18") {
+                    window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                    window.preVis.render();
+                }
+                if (id === "slide-19") {
+                    window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                    window.inVis.render();
+                }
+                if (id === "slide-20") {
+                    window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                    window.postVis.render();
+                }
+                if (id === "slide-23") {
+                     window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
+                     window.recVis.render();
+                }
+                if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+            });
 
             // Traversal Simulator Logic (Local)
             const localSimStates = {};
@@ -1020,6 +1109,30 @@ root-&gt;right = newNode(20);</code></pre>
             document.getElementById('next-pre').onclick = () => handleNextStep('visual-preorder');
             document.getElementById('next-in').onclick = () => handleNextStep('visual-inorder');
             document.getElementById('next-post').onclick = () => handleNextStep('visual-postorder');
+
+            // Terminology Hover Logic
+            const termMapping = {
+                'root': ['A'],
+                'parent': ['A', 'B', 'C'],
+                'child': ['B', 'C', 'D', 'E', 'F'],
+                'sibling': ['B', 'C', 'D', 'E'],
+                'leaf': ['D', 'E', 'F'],
+                'internal': ['B', 'C']
+            };
+
+            document.querySelectorAll('.term-list li').forEach(li => {
+                li.onmouseover = () => {
+                    const term = li.dataset.term;
+                    if (window.compVis && termMapping[term]) {
+                        if (window.compVis.nodes.length === 0) window.compVis.render();
+                        window.compVis.resetHighlights();
+                        window.compVis.highlightMany(termMapping[term]);
+                    }
+                };
+                li.onmouseout = () => {
+                    if (window.compVis) window.compVis.resetHighlights();
+                };
+            });
 
             function generateSteps(node, type, steps) {
                 if (!node) return;
