@@ -178,8 +178,9 @@
                 <div class="slide-body" style="text-align: center;">
                     <ul style="list-style: none; padding: 0; margin-top: 40px; font-size: 1.2rem; color: var(--text-muted);">
                         <li>• Struktur Data Non-Linear</li>
-                        <li>• Binary Tree</li>
+                        <li>• <a href="#13" class="highlight" style="text-decoration: none;">Binary Tree</a></li>
                         <li>• Traversal Tree</li>
+                        <li>• <a href="searching.html#14" class="highlight" style="text-decoration: none;">Binary Search</a></li>
                     </ul>
                     <div style="font-size: 5rem; margin-top: 40px;">🌳</div>
                 </div>
@@ -729,7 +730,7 @@ root-&gt;right = newNode(20);</code></pre>
                 <div class="corner corner-br"></div>
                 <div class="section-badge"><span class="dot"></span>Latihan</div>
                 <div class="slide-title">Latihan <span class="highlight">Kelompok</span></div>
-                <div class="slide-body">
+                <div class="slide-body" style="z-index: 20; position: relative;">
                     <div id="visual-tree-exercise" class="tree-container" style="height: 250px;"></div>
                     <div class="checkpoint-box">
                         <ol>
@@ -741,8 +742,97 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 27: Kapan Menggunakan Tree? -->
-            <div class="slide" id="slide-26" data-notes="Bandingkan: queue -> antrean, stack -> undo, tree -> struktur organisasi.">
+            <!-- SLIDE 27: Binary Search Tree (BST) -->
+            <div class="slide" id="slide-26" data-notes="BST adalah jenis binary tree khusus. Kunci utamanya: data di kiri selalu lebih kecil, data di kanan selalu lebih besar. Ini yang membuat pencarian sangat cepat (O(log N)).">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tipe Khusus</div>
+                <div class="slide-title">Binary Search <span class="highlight">Tree (BST)</span></div>
+                <div class="slide-body">
+                    <p>Struktur data yang menggabungkan efisiensi <strong>Binary Search</strong> dengan fleksibilitas <strong>Linked List</strong>.</p>
+                    <div class="interactive-box" style="margin-top: 20px;">
+                        <strong>Aturan Utama (BST Property):</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Semua node di <span class="highlight">Subtree Kiri</span> &lt; Root</li>
+                            <li>Semua node di <span class="highlight">Subtree Kanan</span> &gt; Root</li>
+                            <li>Berlaku secara rekursif untuk setiap node.</li>
+                        </ul>
+                    </div>
+                    <div style="border: 1px solid rgba(244,114,182,0.3); background: rgba(244,114,182,0.05); padding: 16px 22px; border-radius: 3px; margin: 18px 0; color: var(--accent4); font-size: clamp(0.9rem, 1.3vw, 1.05rem); max-width: 680px;">
+                        <div class="tip-label">TIP</div>
+                        Hasil <strong>Inorder Traversal</strong> pada BST akan selalu menghasilkan data yang <strong>terurut</strong>!
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 28: Visualisasi BST -->
+            <div class="slide" id="slide-27" data-notes="Gunakan simulasi ini untuk menunjukkan bagaimana BST tumbuh. Coba masukkan angka acak. Perhatikan bagaimana angka kecil selalu ke kiri dan angka besar selalu ke kanan. Untuk penghapusan, jelaskan kasus-kasusnya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Simulasi</div>
+                <div class="slide-title">Visualisasi <span class="highlight">BST</span></div>
+                <div class="slide-body" style="max-width: 1000px; display: flex; flex-direction: column; position: relative; z-index: 20;">
+                    <div id="bst-visualizer" class="tree-container" style="height: 300px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+                            <button class="btn btn-primary btn-sm" id="btn-bst-insert">Tambah Acak</button>
+                            <button class="btn btn-danger btn-sm" id="btn-bst-delete">Hapus Acak</button>
+                            <div style="display: flex; gap: 5px; align-items: center;">
+                                <input type="number" id="bst-search-val" placeholder="Cari..." style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); color: var(--text);">
+                                <button class="btn btn-outline btn-sm" id="btn-bst-search">Cari</button>
+                            </div>
+                            <button class="btn btn-outline btn-sm" id="btn-bst-reset">Reset</button>
+                        </div>
+                        <div id="bst-status" style="margin-top: 0; font-size: 0.9rem; text-align: center; color: var(--accent); min-height: 1.2em;">Klik Tambah Acak untuk memulai!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 29: Operasi BST (C++) -->
+            <div class="slide" id="slide-28" data-notes="Jelaskan algoritma insert dan search secara rekursif. Tunjukkan bagaimana properti BST menjaga keteraturan data.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Operasi <span class="highlight">BST (C++)</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <h4 style="font-size: 0.8rem;">Searching</h4>
+                            <pre style="font-size: 0.7rem;"><code class="language-cpp">Node* search(Node* root, int key) {
+    if (root == NULL || root-&gt;data == key)
+        return root;
+
+    if (key &lt; root-&gt;data)
+        return search(root-&gt;left, key);
+
+    return search(root-&gt;right, key);
+}</code></pre>
+                        </div>
+                        <div class="col">
+                            <h4 style="font-size: 0.8rem;">Insertion</h4>
+                            <pre style="font-size: 0.7rem;"><code class="language-cpp">Node* insert(Node* node, int key) {
+    if (node == NULL) return newNode(key);
+
+    if (key &lt; node-&gt;data)
+        node-&gt;left = insert(node-&gt;left, key);
+    else if (key &gt; node-&gt;data)
+        node-&gt;right = insert(node-&gt;right, key);
+
+    return node;
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 30: Kapan Menggunakan Tree? -->
+            <div class="slide" id="slide-29" data-notes="Bandingkan: queue -> antrean, stack -> undo, tree -> struktur organisasi.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -758,8 +848,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 28: Integrasi Semua Struktur Data -->
-            <div class="slide" id="slide-27" data-notes="Ini penting untuk persiapan UAS. Tekankan: Tidak ada struktur data terbaik untuk semua kasus.">
+            <!-- SLIDE 31: Integrasi Semua Struktur Data -->
+            <div class="slide" id="slide-30" data-notes="Ini penting untuk persiapan UAS. Tekankan: Tidak ada struktur data terbaik untuk semua kasus.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -785,8 +875,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 29: Ringkasan Semester -->
-            <div class="slide" id="slide-28" data-notes="Lakukan refleksi: kemampuan mahasiswa sekarang jauh berkembang dibanding awal semester.">
+            <!-- SLIDE 32: Ringkasan Semester -->
+            <div class="slide" id="slide-31" data-notes="Lakukan refleksi: kemampuan mahasiswa sekarang jauh berkembang dibanding awal semester.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -809,8 +899,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 30: Persiapan UAS -->
-            <div class="slide" id="slide-29" data-notes="Sampaikan: soal kemungkinan berbentuk analisis, tracing algoritma, pemilihan struktur data.">
+            <!-- SLIDE 33: Persiapan UAS -->
+            <div class="slide" id="slide-32" data-notes="Sampaikan: soal kemungkinan berbentuk analisis, tracing algoritma, pemilihan struktur data.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -827,8 +917,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 31: Penutup -->
-            <div class="slide" id="slide-30" data-notes="Penutup santai. Berikan motivasi menjelang UAS. Kalau kalian memahami cara data disusun, kalian memahami cara komputer berpikir.">
+            <!-- SLIDE 34: Penutup -->
+            <div class="slide" id="slide-33" data-notes="Penutup santai. Berikan motivasi menjelang UAS. Kalau kalian memahami cara data disusun, kalian memahami cara komputer berpikir.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -848,7 +938,7 @@ root-&gt;right = newNode(20);</code></pre>
         <div class="nav-slides-container">
             <div class="nav-slides">
                 <button class="nav-btn" id="prevBtn">←</button>
-                <span class="nav-counter" id="counter">1 / 31</span>
+                <span class="nav-counter" id="counter">1 / 34</span>
                 <button class="nav-btn" id="nextBtn">→</button>
             </div>
         </div>
@@ -1033,7 +1123,17 @@ root-&gt;right = newNode(20);</code></pre>
                              window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
                              window.recVis.render();
                         }
-                        if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                        if (id === "slide-26") {
+                            // BST Concept slide - no specific visualizer needed yet or can highlight property
+                        }
+                        if (id === "slide-27") {
+                            if (!window.bstVis) {
+                                window.bstVis = new TreeVisualizer('bst-visualizer', null);
+                                initBSTLogic();
+                            }
+                            window.bstVis.render();
+                        }
+                        if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
                     }
                 });
             });
@@ -1098,7 +1198,14 @@ root-&gt;right = newNode(20);</code></pre>
                      window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
                      window.recVis.render();
                 }
-                if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                if (id === "slide-27") {
+                    if (!window.bstVis) {
+                        window.bstVis = new TreeVisualizer('bst-visualizer', null);
+                        initBSTLogic();
+                    }
+                    window.bstVis.render();
+                }
+                if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
             });
 
             // Traversal Simulator Logic (Local)
@@ -1167,6 +1274,118 @@ root-&gt;right = newNode(20);</code></pre>
                     if (window.compVis) window.compVis.resetHighlights();
                 };
             });
+
+            // BST Logic
+            class BSTNode {
+                constructor(val) {
+                    this.id = Math.random().toString(36).substr(2, 9);
+                    this.val = val;
+                    this.left = null;
+                    this.right = null;
+                }
+            }
+
+            let bstRoot = null;
+
+            function insertBST(root, val) {
+                if (!root) return new BSTNode(val);
+                if (val < root.val) root.left = insertBST(root.left, val);
+                else if (val > root.val) root.right = insertBST(root.right, val);
+                return root;
+            }
+
+            function findMin(node) {
+                while (node.left) node = node.left;
+                return node;
+            }
+
+            function deleteBST(root, val) {
+                if (!root) return null;
+                if (val < root.val) root.left = deleteBST(root.left, val);
+                else if (val > root.val) root.right = deleteBST(root.right, val);
+                else {
+                    if (!root.left) return root.right;
+                    if (!root.right) return root.left;
+                    let temp = findMin(root.right);
+                    root.val = temp.val;
+                    root.right = deleteBST(root.right, temp.val);
+                }
+                return root;
+            }
+
+            function getBSTValues(node, arr = []) {
+                if (!node) return arr;
+                getBSTValues(node.left, arr);
+                arr.push(node.val);
+                getBSTValues(node.right, arr);
+                return arr;
+            }
+
+            function searchBST(root, val, path = []) {
+                if (!root) return { found: false, path };
+                path.push(root.id);
+                if (root.val === val) return { found: true, path };
+                if (val < root.val) return searchBST(root.left, val, path);
+                return searchBST(root.right, val, path);
+            }
+
+            function initBSTLogic() {
+                const btnInsert = document.getElementById('btn-bst-insert');
+                const btnDelete = document.getElementById('btn-bst-delete');
+                const btnSearch = document.getElementById('btn-bst-search');
+                const btnReset = document.getElementById('btn-bst-reset');
+                const status = document.getElementById('bst-status');
+                const searchInput = document.getElementById('bst-search-val');
+
+                btnInsert.onclick = () => {
+                    const val = Math.floor(Math.random() * 99) + 1;
+                    bstRoot = insertBST(bstRoot, val);
+                    window.bstVis.data = bstRoot;
+                    window.bstVis.render();
+                    status.textContent = `Berhasil menambah: ${val}`;
+                };
+
+                btnDelete.onclick = () => {
+                    const vals = getBSTValues(bstRoot);
+                    if (vals.length === 0) {
+                        status.textContent = "Tree kosong!";
+                        return;
+                    }
+                    const val = vals[Math.floor(Math.random() * vals.length)];
+                    bstRoot = deleteBST(bstRoot, val);
+                    window.bstVis.data = bstRoot;
+                    window.bstVis.render();
+                    status.textContent = `Berhasil menghapus: ${val}`;
+                };
+
+                btnSearch.onclick = async () => {
+                    const val = parseInt(searchInput.value);
+                    if (isNaN(val)) return;
+                    window.bstVis.resetHighlights();
+                    const result = searchBST(bstRoot, val);
+
+                    if (result.path.length > 0) {
+                        for (let i = 0; i < result.path.length; i++) {
+                            window.bstVis.highlight(result.path[i], 'active');
+                            await new Promise(r => setTimeout(r, 400));
+                        }
+                    }
+
+                    if (result.found) {
+                        status.textContent = `Data ${val} ditemukan!`;
+                        window.bstVis.highlight(result.path[result.path.length - 1], 'visited');
+                    } else {
+                        status.textContent = `Data ${val} tidak ditemukan.`;
+                    }
+                };
+
+                btnReset.onclick = () => {
+                    bstRoot = null;
+                    window.bstVis.data = null;
+                    window.bstVis.render();
+                    status.textContent = "Tree direset.";
+                };
+            }
 
             function generateSteps(node, type, steps) {
                 if (!node) return;
