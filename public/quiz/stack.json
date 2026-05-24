@@ -1,6 +1,7 @@
 [
   {
     "question": "Apa prinsip dasar yang digunakan oleh struktur data Stack?",
+    "slideLink": "slides/stack.html#4",
     "choices": [
       { "text": "FIFO (First In First Out)", "isCorrect": false, "reason": "FIFO digunakan oleh Queue." },
       { "text": "LIFO (Last In First Out)", "isCorrect": true, "reason": "Stack menggunakan prinsip di mana data yang terakhir masuk akan menjadi yang pertama kali keluar." },
@@ -10,6 +11,7 @@
   },
   {
     "question": "Operasi apa yang digunakan untuk menambahkan elemen ke dalam Stack?",
+    "slideLink": "slides/stack.html#8",
     "choices": [
       { "text": "Pop", "isCorrect": false, "reason": "Pop digunakan untuk mengambil/menghapus data." },
       { "text": "Push", "isCorrect": true, "reason": "Push adalah operasi untuk meletakkan data baru di posisi paling atas Stack." },
@@ -19,6 +21,7 @@
   },
   {
     "question": "Diberikan sebuah Stack kosong. Dilakukan operasi: Push(10), Push(20), Pop(), Push(30). Berapa nilai yang ada di posisi TOP sekarang?",
+    "slideLink": "slides/stack.html#10",
     "choices": [
       { "text": "10", "isCorrect": false, "reason": "10 berada di bawah 30." },
       { "text": "20", "isCorrect": false, "reason": "20 sudah dikeluarkan oleh operasi Pop()." },
@@ -28,6 +31,7 @@
   },
   {
     "question": "Apa fungsi dari operasi Peek (atau Top)?",
+    "slideLink": "slides/stack.html#11",
     "choices": [
       { "text": "Menghapus elemen teratas", "isCorrect": false, "reason": "Itu adalah fungsi Pop." },
       { "text": "Melihat nilai elemen teratas tanpa menghapusnya", "isCorrect": true, "reason": "Peek hanya mengintip nilai di TOP agar kita tahu isinya tanpa mengubah isi Stack." },
@@ -37,6 +41,7 @@
   },
   {
     "question": "Kondisi 'Stack Overflow' terjadi saat kita mencoba...",
+    "slideLink": "slides/stack.html#13",
     "choices": [
       { "text": "Mengambil data dari Stack yang kosong", "isCorrect": false, "reason": "Itu disebut Stack Underflow." },
       { "text": "Menambah data ke Stack yang sudah penuh", "isCorrect": true, "reason": "Overflow berarti kapasitas penyimpanan sudah maksimal dan tidak bisa menampung data lagi." },
@@ -46,6 +51,7 @@
   },
   {
     "question": "Jika kita melakukan Push: 'A', 'B', 'C' secara berurutan, lalu melakukan Pop dua kali, apa isi Stack sekarang?",
+    "slideLink": "slides/stack.html#10",
     "choices": [
       { "text": "['A', 'B', 'C']", "isCorrect": false, "reason": "Data sudah berkurang." },
       { "text": "['A']", "isCorrect": true, "reason": "Push A, B, C -> [A, B, C]. Pop pertama hapus C, Pop kedua hapus B. Tersisa A." },
@@ -55,6 +61,7 @@
   },
   {
     "question": "Manakah dari aplikasi berikut yang menggunakan prinsip Stack?",
+    "slideLink": "slides/stack.html#5",
     "choices": [
       { "text": "Antrean cetak dokumen (Printer Queue)", "isCorrect": false, "reason": "Ini menggunakan Queue (FIFO)." },
       { "text": "Fitur 'Undo' pada teks editor", "isCorrect": true, "reason": "Aksi terakhir yang dilakukan adalah yang pertama kali dibatalkan (Undo), sesuai prinsip LIFO." },
@@ -64,6 +71,7 @@
   },
   {
     "question": "Dalam implementasi Stack menggunakan array, jika MAX_SIZE = 5 dan indeks dimulai dari 0, berapa nilai variabel 'top' saat stack penuh?",
+    "slideLink": "slides/stack.html#14",
     "choices": [
       { "text": "0", "isCorrect": false, "reason": "Ini stack berisi 1 elemen." },
       { "text": "4", "isCorrect": true, "reason": "Indeks array 0, 1, 2, 3, 4 totalnya adalah 5 elemen." },
@@ -73,6 +81,7 @@
   },
   {
     "question": "Operasi IsEmpty() digunakan untuk mengecek...",
+    "slideLink": "slides/stack.html#12",
     "choices": [
       { "text": "Apakah stack sudah penuh", "isCorrect": false, "reason": "Itu IsFull()." },
       { "text": "Apakah stack tidak memiliki elemen sama sekali", "isCorrect": true, "reason": "IsEmpty akan mengembalikan true jika stack kosong, penting dilakukan sebelum operasi Pop." },
@@ -82,6 +91,7 @@
   },
   {
     "question": "Diberikan urutan input: 5, 2, 8. Jika dimasukkan ke Stack dan kemudian dikeluarkan satu per satu, urutan keluarnya adalah...",
+    "slideLink": "slides/stack.html#4",
     "choices": [
       { "text": "5, 2, 8", "isCorrect": false, "reason": "Ini urutan masuk (FIFO)." },
       { "text": "8, 2, 5", "isCorrect": true, "reason": "Karena prinsip LIFO, yang terakhir masuk (8) akan keluar pertama, diikuti 2, lalu 5." },

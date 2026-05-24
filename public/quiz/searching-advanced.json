@@ -1,6 +1,7 @@
 [
   {
     "question": "Apa syarat mutlak sebelum melakukan Binary Search pada sebuah array?",
+    "slideLink": "slides/searching-advanced.html#4",
     "choices": [
       { "text": "Array harus memiliki jumlah elemen genap", "isCorrect": false, "reason": "Binary search bekerja pada jumlah elemen ganjil maupun genap." },
       { "text": "Data dalam array harus sudah terurut", "isCorrect": true, "reason": "Binary Search mengandalkan urutan data untuk membagi area pencarian menjadi dua." },
@@ -10,6 +11,7 @@
   },
   {
     "question": "Diberikan array terurut: [10, 20, 30, 40, 50, 60, 70]. Jika kita mencari angka 60, apa nilai 'mid' pada langkah pertama?",
+    "slideLink": "slides/searching-advanced.html#7",
     "choices": [
       { "text": "20", "isCorrect": false, "reason": "Ini terlalu ke kiri." },
       { "text": "40", "isCorrect": true, "reason": "Indeks low=0, high=6. Mid = (0+6)/2 = 3. Indeks 3 berisi nilai 40." },
@@ -19,6 +21,7 @@
   },
   {
     "question": "Setelah langkah pertama pada soal sebelumnya (mencari 60 di [10..70], mid=40), ke mana pencarian akan berlanjut?",
+    "slideLink": "slides/searching-advanced.html#10",
     "choices": [
       { "text": "Berhenti karena 40 != 60", "isCorrect": false, "reason": "Pencarian berlanjut ke setengah bagian lainnya." },
       { "text": "Ke sebelah kiri (10, 20, 30)", "isCorrect": false, "reason": "60 lebih besar dari 40, jadi harus ke kanan." },
@@ -28,6 +31,7 @@
   },
   {
     "question": "Berapa jumlah perbandingan maksimal (kasus terburuk) untuk Binary Search pada array dengan 8 elemen?",
+    "slideLink": "slides/searching-advanced.html#15",
     "choices": [
       { "text": "3", "isCorrect": false, "reason": "2^3 = 8, tapi biasanya perlu 4 langkah untuk memastikan jika data tidak ada." },
       { "text": "4", "isCorrect": true, "reason": "Log2(8) = 3. Maksimal perbandingan adalah sekitar log2(N) + 1. Untuk 8 elemen, maksimal 4 kali perbandingan." },
@@ -37,6 +41,7 @@
   },
   {
     "question": "Pada array [2, 4, 6, 8, 10, 12, 14], jika mencari angka 2, berapa kali nilai 'mid' dihitung sampai ditemukan?",
+    "slideLink": "slides/searching-advanced.html#10",
     "choices": [
       { "text": "1", "isCorrect": false, "reason": "Mid pertama adalah 8." },
       { "text": "2", "isCorrect": false, "reason": "Mid kedua adalah 4." },
@@ -46,6 +51,7 @@
   },
   {
     "question": "Apa yang terjadi jika nilai 'low' menjadi lebih besar dari nilai 'high' dalam algoritma Binary Search?",
+    "slideLink": "slides/searching-advanced.html#12",
     "choices": [
       { "text": "Data ditemukan", "isCorrect": false, "reason": "Data ditemukan jika mid == target." },
       { "text": "Data tidak ditemukan", "isCorrect": true, "reason": "Kondisi low > high adalah tanda bahwa ruang pencarian sudah habis dan target tidak ada." },
@@ -55,6 +61,7 @@
   },
   {
     "question": "Diberikan array [5, 10, 15, 20, 25]. Jika mencari angka 12, apa urutan nilai 'mid' yang diperiksa?",
+    "slideLink": "slides/searching-advanced.html#10",
     "choices": [
       { "text": "15, 10, 5", "isCorrect": false, "reason": "Angka 12 berada di antara 10 dan 15." },
       { "text": "15, 5, 10", "isCorrect": false, "reason": "Salah urutan." },
@@ -64,6 +71,7 @@
   },
   {
     "question": "Manakah pernyataan yang benar mengenai efisiensi Binary Search?",
+    "slideLink": "slides/searching-advanced.html#16",
     "choices": [
       { "text": "Lebih lambat dari Sequential Search untuk data terurut", "isCorrect": false, "reason": "Jauh lebih cepat." },
       { "text": "Efisiensinya adalah O(N)", "isCorrect": false, "reason": "Efisiensinya adalah O(log N)." },
@@ -73,6 +81,7 @@
   },
   {
     "question": "Jika mid = (low + high) / 2 menghasilkan bilangan desimal, apa yang biasanya dilakukan dalam pemrograman?",
+    "slideLink": "slides/searching-advanced.html#11",
     "choices": [
       { "text": "Dibulatkan ke atas", "isCorrect": false, "reason": "Biasanya dibulatkan ke bawah (floor)." },
       { "text": "Dibulatkan ke bawah (diambil nilai integer)", "isCorrect": true, "reason": "Pembagian integer dalam banyak bahasa (seperti C++) otomatis membuang angka di belakang koma." },
@@ -82,6 +91,7 @@
   },
   {
     "question": "Berapa banyak langkah yang dibutuhkan Binary Search untuk mencari data pada array dengan 1.000.000 elemen dalam kasus terburuk?",
+    "slideLink": "slides/searching-advanced.html#16",
     "choices": [
       { "text": "Sekitar 20 langkah", "isCorrect": true, "reason": "2^20 adalah sekitar 1.048.576. Jadi maksimal hanya butuh sekitar 20 perbandingan." },
       { "text": "500.000 langkah", "isCorrect": false, "reason": "Ini jika Sequential Search rata-rata." },

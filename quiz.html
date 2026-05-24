@@ -53,6 +53,7 @@
       display: flex;
       align-items: flex-start;
       gap: 12px;
+      width: 100%;
     }
     .choice-btn:hover:not(:disabled) {
       border-color: var(--accent);
@@ -68,30 +69,56 @@
     .choice-btn.incorrect {
       border-color: #ef4444;
       background: rgba(239, 68, 68, 0.1);
+      opacity: 0.7;
     }
     .choice-btn .label {
       font-weight: bold;
       color: var(--accent);
       min-width: 24px;
     }
-    .reason-box {
+    .feedback-container {
       margin-top: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .feedback-container.visible {
+      display: flex;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .reason-box {
       padding: 16px;
       border-radius: 8px;
       font-size: 0.95rem;
-      display: none;
       line-height: 1.5;
       border-left: 4px solid var(--accent);
       background: var(--surface2);
     }
-    .reason-box.visible {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
+    .slide-link-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent3);
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 8px 12px;
+      border: 1px dashed var(--accent3);
+      border-radius: 6px;
+      width: fit-content;
+    }
+    .slide-link-box:hover {
+      background: rgba(147, 197, 253, 0.1);
     }
     .quiz-footer {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
       margin-top: 24px;
+    }
+    .retry-msg {
+      color: var(--accent4);
+      font-weight: bold;
+      font-size: 0.9rem;
     }
     #result-screen {
       text-align: center;
@@ -150,12 +177,19 @@
         <div id="choices-container" class="choices-grid">
           <!-- Choices will be injected here -->
         </div>
-        <div id="reason-container" class="reason-box">
-          <!-- Reason will be shown here -->
+
+        <div id="feedback-container" class="feedback-container">
+          <div id="reason-container" class="reason-box">
+            <!-- Reason will be shown here -->
+          </div>
+          <a id="slide-link" href="#" target="_blank" class="slide-link-box">
+            <span>📖 Lihat materi terkait</span>
+          </a>
         </div>
       </div>
 
       <div class="quiz-footer">
+        <span id="retry-msg" class="retry-msg" style="visibility: hidden;">Salah! Coba lagi sekali lagi.</span>
         <button id="next-btn" class="btn btn-primary" style="display: none;">Lanjut</button>
       </div>
     </div>
@@ -183,10 +217,10 @@
       'queue'
     ];
 
-    let allQuestions = [];
     let currentQuestionIndex = 0;
     let score = 0;
     let quizData = [];
+    let attempts = 0; // 0: first try, 1: second try
 
     async function loadQuiz() {
       try {
@@ -197,12 +231,10 @@
 
         quizData = [];
         results.forEach(questions => {
-          // Select 2 random questions from each topic
           const shuffled = questions.sort(() => 0.5 - Math.random());
           quizData.push(...shuffled.slice(0, 2));
         });
 
-        // Shuffle all selected questions
         quizData = quizData.sort(() => 0.5 - Math.random());
 
         startQuiz();
@@ -222,60 +254,102 @@
     }
 
     function showQuestion() {
+      attempts = 0;
       const q = quizData[currentQuestionIndex];
       const questionText = document.getElementById('question-text');
       const choicesContainer = document.getElementById('choices-container');
-      const reasonContainer = document.getElementById('reason-container');
+      const feedbackContainer = document.getElementById('feedback-container');
       const nextBtn = document.getElementById('next-btn');
       const counter = document.getElementById('question-counter');
       const progressBar = document.getElementById('progress-bar');
+      const retryMsg = document.getElementById('retry-msg');
 
-      // Update UI
       questionText.textContent = q.question;
       counter.textContent = `Pertanyaan ${currentQuestionIndex + 1} / ${quizData.length}`;
       progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
 
       choicesContainer.innerHTML = '';
-      reasonContainer.classList.remove('visible');
+      feedbackContainer.classList.remove('visible');
       nextBtn.style.display = 'none';
+      retryMsg.style.visibility = 'hidden';
 
-      // Shuffle choices
       const shuffledChoices = [...q.choices].sort(() => 0.5 - Math.random());
 
       shuffledChoices.forEach((choice, index) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         btn.innerHTML = `<span class="label">${String.fromCharCode(65 + index)}.</span> <span>${choice.text}</span>`;
-        btn.onclick = () => selectChoice(btn, choice, q.choices);
+        btn.onclick = () => selectChoice(btn, choice, q);
         choicesContainer.appendChild(btn);
       });
     }
 
-    function selectChoice(selectedBtn, selectedChoice, allChoices) {
+    function selectChoice(selectedBtn, selectedChoice, question) {
       const choicesContainer = document.getElementById('choices-container');
       const btns = choicesContainer.querySelectorAll('.choice-btn');
+      const feedbackContainer = document.getElementById('feedback-container');
       const reasonContainer = document.getElementById('reason-container');
       const nextBtn = document.getElementById('next-btn');
+      const retryMsg = document.getElementById('retry-msg');
+      const slideLink = document.getElementById('slide-link');
 
-      // Lock all buttons
-      btns.forEach(btn => btn.disabled = true);
-
-      // Highlight selected
       if (selectedChoice.isCorrect) {
         selectedBtn.classList.add('correct');
-        score++;
+        // Disable all
+        btns.forEach(btn => btn.disabled = true);
+
+        // Scoring: Full point on first try, half point on second?
+        // User said "update the score". Let's give 1 point if correct.
+        if (attempts === 0) {
+           score += 1;
+        } else {
+           score += 0.5; // Incentive for eventually getting it right
+        }
+
         updateScoreDisplay();
+        showFinalFeedback(selectedChoice.reason, question.slideLink);
       } else {
         selectedBtn.classList.add('incorrect');
-        // Also highlight the correct one
-        // (Optional: do we want to show the correct one?
-        // The user said "show the reason". Usually people want to know the right answer too.)
-        // Let's find the correct choice in allChoices to show its reason maybe?
-        // User said: "show the reason". It's better to show the reason of what they picked.
-      }
+        selectedBtn.disabled = true;
 
-      reasonContainer.textContent = selectedChoice.reason;
-      reasonContainer.classList.add('visible');
+        if (attempts === 0) {
+          attempts = 1;
+          retryMsg.style.visibility = 'visible';
+          // Show reason for the wrong choice
+          reasonContainer.textContent = selectedChoice.reason;
+          reasonContainer.classList.add('visible'); // temporarily show it?
+          // Actually, let's just update text and not show the full feedback box yet
+          // or show it but keep buttons active?
+          // Requirement: "Once quiz taker select a choice, lock it, update the score, and show the reason."
+          // But now we have "another chance".
+
+          // Let's show the reason for the wrong choice immediately.
+          reasonContainer.textContent = "Salah: " + selectedChoice.reason;
+          feedbackContainer.classList.add('visible');
+          slideLink.style.display = 'none'; // Don't show slide link yet
+        } else {
+          // Second attempt failed
+          btns.forEach(btn => btn.disabled = true);
+          retryMsg.style.visibility = 'hidden';
+
+          // Find correct choice to show its reason maybe?
+          // Or just show the reason for this second wrong choice.
+          const correctChoice = question.choices.find(c => c.isCorrect);
+          showFinalFeedback(`Salah lagi. ${selectedChoice.reason}. Jawaban yang benar adalah: ${correctChoice.text}.`, question.slideLink);
+        }
+      }
+    }
+
+    function showFinalFeedback(reason, link) {
+      const feedbackContainer = document.getElementById('feedback-container');
+      const reasonContainer = document.getElementById('reason-container');
+      const slideLink = document.getElementById('slide-link');
+      const nextBtn = document.getElementById('next-btn');
+
+      reasonContainer.textContent = reason;
+      slideLink.href = link;
+      slideLink.style.display = 'flex';
+      feedbackContainer.classList.add('visible');
 
       if (currentQuestionIndex < quizData.length - 1) {
         nextBtn.textContent = 'Lanjut';

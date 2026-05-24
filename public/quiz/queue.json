@@ -1,6 +1,7 @@
 [
   {
     "question": "Apa prinsip utama yang digunakan oleh struktur data Queue?",
+    "slideLink": "slides/queue.html#4",
     "choices": [
       { "text": "LIFO (Last In First Out)", "isCorrect": false, "reason": "LIFO digunakan oleh Stack." },
       { "text": "FIFO (First In First Out)", "isCorrect": true, "reason": "Queue menggunakan prinsip di mana data yang pertama kali masuk akan menjadi yang pertama kali keluar." },
@@ -10,6 +11,7 @@
   },
   {
     "question": "Operasi untuk menambahkan elemen ke dalam Queue disebut...",
+    "slideLink": "slides/queue.html#10",
     "choices": [
       { "text": "Push", "isCorrect": false, "reason": "Push digunakan pada Stack." },
       { "text": "Pop", "isCorrect": false, "reason": "Pop digunakan pada Stack." },
@@ -19,6 +21,7 @@
   },
   {
     "question": "Diberikan Queue kosong. Operasi: Enqueue(A), Enqueue(B), Dequeue(), Enqueue(C). Siapa yang berada di posisi paling depan (Front) sekarang?",
+    "slideLink": "slides/queue.html#12",
     "choices": [
       { "text": "A", "isCorrect": false, "reason": "A sudah dikeluarkan oleh Dequeue()." },
       { "text": "B", "isCorrect": true, "reason": "Urutan: [A] -> [A, B] -> [B] -> [B, C]. Maka Front adalah B." },
@@ -28,6 +31,7 @@
   },
   {
     "question": "Pada Linear Queue (antrean biasa) menggunakan array, apa masalah yang sering muncul?",
+    "slideLink": "slides/queue.html#21",
     "choices": [
       { "text": "Stack Overflow", "isCorrect": false, "reason": "Ini masalah pada Stack." },
       { "text": "False Overflow", "isCorrect": true, "reason": "Terjadi ketika 'rear' sudah mencapai batas akhir array, sehingga antrean dianggap penuh padahal di bagian depan masih ada ruang kosong (bekas Dequeue)." },
@@ -37,15 +41,17 @@
   },
   {
     "question": "Bagaimana Circular Queue mengatasi masalah False Overflow?",
+    "slideLink": "slides/queue.html#25",
     "choices": [
-      { "text": "Dengan memperbesar ukuran array secara otomatis", "isCorrect": false, "reason": "Bukan mekanisme utama circular queue." },
-      { "text": "Dengan memindahkan semua elemen ke depan setiap kali ada Dequeue", "isCorrect": false, "reason": "Ini terlalu lambat (O(N))." },
-      { "text": "Dengan memanfaatkan operator modulo (%) untuk menghubungkan posisi akhir kembali ke posisi awal array", "isCorrect": true, "reason": "Indeks dihitung dengan (i + 1) % MAX, sehingga saat mencapai akhir, ia akan kembali ke 0 jika kosong." },
-      { "text": "Dengan menghapus data yang paling lama", "isCorrect": false, "reason": "Data hanya dihapus jika ada operasi Dequeue." }
+      { "text": "By automatically resizing the array", "isCorrect": false, "reason": "Not the primary mechanism of circular queue." },
+      { "text": "By moving all elements to the front after each Dequeue", "isCorrect": false, "reason": "This is too slow (O(N))." },
+      { "text": "With the modulo operator (%) to connect the end back to the beginning", "isCorrect": true, "reason": "The index is calculated as (i + 1) % MAX, so upon reaching the end, it returns to 0 if available." },
+      { "text": "By deleting the oldest data", "isCorrect": false, "reason": "Data is only deleted via a Dequeue operation." }
     ]
   },
   {
     "question": "Operasi Dequeue dilakukan pada posisi...",
+    "slideLink": "slides/queue.html#11",
     "choices": [
       { "text": "Rear (Belakang)", "isCorrect": false, "reason": "Rear adalah tempat memasukkan data (Enqueue)." },
       { "text": "Front (Depan)", "isCorrect": true, "reason": "Sesuai prinsip antrean, data diambil dari posisi paling depan." },
@@ -55,6 +61,7 @@
   },
   {
     "question": "Jika sebuah Queue memiliki kapasitas 5 dan sudah berisi 5 elemen, apa yang terjadi jika kita melakukan Enqueue lagi?",
+    "slideLink": "slides/queue.html#15",
     "choices": [
       { "text": "Queue Underflow", "isCorrect": false, "reason": "Underflow terjadi jika mengambil dari queue kosong." },
       { "text": "Queue Overflow", "isCorrect": true, "reason": "Overflow terjadi karena kapasitas memori untuk antrean sudah penuh." },
@@ -64,6 +71,7 @@
   },
   {
     "question": "Dalam Circular Queue dengan MAX=5, jika Front=2 dan ada 3 elemen, di manakah posisi Rear?",
+    "slideLink": "slides/queue.html#30",
     "choices": [
       { "text": "4", "isCorrect": true, "reason": "Elemen ada di indeks 2, 3, dan 4. Maka Rear berada di indeks 4." },
       { "text": "5", "isCorrect": false, "reason": "Indeks maksimal adalah 4." },
@@ -73,6 +81,7 @@
   },
   {
     "question": "Aplikasi nyata manakah yang menggunakan prinsip Queue?",
+    "slideLink": "slides/queue.html#5",
     "choices": [
       { "text": "Tumpukan piring", "isCorrect": false, "reason": "Ini analogi Stack (LIFO)." },
       { "text": "Sistem penjadwalan proses pada CPU", "isCorrect": true, "reason": "Tugas yang datang lebih dulu akan diproses lebih dulu (First Come First Served), menggunakan prinsip Queue." },
@@ -82,6 +91,7 @@
   },
   {
     "question": "Kapan sebuah Queue dikatakan kosong (IsEmpty)?",
+    "slideLink": "slides/queue.html#13",
     "choices": [
       { "text": "Saat Front == Rear + 1", "isCorrect": false, "reason": "Ini biasanya indikasi penuh pada beberapa implementasi circular queue." },
       { "text": "Saat nilai Front dan Rear berada di posisi -1", "isCorrect": true, "reason": "Secara standar, menginisialisasi Front dan Rear ke -1 menandakan antrean belum berisi data sama sekali." },

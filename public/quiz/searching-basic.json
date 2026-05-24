@@ -1,6 +1,7 @@
 [
   {
     "question": "Berapa jumlah perbandingan maksimal yang dilakukan Sequential Search pada array dengan 10 elemen jika data yang dicari tidak ada?",
+    "slideLink": "slides/searching.html#15",
     "choices": [
       { "text": "5", "isCorrect": false, "reason": "Pencarian berurutan harus memeriksa setiap elemen jika data tidak ditemukan." },
       { "text": "9", "isCorrect": false, "reason": "Indeks terakhir adalah 9, tapi jumlah elemen yang diperiksa adalah 10." },
@@ -10,6 +11,7 @@
   },
   {
     "question": "Diberikan array [12, 45, 7, 23, 56, 34]. Jika kita mencari angka 23 menggunakan Sequential Search, pada indeks berapakah angka tersebut ditemukan?",
+    "slideLink": "slides/searching.html#10",
     "choices": [
       { "text": "2", "isCorrect": false, "reason": "Indeks 2 berisi angka 7." },
       { "text": "3", "isCorrect": true, "reason": "Angka 23 berada pada posisi ke-4, yang berarti indeks 3 (dimulai dari 0)." },
@@ -19,6 +21,7 @@
   },
   {
     "question": "Kapan kondisi 'Best Case' terjadi pada algoritma Sequential Search?",
+    "slideLink": "slides/searching.html#14",
     "choices": [
       { "text": "Saat data berada di tengah array", "isCorrect": false, "reason": "Ini memerlukan N/2 perbandingan, bukan kasus terbaik." },
       { "text": "Saat data berada di indeks terakhir", "isCorrect": false, "reason": "Ini adalah kasus terburuk karena semua elemen harus diperiksa." },
@@ -28,6 +31,7 @@
   },
   {
     "question": "Jika Sequential Search dilakukan pada array [5, 8, 12, 15, 20] untuk mencari angka 10, berapa kali perbandingan dilakukan?",
+    "slideLink": "slides/searching.html#15",
     "choices": [
       { "text": "2", "isCorrect": false, "reason": "Hanya memeriksa sampai indeks 1, belum cukup." },
       { "text": "3", "isCorrect": false, "reason": "Hanya memeriksa sampai indeks 2, belum selesai." },
@@ -37,6 +41,7 @@
   },
   {
     "question": "Apa keunggulan utama Sequential Search dibandingkan Binary Search?",
+    "slideLink": "slides/searching.html#6",
     "choices": [
       { "text": "Lebih cepat untuk data dalam jumlah besar", "isCorrect": false, "reason": "Binary search jauh lebih cepat untuk data besar (log N vs N)." },
       { "text": "Data tidak perlu diurutkan terlebih dahulu", "isCorrect": true, "reason": "Sequential Search dapat bekerja pada data acak (unsorted), sedangkan Binary Search wajib pada data terurut." },
@@ -46,6 +51,7 @@
   },
   {
     "question": "Diberikan array [10, 20, 30, 40, 50]. Jika mencari angka 40, berapa banyak elemen yang harus diperiksa?",
+    "slideLink": "slides/searching.html#10",
     "choices": [
       { "text": "3", "isCorrect": false, "reason": "Hanya sampai angka 30." },
       { "text": "4", "isCorrect": true, "reason": "Elemen diperiksa satu per satu: 10, 20, 30, lalu 40 (total 4 elemen)." },
@@ -55,6 +61,7 @@
   },
   {
     "question": "Dalam implementasi Sequential Search dengan loop 'for', apa yang biasanya menjadi tanda bahwa data tidak ditemukan?",
+    "slideLink": "slides/searching.html#12",
     "choices": [
       { "text": "Loop berhenti di tengah", "isCorrect": false, "reason": "Itu biasanya berarti data ditemukan." },
       { "text": "Variabel flag tetap bernilai false setelah loop selesai", "isCorrect": true, "reason": "Flag digunakan untuk menandai apakah data ditemukan selama iterasi." },
@@ -64,6 +71,7 @@
   },
   {
     "question": "Jika kita mencari angka 100 pada array berisi 1000 elemen acak menggunakan Sequential Search, dan angka tersebut ada di posisi terakhir, berapa perbandingan yang dilakukan?",
+    "slideLink": "slides/searching.html#15",
     "choices": [
       { "text": "1", "isCorrect": false, "reason": "Itu jika di posisi pertama." },
       { "text": "500", "isCorrect": false, "reason": "Itu rata-rata jika di tengah." },
@@ -73,6 +81,7 @@
   },
   {
     "question": "Mengapa Sequential Search kurang efisien untuk data yang sangat besar?",
+    "slideLink": "slides/searching.html#16",
     "choices": [
       { "text": "Karena memerlukan memori tambahan yang besar", "isCorrect": false, "reason": "Sequential search tidak butuh memori tambahan yang signifikan." },
       { "text": "Karena waktu pencarian meningkat secara linear seiring bertambahnya data", "isCorrect": true, "reason": "Jumlah perbandingan berbanding lurus dengan jumlah data (O(N))." },
@@ -82,6 +91,7 @@
   },
   {
     "question": "Pada array [2, 4, 6, 8, 10], manakah target pencarian yang akan menghasilkan 'Worst Case'?",
+    "slideLink": "slides/searching.html#15",
     "choices": [
       { "text": "2", "isCorrect": false, "reason": "Ini adalah Best Case." },
       { "text": "6", "isCorrect": false, "reason": "Ini kasus rata-rata." },

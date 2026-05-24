@@ -1,6 +1,7 @@
 [
   {
     "question": "Apa prinsip utama dari algoritma Merge Sort?",
+    "slideLink": "slides/sorting-advanced.html#5",
     "choices": [
       { "text": "Mencari nilai pivot dan membagi data", "isCorrect": false, "reason": "Ini adalah prinsip Quick Sort." },
       { "text": "Memecah array menjadi bagian terkecil lalu menggabungkannya kembali secara terurut", "isCorrect": true, "reason": "Merge Sort menggunakan strategi Divide and Conquer: membagi hingga elemen tunggal, lalu menggabungkan (merge) kembali." },
@@ -10,6 +11,7 @@
   },
   {
     "question": "Pada Quick Sort, apa fungsi dari 'pivot'?",
+    "slideLink": "slides/sorting-advanced.html#21",
     "choices": [
       { "text": "Sebagai penanda elemen terkecil", "isCorrect": false, "reason": "Bukan, itu tugas pencarian minimum." },
       { "text": "Sebagai titik acuan untuk membagi array menjadi dua bagian (kiri lebih kecil, kanan lebih besar)", "isCorrect": true, "reason": "Pivot digunakan untuk mempartisi array sehingga elemen di kirinya <= pivot dan di kanannya >= pivot." },
@@ -19,6 +21,7 @@
   },
   {
     "question": "Bagaimana Shell Sort memperbaiki kelemahan Insertion Sort?",
+    "slideLink": "slides/sorting-advanced.html#12",
     "choices": [
       { "text": "Dengan membagi array menjadi dua bagian sama besar", "isCorrect": false, "reason": "Ini cara Merge Sort." },
       { "text": "Dengan memungkinkan perpindahan elemen dalam jarak jauh menggunakan sistem 'gap'", "isCorrect": true, "reason": "Shell Sort melakukan perbandingan dan perpindahan elemen yang berjauhan, sehingga mengurangi jumlah pergeseran yang dibutuhkan saat gap mengecil menjadi 1." },
@@ -28,6 +31,7 @@
   },
   {
     "question": "Kapan Merge Sort lebih dipilih dibandingkan Quick Sort?",
+    "slideLink": "slides/sorting-advanced.html#30",
     "choices": [
       { "text": "Saat penggunaan memori harus seminimal mungkin", "isCorrect": false, "reason": "Merge Sort butuh memori tambahan O(N), sedangkan Quick Sort lebih hemat." },
       { "text": "Saat kita memerlukan algoritma pengurutan yang stabil (stable sort)", "isCorrect": true, "reason": "Merge Sort mempertahankan urutan elemen yang bernilai sama, sedangkan Quick Sort standar tidak stabil." },
@@ -37,6 +41,7 @@
   },
   {
     "question": "Jika kita memiliki array [38, 27, 43, 3, 9, 82, 10], berapa banyak elemen di setiap bagian setelah pembelahan pertama pada Merge Sort?",
+    "slideLink": "slides/sorting-advanced.html#8",
     "choices": [
       { "text": "1 dan 6", "isCorrect": false, "reason": "Pembagian harus seimbang." },
       { "text": "2 dan 5", "isCorrect": false, "reason": "Masih belum seimbang." },
@@ -46,6 +51,7 @@
   },
   {
     "question": "Apa kasus terburuk (worst case) dari Quick Sort (standar)?",
+    "slideLink": "slides/sorting-advanced.html#29",
     "choices": [
       { "text": "Saat data sudah terurut atau terurut terbalik dengan pivot di ujung", "isCorrect": true, "reason": "Jika pivot selalu elemen terkecil atau terbesar, partisi menjadi sangat tidak seimbang dan kompleksitas menjadi O(N^2)." },
       { "text": "Saat data teracak sempurna", "isCorrect": false, "reason": "Ini justru biasanya menghasilkan performa bagus O(N log N)." },
@@ -55,6 +61,7 @@
   },
   {
     "question": "Berapa kompleksitas waktu rata-rata (average case) untuk Merge Sort dan Quick Sort?",
+    "slideLink": "slides/sorting-advanced.html#29",
     "choices": [
       { "text": "O(N)", "isCorrect": false, "reason": "Terlalu cepat untuk pengurutan berbasis perbandingan." },
       { "text": "O(N^2)", "isCorrect": false, "reason": "Ini kompleksitas algoritma dasar." },
@@ -64,6 +71,7 @@
   },
   {
     "question": "Jika gap pada Shell Sort bernilai 1, maka algoritma tersebut identik dengan...",
+    "slideLink": "slides/sorting-advanced.html#12",
     "choices": [
       { "text": "Bubble Sort", "isCorrect": false, "reason": "Mekanismenya berbeda." },
       { "text": "Selection Sort", "isCorrect": false, "reason": "Mekanismenya berbeda." },
@@ -73,6 +81,7 @@
   },
   {
     "question": "Dalam proses Merge Sort, setelah membagi array menjadi bagian-bagian terkecil (1 elemen), apa langkah selanjutnya?",
+    "slideLink": "slides/sorting-advanced.html#7",
     "choices": [
       { "text": "Menghapus data", "isCorrect": false, "reason": "Data harus diurutkan, bukan dihapus." },
       { "text": "Menggabungkan dua sub-array yang sudah terurut menjadi satu sub-array baru yang terurut", "isCorrect": true, "reason": "Proses merge membandingkan elemen terdepan dari dua bagian dan menyusunnya kembali secara terurut." },
@@ -82,10 +91,11 @@
   },
   {
     "question": "Manakah pernyataan yang BENAR mengenai penggunaan memori tambahan (space complexity)?",
+    "slideLink": "slides/sorting-advanced.html#29",
     "choices": [
       { "text": "Merge Sort lebih hemat memori dibanding Quick Sort", "isCorrect": false, "reason": "Terbalik, Merge Sort butuh O(N) memori tambahan untuk proses penggabungan." },
       { "text": "Quick Sort (in-place) lebih hemat memori dibanding Merge Sort", "isCorrect": true, "reason": "Quick Sort bekerja langsung pada array asal (in-place) sehingga hanya butuh sedikit memori tambahan (untuk stack rekursi)." },
-      { "text": "Shell Sort memerlukan memori paling besar", "isCorrect": false, "reason": "Shell sort juga in-place." },
+      { "text": "Shell Sort memerlukan memori paling besar", "isCorrect": false, "reason": "Shell sort also in-place." },
       { "text": "Semua algoritma lanjutan tidak butuh memori tambahan", "isCorrect": false, "reason": "Setiap algoritma memiliki kebutuhan memori yang berbeda." }
     ]
   }
