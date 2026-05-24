@@ -55,8 +55,12 @@
                 background: rgba(var(--accent2-rgb), 0.1);
             }
 
-            .tree-node.highlight-root { border-color: #ffcc33; box-shadow: 0 0 10px #ffcc33; }
-            .tree-node.highlight-leaf { border-color: #ff5555; box-shadow: 0 0 10px #ff5555; }
+            .tree-node.highlight-root { border-color: #ffcc33; box-shadow: 0 0 15px #ffcc33; background: rgba(255, 204, 51, 0.2); }
+            .tree-node.highlight-parent { border-color: #ff9800; box-shadow: 0 0 15px #ff9800; background: rgba(255, 152, 0, 0.2); }
+            .tree-node.highlight-child { border-color: #00bcd4; box-shadow: 0 0 15px #00bcd4; background: rgba(0, 188, 212, 0.2); }
+            .tree-node.highlight-sibling { border-color: #9c27b0; box-shadow: 0 0 15px #9c27b0; background: rgba(156, 39, 176, 0.2); }
+            .tree-node.highlight-leaf { border-color: #ff5555; box-shadow: 0 0 15px #ff5555; background: rgba(255, 85, 85, 0.2); }
+            .tree-node.highlight-internal { border-color: #4caf50; box-shadow: 0 0 15px #4caf50; background: rgba(76, 175, 80, 0.2); }
 
             .tree-edge {
                 position: absolute;
@@ -380,8 +384,35 @@
                 </div>
             </div>
 
-            <!-- SLIDE 10: Level, Depth, Height -->
-            <div class="slide" id="slide-9" data-notes="Jelaskan perlahan: depth = jarak dari root, height = jarak terpanjang ke leaf. Mahasiswa sering tertukar. Gunakan warna berbeda.">
+            <!-- SLIDE 10: Jawaban Identifikasi Node -->
+            <div class="slide" id="slide-9" data-notes="Tampilkan jawaban untuk memastikan pemahaman mahasiswa. Bahas mengapa setiap node dikategorikan demikian.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Jawaban</div>
+                <div class="slide-title">Jawaban <span class="highlight">Identifikasi</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <div id="visual-tree-quiz-ans" class="tree-container" style="height: 250px;"></div>
+                        </div>
+                        <div class="col" style="flex: 0.8;">
+                            <div class="interactive-box">
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="margin-bottom: 10px;"><strong>Root:</strong> Node 10 (A)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Sibling B:</strong> Node 20 (C)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Leaf Nodes:</strong> 3, 7, 30 (D, E, F)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Subtree:</strong> Node 5 beserta anak-anaknya (D, E)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Level, Depth, Height -->
+            <div class="slide" id="slide-10" data-notes="Jelaskan perlahan: depth = jarak dari root, height = jarak terpanjang ke leaf. Mahasiswa sering tertukar. Gunakan warna berbeda.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -397,8 +428,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 11: Mengapa Tree Efisien? -->
-            <div class="slide" id="slide-10" data-notes="Hubungkan dengan searching, database, file system. Data besar sulit dicari linear, tree membagi pencarian. Teaser: BST nanti membuat pencarian jauh lebih cepat.">
+            <!-- SLIDE 12: Mengapa Tree Efisien? -->
+            <div class="slide" id="slide-11" data-notes="Hubungkan dengan searching, database, file system. Data besar sulit dicari linear, tree membagi pencarian. Teaser: BST nanti membuat pencarian jauh lebih cepat.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -415,8 +446,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 12: Binary Tree -->
-            <div class="slide" id="slide-11" data-notes="Tekankan: maksimal dua anak, tidak harus selalu dua. Contoh: node dengan satu child tetap valid.">
+            <!-- SLIDE 13: Binary Tree -->
+            <div class="slide" id="slide-12" data-notes="Tekankan: maksimal dua anak, tidak harus selalu dua. Contoh: node dengan satu child tetap valid.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -436,8 +467,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 13: Visual Binary Tree -->
-            <div class="slide" id="slide-12" data-notes="Tunjukkan left child dan right child. Bahas arah traversal dan hubungan pointer.">
+            <!-- SLIDE 14: Visual Binary Tree -->
+            <div class="slide" id="slide-13" data-notes="Tunjukkan left child dan right child. Bahas arah traversal dan hubungan pointer.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -449,8 +480,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 14: Jenis Binary Tree -->
-            <div class="slide" id="slide-13" data-notes="Jelaskan singkat: Full (0 atau 2 anak), Complete (terisi dari kiri), Skewed (miring). Fokus pengenalan konsep.">
+            <!-- SLIDE 15: Jenis Binary Tree -->
+            <div class="slide" id="slide-14" data-notes="Jelaskan singkat: Full (0 atau 2 anak), Complete (terisi dari kiri), Skewed (miring). Fokus pengenalan konsep.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -475,8 +506,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 15: Struktur Node pada C++ -->
-            <div class="slide" id="slide-14" data-notes="Hubungkan dengan linked list: satu pointer next vs dua pointer (left, right). Tekankan: Tree dibangun menggunakan pointer.">
+            <!-- SLIDE 16: Struktur Node pada C++ -->
+            <div class="slide" id="slide-15" data-notes="Hubungkan dengan linked list: satu pointer next vs dua pointer (left, right). Tekankan: Tree dibangun menggunakan pointer.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -495,8 +526,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 16: Membuat Node -->
-            <div class="slide" id="slide-15" data-notes="Jelaskan: alokasi memori dinamis, inisialisasi pointer. Hubungkan ke materi pointer sebelumnya.">
+            <!-- SLIDE 17: Membuat Node -->
+            <div class="slide" id="slide-16" data-notes="Jelaskan: alokasi memori dinamis, inisialisasi pointer. Hubungkan ke materi pointer sebelumnya.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -515,8 +546,8 @@
                 </div>
             </div>
 
-            <!-- SLIDE 17: Membentuk Tree -->
-            <div class="slide" id="slide-16" data-notes="Jelaskan: hubungan node dibentuk manual, pointer menghubungkan node. Mahasiswa biasanya mulai memahami tree pada slide ini.">
+            <!-- SLIDE 18: Membentuk Tree -->
+            <div class="slide" id="slide-17" data-notes="Jelaskan: hubungan node dibentuk manual, pointer menghubungkan node. Mahasiswa biasanya mulai memahami tree pada slide ini.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -542,8 +573,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 18: Apa itu Traversal? -->
-            <div class="slide" id="slide-17" data-notes="Tanyakan: Kalau data bercabang, bagaimana cara mengunjunginya? Tekankan: traversal = strategi kunjungan.">
+            <!-- SLIDE 19: Apa itu Traversal? -->
+            <div class="slide" id="slide-18" data-notes="Tanyakan: Kalau data bercabang, bagaimana cara mengunjunginya? Tekankan: traversal = strategi kunjungan.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -563,8 +594,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 19: Preorder Traversal -->
-            <div class="slide" id="slide-18" data-notes="Gunakan simulator untuk demonstrasi. Tekankan: root selalu duluan. Tips hafalan: Pre = parent dulu.">
+            <!-- SLIDE 20: Preorder Traversal -->
+            <div class="slide" id="slide-19" data-notes="Gunakan simulator for demonstrasi. Tekankan: root selalu duluan. Tips hafalan: Pre = parent dulu.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -585,8 +616,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 20: Inorder Traversal -->
-            <div class="slide" id="slide-19" data-notes="Tekankan: root di tengah. Hubungkan: BST menghasilkan data terurut pada inorder traversal.">
+            <!-- SLIDE 21: Inorder Traversal -->
+            <div class="slide" id="slide-20" data-notes="Tekankan: root di tengah. Hubungkan: BST menghasilkan data terurut pada inorder traversal.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -607,8 +638,8 @@ root-&gt;right = newNode(20);</code></pre>
                 </div>
             </div>
 
-            <!-- SLIDE 21: Postorder Traversal -->
-            <div class="slide" id="slide-20" data-notes="Tekankan: root terakhir. Contoh nyata: menghapus folder -> hapus isi dulu baru folder utama.">
+            <!-- SLIDE 22: Postorder Traversal -->
+            <div class="slide" id="slide-21" data-notes="Tekankan: root terakhir. Contoh nyata: menghapus folder -> hapus isi dulu baru folder utama.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -817,7 +848,7 @@ root-&gt;right = newNode(20);</code></pre>
         <div class="nav-slides-container">
             <div class="nav-slides">
                 <button class="nav-btn" id="prevBtn">←</button>
-                <span class="nav-counter" id="counter">1 / 30</span>
+                <span class="nav-counter" id="counter">1 / 31</span>
                 <button class="nav-btn" id="nextBtn">→</button>
             </div>
         </div>
@@ -924,7 +955,7 @@ root-&gt;right = newNode(20);</code></pre>
                 }
 
                 resetHighlights() {
-                    this.nodes.forEach(n => n.el.classList.remove('active', 'visited', 'highlight-root', 'highlight-leaf'));
+                    this.nodes.forEach(n => n.el.classList.remove('active', 'visited', 'highlight-root', 'highlight-leaf', 'highlight-parent', 'highlight-child', 'highlight-sibling', 'highlight-internal'));
                 }
             }
 
@@ -980,28 +1011,29 @@ root-&gt;right = newNode(20);</code></pre>
                             }, 300);
                         }
                         if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
-                        if (id === "slide-9") {
+                        if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                        if (id === "slide-10") {
                             const v = new TreeVisualizer('visual-tree-levels', sampleTree);
                             v.render();
                         }
-                        if (id === "slide-12") new TreeVisualizer('visual-binary-tree', sampleTree).render();
-                        if (id === "slide-18") {
+                        if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                        if (id === "slide-19") {
                             window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
                             window.preVis.render();
                         }
-                        if (id === "slide-19") {
+                        if (id === "slide-20") {
                             window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
                             window.inVis.render();
                         }
-                        if (id === "slide-20") {
+                        if (id === "slide-21") {
                             window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
                             window.postVis.render();
                         }
-                        if (id === "slide-23") {
+                        if (id === "slide-24") {
                              window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
                              window.recVis.render();
                         }
-                        if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                        if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
                     }
                 });
             });
@@ -1044,28 +1076,29 @@ root-&gt;right = newNode(20);</code></pre>
                     }, 300);
                 }
                 if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
-                if (id === "slide-9") {
+                if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                if (id === "slide-10") {
                     const v = new TreeVisualizer('visual-tree-levels', sampleTree);
                     v.render();
                 }
-                if (id === "slide-12") new TreeVisualizer('visual-binary-tree', sampleTree).render();
-                if (id === "slide-18") {
+                if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                if (id === "slide-19") {
                     window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
                     window.preVis.render();
                 }
-                if (id === "slide-19") {
+                if (id === "slide-20") {
                     window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
                     window.inVis.render();
                 }
-                if (id === "slide-20") {
+                if (id === "slide-21") {
                     window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
                     window.postVis.render();
                 }
-                if (id === "slide-23") {
+                if (id === "slide-24") {
                      window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
                      window.recVis.render();
                 }
-                if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
             });
 
             // Traversal Simulator Logic (Local)
@@ -1112,21 +1145,22 @@ root-&gt;right = newNode(20);</code></pre>
 
             // Terminology Hover Logic
             const termMapping = {
-                'root': ['A'],
-                'parent': ['A', 'B', 'C'],
-                'child': ['B', 'C', 'D', 'E', 'F'],
-                'sibling': ['B', 'C', 'D', 'E'],
-                'leaf': ['D', 'E', 'F'],
-                'internal': ['B', 'C']
+                'root': { ids: ['A'], class: 'highlight-root' },
+                'parent': { ids: ['A', 'B', 'C'], class: 'highlight-parent' },
+                'child': { ids: ['B', 'C', 'D', 'E', 'F'], class: 'highlight-child' },
+                'sibling': { ids: ['B', 'C', 'D', 'E'], class: 'highlight-sibling' },
+                'leaf': { ids: ['D', 'E', 'F'], class: 'highlight-leaf' },
+                'internal': { ids: ['B', 'C'], class: 'highlight-internal' }
             };
 
             document.querySelectorAll('.term-list li').forEach(li => {
                 li.onmouseover = () => {
                     const term = li.dataset.term;
-                    if (window.compVis && termMapping[term]) {
+                    const map = termMapping[term];
+                    if (window.compVis && map) {
                         if (window.compVis.nodes.length === 0) window.compVis.render();
                         window.compVis.resetHighlights();
-                        window.compVis.highlightMany(termMapping[term]);
+                        window.compVis.highlightMany(map.ids, map.class);
                     }
                 };
                 li.onmouseout = () => {
