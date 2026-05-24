@@ -1,0 +1,1232 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pertemuan 15 – Tree dan Operasi Dasar</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../src/style.css" />
+        <link rel="stylesheet" href="../src/slides.css" />
+        <style>
+            :root {
+                --node-size: 50px;
+                --node-gap-h: 40px;
+                --node-gap-v: 60px;
+            }
+
+            .tree-container {
+                position: relative;
+                width: 100%;
+                height: 400px;
+                margin: 20px 0;
+                display: flex;
+                justify-content: center;
+                overflow: visible;
+            }
+
+            .tree-node {
+                position: absolute;
+                width: var(--node-size);
+                height: var(--node-size);
+                border-radius: 50%;
+                background: var(--surface);
+                border: 2px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: bold;
+                z-index: 2;
+                transition: all 0.3s ease;
+            }
+
+            .tree-node.active {
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.1);
+                transform: scale(1.1);
+                box-shadow: 0 0 15px var(--accent);
+            }
+
+            .tree-node.visited {
+                border-color: var(--accent2);
+                background: rgba(var(--accent2-rgb), 0.1);
+            }
+
+            .tree-node.highlight-root { border-color: #ffcc33; box-shadow: 0 0 15px #ffcc33; background: rgba(255, 204, 51, 0.2); }
+            .tree-node.highlight-parent { border-color: #ff9800; box-shadow: 0 0 15px #ff9800; background: rgba(255, 152, 0, 0.2); }
+            .tree-node.highlight-child { border-color: #00bcd4; box-shadow: 0 0 15px #00bcd4; background: rgba(0, 188, 212, 0.2); }
+            .tree-node.highlight-sibling { border-color: #9c27b0; box-shadow: 0 0 15px #9c27b0; background: rgba(156, 39, 176, 0.2); }
+            .tree-node.highlight-leaf { border-color: #ff5555; box-shadow: 0 0 15px #ff5555; background: rgba(255, 85, 85, 0.2); }
+            .tree-node.highlight-internal { border-color: #4caf50; box-shadow: 0 0 15px #4caf50; background: rgba(76, 175, 80, 0.2); }
+
+            .tree-edge {
+                position: absolute;
+                background: var(--border);
+                height: 2px;
+                transform-origin: left center;
+                z-index: 1;
+                transition: background 0.3s;
+            }
+            .tree-edge.active {
+                background: var(--accent);
+                height: 3px;
+            }
+
+            .label-depth { color: var(--accent); font-weight: bold; }
+            .label-height { color: #ff5555; font-weight: bold; }
+
+            .call-stack {
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 5px;
+                border: 2px solid var(--border);
+                padding: 10px;
+                min-height: 200px;
+                background: rgba(var(--accent-rgb), 0.05);
+                border-radius: 8px;
+            }
+            .stack-frame {
+                padding: 8px;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.8rem;
+                animation: slideIn 0.3s ease;
+            }
+            .stack-frame.active {
+                border-color: var(--accent);
+                background: rgba(var(--accent-rgb), 0.1);
+            }
+
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .traversal-output {
+                margin-top: 20px;
+                padding: 15px;
+                background: #000;
+                color: #0f0;
+                font-family: 'JetBrains Mono', monospace;
+                border-radius: 4px;
+                min-height: 50px;
+            }
+
+            .term-list {
+                list-style: none;
+                padding: 0;
+                font-size: 0.9rem;
+            }
+            .term-list li {
+                cursor: help;
+                padding: 8px;
+                margin-bottom: 5px;
+                border-radius: 4px;
+                border: 1px solid transparent;
+                transition: all 0.2s;
+            }
+            .term-list li:hover {
+                background: rgba(var(--accent-rgb), 0.1);
+                border-color: var(--accent);
+                transform: translateX(5px);
+            }
+            .term-list li strong {
+                color: var(--accent);
+            }
+
+            .comparison-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 10px;
+                border: 1px solid var(--border);
+                text-align: left;
+            }
+            .comparison-table th { background: rgba(var(--accent-rgb), 0.1); }
+        </style>
+    </head>
+    <body>
+        <div class="progress" id="progress"></div>
+
+        <nav class="top-nav slide-top-nav">
+            <div class="back-hotspot">
+                <a href="../topics/tree.html" class="back-link" data-i18n="back">Kembali</a>
+            </div>
+            <div class="controls-hotspot">
+                <div class="controls slide-controls">
+                    <button class="control-btn" id="lang-toggle">ID / EN</button>
+                    <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="slides-wrapper" id="slidesWrapper">
+            <!-- SLIDE 1: Cover -->
+            <div class="slide active" id="slide-0" data-notes="Sampaikan bahwa ini adalah materi terakhir inti sebelum UAS. Tekankan bahwa tree adalah salah satu struktur data paling penting di ilmu komputer. Motivasi: Kalau linked list adalah langkah awal memahami data dinamis, maka tree adalah langkah awal memahami data hierarkis. Teknologi modern: file system, AI, database, compiler, website DOM.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="slide-num">PERTEMUAN 15</div>
+                <div class="section-badge"><span class="dot"></span>Struktur Data dan Algoritma</div>
+                <div class="slide-title"><span class="highlight">TREE</span> DAN OPERASI DASAR</div>
+                <div class="slide-body" style="text-align: center;">
+                    <ul style="list-style: none; padding: 0; margin-top: 40px; font-size: 1.2rem; color: var(--text-muted);">
+                        <li>• Struktur Data Non-Linear</li>
+                        <li>• Binary Tree</li>
+                        <li>• Traversal Tree</li>
+                    </ul>
+                    <div style="font-size: 5rem; margin-top: 40px;">🌳</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Learning Outcomes -->
+            <div class="slide" id="slide-1" data-notes="Jelaskan bahwa fokus utama bukan menghafal definisi. Fokus: memahami hubungan node, memahami traversal, memahami alasan penggunaan tree. Traversal tree adalah dasar untuk banyak algoritma lanjut.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Target</div>
+                <div class="slide-title">Learning <span class="highlight">Outcomes</span></div>
+                <div class="slide-body">
+                    <p>Setelah pertemuan ini mahasiswa mampu:</p>
+                    <ul class="task-list">
+                        <li>Menjelaskan konsep tree</li>
+                        <li>Mengidentifikasi komponen tree</li>
+                        <li>Memahami binary tree</li>
+                        <li>Melakukan traversal tree</li>
+                        <li>Mengimplementasikan tree sederhana</li>
+                        <li>Menganalisis penggunaan tree</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Review Pertemuan Sebelumnya -->
+            <div class="slide" id="slide-2" data-notes="Arahkan diskusi: Pada queue, data bergerak satu jalur, hanya ada urutan depan-belakang. Bandingkan dengan tree: bercabang, tidak satu jalur, memiliki hubungan hierarki. Queue = antrean, Tree = struktur organisasi.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Review</div>
+                <div class="slide-title">Review: <span class="highlight">Queue</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <h3>Karakteristik Queue:</h3>
+                            <ul>
+                                <li>FIFO (First In First Out)</li>
+                                <li>Operasi: enqueue(), dequeue()</li>
+                                <li>Circular Queue untuk efisiensi</li>
+                            </ul>
+                        </div>
+                        <div class="col" style="border-left: 1px solid var(--border); padding-left: 20px;">
+                            <div class="interactive-box">
+                                <p><strong>Pertanyaan:</strong></p>
+                                <blockquote style="font-style: italic; border-left: 4px solid var(--accent); padding-left: 15px;">
+                                    "Mengapa queue disebut struktur data linear?"
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Dari Struktur Linear ke Non-Linear -->
+            <div class="slide" id="slide-3" data-notes="Struktur linear: hubungan data berurutan, satu jalur traversal utama. Struktur non-linear: banyak cabang, hubungan lebih kompleks. Analogi: Linear = jalan lurus, Tree = percabangan jalan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Konsep</div>
+                <div class="slide-title">Linear vs <span class="highlight">Non-Linear</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <h3 style="color: var(--accent);">Struktur Linear</h3>
+                            <ul class="kp-item">
+                                <li>Array</li>
+                                <li>Linked List</li>
+                                <li>Stack</li>
+                                <li>Queue</li>
+                            </ul>
+                            <div style="font-size: 2rem; margin-top: 20px;">➡️</div>
+                        </div>
+                        <div class="col" style="border-left: 1px solid var(--border); padding-left: 20px;">
+                            <h3 style="color: var(--accent2);">Struktur Non-Linear</h3>
+                            <ul class="kp-item">
+                                <li><strong>Tree</strong></li>
+                                <li>Graph</li>
+                            </ul>
+                            <div style="font-size: 2rem; margin-top: 20px;">🌿</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Motivasi: Tree di Dunia Nyata -->
+            <div class="slide" id="slide-4" data-notes="Bahas satu per satu: Folder -> folder utama punya subfolder, Organisasi -> direktur -> manager -> staf, HTML -> body -> div -> button. Tekankan: Tree muncul hampir di semua sistem besar.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Motivasi</div>
+                <div class="slide-title">Tree di <span class="highlight">Dunia Nyata</span></div>
+                <div class="slide-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="kp-item"><span class="icon">📁</span><span>Folder Komputer</span></div>
+                        <div class="kp-item"><span class="icon">🏢</span><span>Struktur Organisasi</span></div>
+                        <div class="kp-item"><span class="icon">👪</span><span>Family Tree</span></div>
+                        <div class="kp-item"><span class="icon">🌐</span><span>HTML DOM</span></div>
+                        <div class="kp-item"><span class="icon">📱</span><span>Menu Aplikasi</span></div>
+                        <div class="kp-item"><span class="icon">🤖</span><span>Decision Tree AI</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Visualisasi Tree -->
+            <div class="slide" id="slide-5" data-notes="Tunjukkan node, edge, arah hubungan. Tanyakan: Mana node paling atas? Mana yang bukan tree? Tekankan bahwa tree tidak boleh memiliki cycle atau multiple parent.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visual</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Tree</span></div>
+                <div class="slide-body">
+                    <div class="cols" style="align-items: flex-start; gap: 10px;">
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px;">Binary Tree</h4>
+                            <div id="tree-binary-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px;">General Tree</h4>
+                            <div id="tree-general-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="font-size: 0.8rem; margin-bottom: 5px; color: #ff5555;">Bukan Tree (Cycle)</h4>
+                            <div id="tree-not-intro" class="tree-container" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Tree adalah struktur hierarki tanpa siklus (cycle) dan setiap node (kecuali root) hanya punya satu parent.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Definisi Tree -->
+            <div class="slide" id="slide-6" data-notes="Definisi: Struktur data hierarkis dari node yang terhubung. Karakteristik: Root, parent-child, no cycle. Bandingkan dengan graph: graph bisa cycle, tree tidak.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Definisi</div>
+                <div class="slide-title">Apa Itu <span class="highlight">Tree?</span></div>
+                <div class="slide-body">
+                    <div class="interactive-box">
+                        <p><strong>Tree adalah:</strong> Struktur data hierarkis yang terdiri dari node-node yang saling terhubung.</p>
+                    </div>
+                    <h3 style="margin-top: 30px;">Karakteristik:</h3>
+                    <ul>
+                        <li>Memiliki <strong>Root</strong> (satu node utama di atas)</li>
+                        <li>Memiliki hubungan <strong>Parent-Child</strong></li>
+                        <li><strong>Tidak membentuk Cycle</strong> (lingkaran)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: Komponen Tree -->
+            <div class="slide" id="slide-7" data-notes="Gunakan pointer langsung ke diagram. Jelaskan terminologi: Root, Parent, Child, Sibling, Leaf, Internal Node, Subtree. Gunakan analogi keluarga.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Terminologi</div>
+                <div class="slide-title">Komponen <span class="highlight">Tree</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <div id="visual-tree-components" class="tree-container" style="height: 300px;"></div>
+                        </div>
+                        <div class="col" style="flex: 0.6;">
+                            <ul class="term-list">
+                                <li data-term="root"><strong>Root:</strong> Node paling atas</li>
+                                <li data-term="parent"><strong>Parent:</strong> Node induk (punya anak)</li>
+                                <li data-term="child"><strong>Child:</strong> Node anak</li>
+                                <li data-term="sibling"><strong>Sibling:</strong> Saudara satu parent</li>
+                                <li data-term="leaf"><strong>Leaf:</strong> Node tanpa child</li>
+                                <li data-term="internal"><strong>Internal Node:</strong> Node dengan child (bukan root)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: Contoh Identifikasi Node -->
+            <div class="slide" id="slide-8" data-notes="Ajak mahasiswa menjawab bersama. Jangan langsung beri jawaban. Bangun pemahaman visual.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kuis Cepat</div>
+                <div class="slide-title">Identifikasi <span class="highlight">Node</span></div>
+                <div class="slide-body">
+                    <div id="visual-tree-quiz" class="tree-container" style="height: 250px;"></div>
+                    <div class="checkpoint-box" style="margin-top: 10px;">
+                        <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; padding: 0; list-style: none;">
+                            <li>• Siapa Root?</li>
+                            <li>• Siapa Sibling dari B?</li>
+                            <li>• Mana Leaf Node?</li>
+                            <li>• Mana Subtree?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Jawaban Identifikasi Node -->
+            <div class="slide" id="slide-9" data-notes="Tampilkan jawaban untuk memastikan pemahaman mahasiswa. Bahas mengapa setiap node dikategorikan demikian.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Jawaban</div>
+                <div class="slide-title">Jawaban <span class="highlight">Identifikasi</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <div id="visual-tree-quiz-ans" class="tree-container" style="height: 250px;"></div>
+                        </div>
+                        <div class="col" style="flex: 0.8;">
+                            <div class="interactive-box">
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="margin-bottom: 10px;"><strong>Root:</strong> Node 10 (A)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Sibling B:</strong> Node 20 (C)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Leaf Nodes:</strong> 3, 7, 30 (D, E, F)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Subtree:</strong> Node 5 beserta anak-anaknya (D, E)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Level, Depth, Height -->
+            <div class="slide" id="slide-10" data-notes="Jelaskan perlahan: depth = jarak dari root, height = jarak terpanjang ke leaf. Mahasiswa sering tertukar. Gunakan warna berbeda.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Konsep Lanjut</div>
+                <div class="slide-title">Level, Depth, & <span class="highlight">Height</span></div>
+                <div class="slide-body">
+                    <div id="visual-tree-levels" class="tree-container" style="height: 300px;"></div>
+                    <div class="cols" style="font-size: 0.9rem; margin-top: 10px;">
+                        <div class="col"><span class="label-depth">Depth:</span> Jarak dari Root ke Node.</div>
+                        <div class="col"><span class="label-height">Height:</span> Jarak terjauh dari Node ke Leaf.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: Mengapa Tree Efisien? -->
+            <div class="slide" id="slide-11" data-notes="Hubungkan dengan searching, database, file system. Data besar sulit dicari linear, tree membagi pencarian. Teaser: BST nanti membuat pencarian jauh lebih cepat.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Efisiensi</div>
+                <div class="slide-title">Mengapa Menggunakan <span class="highlight">Tree?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">⚡</span><span><strong>Pencarian Cepat:</strong> Membagi ruang pencarian (logaritmik).</span></div>
+                        <div class="kp-item"><span class="icon">🗄️</span><span><strong>Hierarki:</strong> Merepresentasikan hubungan data secara alami.</span></div>
+                        <div class="kp-item"><span class="icon">🔄</span><span><strong>Dinamis:</strong> Mudah menambah/menghapus cabang.</span></div>
+                    </div>
+                    <p style="margin-top: 20px; font-style: italic;">"Searching pada data linear = O(N), pada tree yang seimbang = O(log N)."</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: Binary Tree -->
+            <div class="slide" id="slide-12" data-notes="Tekankan: maksimal dua anak, tidak harus selalu dua. Contoh: node dengan satu child tetap valid.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tipe Utama</div>
+                <div class="slide-title"><span class="highlight">Binary</span> Tree</div>
+                <div class="slide-body">
+                    <p>Jenis tree yang paling umum digunakan dalam pemrograman.</p>
+                    <div class="interactive-box">
+                        Setiap node <strong>maksimal</strong> memiliki:
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>1 Left Child</li>
+                            <li>1 Right Child</li>
+                        </ul>
+                    </div>
+                    <div style="font-size: 4rem; text-align: center; margin-top: 20px;">🧬</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 14: Visual Binary Tree -->
+            <div class="slide" id="slide-13" data-notes="Tunjukkan left child dan right child. Bahas arah traversal dan hubungan pointer.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Visual</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Binary Tree</span></div>
+                <div class="slide-body">
+                    <div id="visual-binary-tree" class="tree-container"></div>
+                </div>
+            </div>
+
+            <!-- SLIDE 15: Jenis Binary Tree -->
+            <div class="slide" id="slide-14" data-notes="Jelaskan singkat: Full (0 atau 2 anak), Complete (terisi dari kiri), Skewed (miring). Fokus pengenalan konsep.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Variasi</div>
+                <div class="slide-title">Jenis <span class="highlight">Binary Tree</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: var(--accent);">Full</h4>
+                            <p style="font-size: 0.8rem;">Setiap node punya 0 atau 2 anak.</p>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: var(--accent2);">Complete</h4>
+                            <p style="font-size: 0.8rem;">Tiap level penuh, level terakhir terisi dari kiri.</p>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: #ff5555;">Skewed</h4>
+                            <p style="font-size: 0.8rem;">Miring ke satu sisi (seperti linked list).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 16: Struktur Node pada C++ -->
+            <div class="slide" id="slide-15" data-notes="Hubungkan dengan linked list: satu pointer next vs dua pointer (left, right). Tekankan: Tree dibangun menggunakan pointer.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Implementasi</div>
+                <div class="slide-title">Struktur Node pada <span class="highlight">C++</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};</code></pre>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        Sama seperti Linked List, tapi dengan <strong>dua</strong> penunjuk arah.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 17: Membuat Node -->
+            <div class="slide" id="slide-16" data-notes="Jelaskan: alokasi memori dinamis, inisialisasi pointer. Hubungkan ke materi pointer sebelumnya.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Implementasi</div>
+                <div class="slide-title">Membuat <span class="highlight">Node Baru</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">Node* newNode(int value) {
+    Node* node = new Node();
+    node-&gt;data = value;
+    node-&gt;left = NULL;
+    node-&gt;right = NULL;
+
+    return node;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 18: Membentuk Tree -->
+            <div class="slide" id="slide-17" data-notes="Jelaskan: hubungan node dibentuk manual, pointer menghubungkan node. Mahasiswa biasanya mulai memahami tree pada slide ini.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Implementasi</div>
+                <div class="slide-title">Membentuk <span class="highlight">Tree</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col">
+                            <pre><code class="language-cpp">root = newNode(10);
+
+root-&gt;left = newNode(5);
+root-&gt;right = newNode(20);</code></pre>
+                        </div>
+                        <div class="col" style="text-align: center; border-left: 1px solid var(--border); padding-left: 20px;">
+                            <div style="font-family: monospace; font-size: 1.5rem; margin-top: 20px;">
+                                &nbsp;&nbsp;10<br>
+                                &nbsp;/&nbsp;&nbsp;\<br>
+                                5&nbsp;&nbsp;&nbsp;&nbsp;20
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 19: Apa itu Traversal? -->
+            <div class="slide" id="slide-18" data-notes="Tanyakan: Kalau data bercabang, bagaimana cara mengunjunginya? Tekankan: traversal = strategi kunjungan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Traversal</div>
+                <div class="slide-title">Apa itu <span class="highlight">Traversal?</span></div>
+                <div class="slide-body">
+                    <div class="interactive-box">
+                        <strong>Traversal:</strong> Proses mengunjungi semua node pada tree tepat satu kali.
+                    </div>
+                    <h3 style="margin-top: 30px;">3 Jenis Utama:</h3>
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">1️⃣</span><span><strong>Preorder</strong> (Root &rarr; Left &rarr; Right)</span></div>
+                        <div class="kp-item"><span class="icon">2️⃣</span><span><strong>Inorder</strong> (Left &rarr; Root &rarr; Right)</span></div>
+                        <div class="kp-item"><span class="icon">3️⃣</span><span><strong>Postorder</strong> (Left &rarr; Right &rarr; Root)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 20: Preorder Traversal -->
+            <div class="slide" id="slide-19" data-notes="Gunakan simulator for demonstrasi. Tekankan: root selalu duluan. Tips hafalan: Pre = parent dulu.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Traversal</div>
+                <div class="slide-title"><span class="highlight">Preorder</span> Traversal</div>
+                <div class="slide-body">
+                    <h3 style="color: var(--accent);">Root &rarr; Left &rarr; Right</h3>
+                    <div id="visual-preorder" class="tree-container" style="height: 220px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('preorder', 'visual-preorder', 'pre-out', 'next-pre')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-pre" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-preorder', 'pre-out', 'next-pre')">Reset</button>
+                        </div>
+                        <div class="traversal-output" id="pre-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 21: Inorder Traversal -->
+            <div class="slide" id="slide-20" data-notes="Tekankan: root di tengah. Hubungkan: BST menghasilkan data terurut pada inorder traversal.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Traversal</div>
+                <div class="slide-title"><span class="highlight">Inorder</span> Traversal</div>
+                <div class="slide-body">
+                    <h3 style="color: var(--accent);">Left &rarr; Root &rarr; Right</h3>
+                    <div id="visual-inorder" class="tree-container" style="height: 220px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('inorder', 'visual-inorder', 'in-out', 'next-in')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-in" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-inorder', 'in-out', 'next-in')">Reset</button>
+                        </div>
+                        <div class="traversal-output" id="in-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 22: Postorder Traversal -->
+            <div class="slide" id="slide-21" data-notes="Tekankan: root terakhir. Contoh nyata: menghapus folder -> hapus isi dulu baru folder utama.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Traversal</div>
+                <div class="slide-title"><span class="highlight">Postorder</span> Traversal</div>
+                <div class="slide-body">
+                    <h3 style="color: var(--accent);">Left &rarr; Right &rarr; Root</h3>
+                    <div id="visual-postorder" class="tree-container" style="height: 220px;"></div>
+                    <div class="interactive-box">
+                        <div class="form-row">
+                            <button class="btn btn-primary btn-sm" onclick="initLocalSim('postorder', 'visual-postorder', 'post-out', 'next-post')">Mulai</button>
+                            <button class="btn btn-outline btn-sm" id="next-post" disabled>Langkah</button>
+                            <button class="btn btn-outline btn-sm" onclick="resetLocalSim('visual-postorder', 'post-out', 'next-post')">Reset</button>
+                        </div>
+                        <div class="traversal-output" id="post-out" style="min-height: 40px; padding: 10px; margin-top: 10px;">Hasil: </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 23: Recursive Traversal -->
+            <div class="slide" id="slide-22" data-notes="Jelaskan perlahan: base case, recursive call. Hubungkan dengan stack function call. Mahasiswa biasanya mulai bingung di sini -> pelankan tempo.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Kode</div>
+                <div class="slide-title">Recursive <span class="highlight">Traversal</span></div>
+                <div class="slide-body">
+                    <pre><code class="language-cpp">void preorder(Node* root) {
+    if (root != NULL) {
+        cout &lt;&lt; root-&gt;data &lt;&lt; " "; // ROOT
+        preorder(root-&gt;left);      // LEFT
+        preorder(root-&gt;right);     // RIGHT
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- SLIDE 24: Visualisasi Recursive Call -->
+            <div class="slide" id="slide-23" data-notes="Jelaskan: function memanggil dirinya sendiri, traversal berjalan otomatis. Analogi: masuk ruangan kiri dulu, kembali, masuk kanan.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Mekanisme</div>
+                <div class="slide-title">Visualisasi <span class="highlight">Call Stack</span></div>
+                <div class="slide-body">
+                    <div class="cols">
+                        <div class="col" style="flex: 1.2;">
+                             <div id="visual-recursion-tree" class="tree-container" style="height: 300px;"></div>
+                        </div>
+                        <div class="col">
+                            <h4 style="text-align: center;">Call Stack</h4>
+                            <div class="call-stack" id="recursive-stack"></div>
+                            <button class="btn btn-primary" id="btn-step-recursion" style="width: 100%; margin-top: 10px;">Langkah</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 25: Demo Output Program -->
+            <div class="slide" id="slide-24" data-notes="Tunjukkan hubungan: bentuk tree, hasil traversal. Tekankan: traversal berbeda -> urutan berbeda.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Output</div>
+                <div class="slide-title">Demo <span class="highlight">Output</span></div>
+                <div class="slide-body">
+                    <div class="interactive-box" style="background: #000; color: #0f0; font-family: monospace; padding: 20px;">
+                        Preorder  : 10 5 20 <br>
+                        Inorder   : 5 10 20 <br>
+                        Postorder : 5 20 10
+                    </div>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="../15_Tree/tree_basic.cpp" download class="btn btn-primary">Unduh Kode Lengkap</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 26: Latihan Kelompok -->
+            <div class="slide" id="slide-25" data-notes="Bagi kelompok kecil. Biarkan diskusi. Keliling membantu mahasiswa.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Latihan</div>
+                <div class="slide-title">Latihan <span class="highlight">Kelompok</span></div>
+                <div class="slide-body">
+                    <div id="visual-tree-exercise" class="tree-container" style="height: 250px;"></div>
+                    <div class="checkpoint-box">
+                        <ol>
+                            <li>Tentukan hasil <strong>Preorder, Inorder, Postorder</strong></li>
+                            <li>Sebutkan semua <strong>Leaf Node</strong></li>
+                            <li>Tentukan <strong>Height</strong> dari tree tersebut</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 27: Kapan Menggunakan Tree? -->
+            <div class="slide" id="slide-26" data-notes="Bandingkan: queue -> antrean, stack -> undo, tree -> struktur organisasi.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Aplikasi</div>
+                <div class="slide-title">Kapan Menggunakan <span class="highlight">Tree?</span></div>
+                <div class="slide-body">
+                    <div class="kp">
+                        <div class="kp-item"><span class="icon">🌿</span><span><strong>Data Hierarkis:</strong> Folder, Organisasi, DOM.</span></div>
+                        <div class="kp-item"><span class="icon">🔍</span><span><strong>Pencarian Cepat:</strong> Dataset besar yang sering dicari.</span></div>
+                        <div class="kp-item"><span class="icon">🌳</span><span><strong>Data Bercabang:</strong> Game AI, Decision Tree.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 28: Integrasi Semua Struktur Data -->
+            <div class="slide" id="slide-27" data-notes="Ini penting untuk persiapan UAS. Tekankan: Tidak ada struktur data terbaik untuk semua kasus.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Ringkasan</div>
+                <div class="slide-title">Integrasi Struktur <span class="highlight">Data</span></div>
+                <div class="slide-body">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Struktur Data</th>
+                                <th>Karakteristik</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Array</td><td>Cepat akses index, statis</td></tr>
+                            <tr><td>Linked List</td><td>Fleksibel, dinamis</td></tr>
+                            <tr><td>Stack</td><td>LIFO (Undo, Back)</td></tr>
+                            <tr><td>Queue</td><td>FIFO (Antrean, Buffer)</td></tr>
+                            <tr><td><strong>Tree</strong></td><td><strong>Hierarki, Cepat Cari</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SLIDE 29: Ringkasan Semester -->
+            <div class="slide" id="slide-28" data-notes="Lakukan refleksi: kemampuan mahasiswa sekarang jauh berkembang dibanding awal semester.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Refleksi</div>
+                <div class="slide-title">Perjalanan <span class="highlight">Satu Semester</span></div>
+                <div class="slide-body">
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px;">
+                        <span class="btn btn-outline">Pointer</span>
+                        <span class="btn btn-outline">Array</span>
+                        <span class="btn btn-outline">Struct</span>
+                        <span class="btn btn-outline">Linked List</span>
+                        <span class="btn btn-outline">Searching</span>
+                        <span class="btn btn-outline">Sorting</span>
+                        <span class="btn btn-outline">Stack</span>
+                        <span class="btn btn-outline">Queue</span>
+                        <span class="btn btn-primary">Tree</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 30px; font-weight: bold;">Anda telah menguasai fondasi ilmu komputer!</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 30: Persiapan UAS -->
+            <div class="slide" id="slide-29" data-notes="Sampaikan: soal kemungkinan berbentuk analisis, tracing algoritma, pemilihan struktur data.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Persiapan</div>
+                <div class="slide-title">Menghadapi <span class="highlight">UAS</span></div>
+                <div class="slide-body">
+                    <ul>
+                        <li>Pahami <strong>Konsep</strong>, bukan hafalan kode</li>
+                        <li>Latihan <strong>Tracing</strong> algoritma di kertas</li>
+                        <li>Pahami kapan harus menggunakan struktur data tertentu</li>
+                        <li>Gunakan logika, bukan intuisi semata</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 31: Penutup -->
+            <div class="slide" id="slide-30" data-notes="Penutup santai. Berikan motivasi menjelang UAS. Kalau kalian memahami cara data disusun, kalian memahami cara komputer berpikir.">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div class="section-badge"><span class="dot"></span>Tutup</div>
+                <div class="slide-title">Terima <span class="highlight">Kasih</span></div>
+                <div class="slide-body" style="text-align: center;">
+                    <blockquote style="font-style: italic; margin-top: 40px; font-size: 1.5rem;">
+                        "Choosing the right data structure is choosing the right way to think about data."
+                    </blockquote>
+                    <div style="font-size: 5rem; margin-top: 40px;">🚀</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="nav-slides-container">
+            <div class="nav-slides">
+                <button class="nav-btn" id="prevBtn">←</button>
+                <span class="nav-counter" id="counter">1 / 31</span>
+                <button class="nav-btn" id="nextBtn">→</button>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initApp } from "../src/main.js";
+            import { initSlides } from "../src/slides.js";
+            initApp();
+            initSlides();
+
+            // Tree Visualization Engine
+            class TreeVisualizer {
+                constructor(containerId, data, options = {}) {
+                    this.container = document.getElementById(containerId);
+                    this.data = data;
+                    this.options = options;
+                    this.nodes = [];
+                    this.edges = [];
+                }
+
+                render() {
+                    if (!this.container) return;
+                    this.container.innerHTML = '';
+                    this.nodes = [];
+                    this.edges = [];
+                    let width = this.container.clientWidth;
+                    if (width === 0) width = 600; // Fallback for hidden containers
+                    if (this.options.manualNodes) {
+                        this.options.manualNodes.forEach(n => this.drawNode(n.val, n.x, n.y, n.id));
+                        if (this.options.manualEdges) {
+                            this.options.manualEdges.forEach(e => {
+                                const fromNode = this.nodes.find(n => n.id === e.from);
+                                const toNode = this.nodes.find(n => n.id === e.to);
+                                if (fromNode && toNode) {
+                                    this.renderEdge(fromNode.x, fromNode.y + 25, toNode.x, toNode.y);
+                                }
+                            });
+                        }
+                    } else {
+                        this.renderNode(this.data, width / 2, 30, width / 4);
+                    }
+                }
+
+                drawNode(val, x, y, id) {
+                    const div = document.createElement('div');
+                    div.className = 'tree-node';
+                    div.id = `node-${this.container.id}-${id}`;
+                    div.textContent = val;
+                    div.style.left = `${x - 25}px`;
+                    div.style.top = `${y}px`;
+                    div.style.width = '40px';
+                    div.style.height = '40px';
+                    div.style.fontSize = '0.8rem';
+                    this.container.appendChild(div);
+                    this.nodes.push({ id, x, y, el: div });
+                }
+
+                renderNode(node, x, y, offset) {
+                    if (!node) return;
+                    this.drawNode(node.val, x, y, node.id);
+
+                    if (node.children) {
+                        const count = node.children.length;
+                        const startX = x - (offset * (count - 1)) / 2;
+                        node.children.forEach((child, i) => {
+                            const childX = startX + i * offset;
+                            const childY = y + 70;
+                            this.renderEdge(x, y + 20, childX, childY);
+                            this.renderNode(child, childX, childY, offset / 1.5);
+                        });
+                    } else {
+                        if (node.left) {
+                            this.renderEdge(x, y + 20, x - offset, y + 70);
+                            this.renderNode(node.left, x - offset, y + 70, offset / 1.8);
+                        }
+                        if (node.right) {
+                            this.renderEdge(x, y + 20, x + offset, y + 70);
+                            this.renderNode(node.right, x + offset, y + 70, offset / 1.8);
+                        }
+                    }
+                }
+
+                renderEdge(x1, y1, x2, y2) {
+                    const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                    const edge = document.createElement('div');
+                    edge.className = 'tree-edge';
+                    edge.style.width = `${length}px`;
+                    edge.style.left = `${x1}px`;
+                    edge.style.top = `${y1}px`;
+                    edge.style.transform = `rotate(${angle}deg)`;
+                    this.container.appendChild(edge);
+                    this.edges.push({ from: x1, to: x2, el: edge });
+                }
+
+                highlight(nodeId, className = 'active') {
+                    const node = this.nodes.find(n => n.id === nodeId);
+                    if (node) node.el.classList.add(className);
+                }
+
+                highlightMany(nodeIds, className = 'active') {
+                    nodeIds.forEach(id => this.highlight(id, className));
+                }
+
+                resetHighlights() {
+                    this.nodes.forEach(n => n.el.classList.remove('active', 'visited', 'highlight-root', 'highlight-leaf', 'highlight-parent', 'highlight-child', 'highlight-sibling', 'highlight-internal'));
+                }
+            }
+
+            const sampleTree = {
+                id: 'A', val: '10',
+                left: { id: 'B', val: '5', left: { id: 'D', val: '3' }, right: { id: 'E', val: '7' } },
+                right: { id: 'C', val: '20', right: { id: 'F', val: '30' } }
+            };
+
+            window.sampleTreeNodes = { 'A': '10', 'B': '5', 'C': '20', 'D': '3', 'E': '7', 'F': '30' };
+
+            const simpleTree = {
+                id: 'A', val: '10',
+                left: { id: 'B', val: '5' },
+                right: { id: 'C', val: '20' }
+            };
+
+            // Initialize Visuals
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((m) => {
+                    if (m.target.classList.contains("active")) {
+                        const id = m.target.id;
+                        if (id === "slide-5") {
+                             new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                             new TreeVisualizer('tree-general-intro', {
+                                 id: 'R', val: '1',
+                                 children: [
+                                     { id: 'C1', val: '2' },
+                                     { id: 'C2', val: '3' },
+                                     { id: 'C3', val: '4' }
+                                 ]
+                             }).render();
+                             new TreeVisualizer('tree-not-intro', null, {
+                                 manualNodes: [
+                                     { id: 'N1', val: 'A', x: 100, y: 30 },
+                                     { id: 'N2', val: 'B', x: 50, y: 100 },
+                                     { id: 'N3', val: 'C', x: 150, y: 100 }
+                                 ],
+                                 manualEdges: [
+                                     { from: 'N1', to: 'N2' },
+                                     { from: 'N2', to: 'N3' },
+                                     { from: 'N3', to: 'N1' }
+                                 ]
+                             }).render();
+                        }
+                        if (id === "slide-7") {
+                            // Ensure cleanup of previous instances if needed, though here we just re-render
+                            setTimeout(() => {
+                                if (!window.compVis) {
+                                    window.compVis = new TreeVisualizer('visual-tree-components', sampleTree);
+                                }
+                                window.compVis.render();
+                            }, 300);
+                        }
+                        if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
+                        if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                        if (id === "slide-10") {
+                            const v = new TreeVisualizer('visual-tree-levels', sampleTree);
+                            v.render();
+                        }
+                        if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                        if (id === "slide-19") {
+                            window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                            window.preVis.render();
+                        }
+                        if (id === "slide-20") {
+                            window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                            window.inVis.render();
+                        }
+                        if (id === "slide-21") {
+                            window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                            window.postVis.render();
+                        }
+                        if (id === "slide-24") {
+                             window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
+                             window.recVis.render();
+                        }
+                        if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                    }
+                });
+            });
+            document.querySelectorAll(".slide").forEach((s) => observer.observe(s, { attributes: true, attributeFilter: ["class"] }));
+
+            // Initial check for already active slides
+            document.querySelectorAll(".slide.active").forEach(s => {
+                observer.takeRecords(); // Clear records
+                const id = s.id;
+                // Reuse the same logic as observer
+                if (id === "slide-5") {
+                     new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                     new TreeVisualizer('tree-general-intro', {
+                         id: 'R', val: '1',
+                         children: [
+                             { id: 'C1', val: '2' },
+                             { id: 'C2', val: '3' },
+                             { id: 'C3', val: '4' }
+                         ]
+                     }).render();
+                     new TreeVisualizer('tree-not-intro', null, {
+                         manualNodes: [
+                             { id: 'N1', val: 'A', x: 100, y: 30 },
+                             { id: 'N2', val: 'B', x: 50, y: 100 },
+                             { id: 'N3', val: 'C', x: 150, y: 100 }
+                         ],
+                         manualEdges: [
+                             { from: 'N1', to: 'N2' },
+                             { from: 'N2', to: 'N3' },
+                             { from: 'N3', to: 'N1' }
+                         ]
+                     }).render();
+                }
+                if (id === "slide-7") {
+                    setTimeout(() => {
+                        if (!window.compVis) {
+                            window.compVis = new TreeVisualizer('visual-tree-components', sampleTree);
+                        }
+                        window.compVis.render();
+                    }, 300);
+                }
+                if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
+                if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                if (id === "slide-10") {
+                    const v = new TreeVisualizer('visual-tree-levels', sampleTree);
+                    v.render();
+                }
+                if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                if (id === "slide-19") {
+                    window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                    window.preVis.render();
+                }
+                if (id === "slide-20") {
+                    window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                    window.inVis.render();
+                }
+                if (id === "slide-21") {
+                    window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                    window.postVis.render();
+                }
+                if (id === "slide-24") {
+                     window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
+                     window.recVis.render();
+                }
+                if (id === "slide-26") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+            });
+
+            // Traversal Simulator Logic (Local)
+            const localSimStates = {};
+
+            window.initLocalSim = (type, visId, outId, nextBtnId) => {
+                const vis = (visId === 'visual-preorder') ? window.preVis : (visId === 'visual-inorder') ? window.inVis : window.postVis;
+                vis.resetHighlights();
+                const steps = [];
+                generateSteps(sampleTree, type, steps);
+                localSimStates[visId] = { steps, current: -1, outId, nextBtnId, vis };
+                document.getElementById(outId).textContent = 'Hasil: ';
+                document.getElementById(nextBtnId).disabled = false;
+            };
+
+            window.resetLocalSim = (visId, outId, nextBtnId) => {
+                const state = localSimStates[visId];
+                if (state) {
+                    state.vis.resetHighlights();
+                    state.current = -1;
+                    document.getElementById(outId).textContent = 'Hasil: ';
+                    document.getElementById(nextBtnId).disabled = true;
+                }
+            };
+
+            function handleNextStep(visId) {
+                const state = localSimStates[visId];
+                if (!state) return;
+                if (state.current < state.steps.length - 1) {
+                    state.current++;
+                    const nodeId = state.steps[state.current];
+                    state.vis.highlight(nodeId, 'visited');
+                    const nodeVal = window.sampleTreeNodes[nodeId];
+                    document.getElementById(state.outId).textContent += nodeVal + ' ';
+                    if (state.current === state.steps.length - 1) {
+                        document.getElementById(state.nextBtnId).disabled = true;
+                    }
+                }
+            }
+
+            document.getElementById('next-pre').onclick = () => handleNextStep('visual-preorder');
+            document.getElementById('next-in').onclick = () => handleNextStep('visual-inorder');
+            document.getElementById('next-post').onclick = () => handleNextStep('visual-postorder');
+
+            // Terminology Hover Logic
+            const termMapping = {
+                'root': { ids: ['A'], class: 'highlight-root' },
+                'parent': { ids: ['A', 'B', 'C'], class: 'highlight-parent' },
+                'child': { ids: ['B', 'C', 'D', 'E', 'F'], class: 'highlight-child' },
+                'sibling': { ids: ['B', 'C', 'D', 'E'], class: 'highlight-sibling' },
+                'leaf': { ids: ['D', 'E', 'F'], class: 'highlight-leaf' },
+                'internal': { ids: ['B', 'C'], class: 'highlight-internal' }
+            };
+
+            document.querySelectorAll('.term-list li').forEach(li => {
+                li.onmouseover = () => {
+                    const term = li.dataset.term;
+                    const map = termMapping[term];
+                    if (window.compVis && map) {
+                        if (window.compVis.nodes.length === 0) window.compVis.render();
+                        window.compVis.resetHighlights();
+                        window.compVis.highlightMany(map.ids, map.class);
+                    }
+                };
+                li.onmouseout = () => {
+                    if (window.compVis) window.compVis.resetHighlights();
+                };
+            });
+
+            function generateSteps(node, type, steps) {
+                if (!node) return;
+                if (type === 'preorder') {
+                    steps.push(node.id);
+                    generateSteps(node.left, type, steps);
+                    generateSteps(node.right, type, steps);
+                } else if (type === 'inorder') {
+                    generateSteps(node.left, type, steps);
+                    steps.push(node.id);
+                    generateSteps(node.right, type, steps);
+                } else if (type === 'postorder') {
+                    generateSteps(node.left, type, steps);
+                    generateSteps(node.right, type, steps);
+                    steps.push(node.id);
+                }
+            }
+
+            // Recursive Call Stack Simulation
+            let recSteps = [];
+            let currentRecStep = 0;
+
+            function buildRecSteps(node) {
+                if (!node) {
+                    recSteps.push({ type: 'return', node: null });
+                    return;
+                }
+                recSteps.push({ type: 'call', node: node });
+                buildRecSteps(node.left);
+                buildRecSteps(node.right);
+                recSteps.push({ type: 'pop', node: node });
+            }
+
+            document.getElementById('btn-step-recursion').onclick = () => {
+                if (recSteps.length === 0) buildRecSteps(simpleTree);
+                if (currentRecStep >= recSteps.length) {
+                    currentRecStep = 0;
+                    document.getElementById('recursive-stack').innerHTML = '';
+                    window.recVis.resetHighlights();
+                    return;
+                }
+
+                const step = recSteps[currentRecStep];
+                const stackEl = document.getElementById('recursive-stack');
+
+                if (step.type === 'call') {
+                    const frame = document.createElement('div');
+                    frame.className = 'stack-frame active';
+                    frame.id = `stack-${step.node.id}`;
+                    frame.textContent = `preorder(Node ${step.node.val})`;
+                    stackEl.appendChild(frame);
+                    window.recVis.highlight(step.node.id, 'active');
+                } else if (step.type === 'pop') {
+                    const frame = document.getElementById(`stack-${step.node.id}`);
+                    if (frame) frame.remove();
+                    window.recVis.highlight(step.node.id, 'visited');
+                }
+
+                currentRecStep++;
+            };
+        </script>
+    </body>
+</html>
