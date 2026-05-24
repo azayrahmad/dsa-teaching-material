@@ -1,0 +1,92 @@
+[
+  {
+    "question": "Apa syarat mutlak sebelum melakukan Binary Search pada sebuah array?",
+    "choices": [
+      { "text": "Array harus memiliki jumlah elemen genap", "isCorrect": false, "reason": "Binary search bekerja pada jumlah elemen ganjil maupun genap." },
+      { "text": "Data dalam array harus sudah terurut", "isCorrect": true, "reason": "Binary Search mengandalkan urutan data untuk membagi area pencarian menjadi dua." },
+      { "text": "Data harus bertipe integer", "isCorrect": false, "reason": "Bisa untuk tipe data apa pun selama bisa dibandingkan (string, float, dll)." },
+      { "text": "Array tidak boleh memiliki nilai duplikat", "isCorrect": false, "reason": "Binary search tetap bisa bekerja meskipun ada data duplikat." }
+    ]
+  },
+  {
+    "question": "Diberikan array terurut: [10, 20, 30, 40, 50, 60, 70]. Jika kita mencari angka 60, apa nilai 'mid' pada langkah pertama?",
+    "choices": [
+      { "text": "20", "isCorrect": false, "reason": "Ini terlalu ke kiri." },
+      { "text": "40", "isCorrect": true, "reason": "Indeks low=0, high=6. Mid = (0+6)/2 = 3. Indeks 3 berisi nilai 40." },
+      { "text": "50", "isCorrect": false, "reason": "Ini bukan nilai tengah dari indeks 0-6." },
+      { "text": "60", "isCorrect": false, "reason": "60 adalah target, bukan nilai tengah awal." }
+    ]
+  },
+  {
+    "question": "Setelah langkah pertama pada soal sebelumnya (mencari 60 di [10..70], mid=40), ke mana pencarian akan berlanjut?",
+    "choices": [
+      { "text": "Berhenti karena 40 != 60", "isCorrect": false, "reason": "Pencarian berlanjut ke setengah bagian lainnya." },
+      { "text": "Ke sebelah kiri (10, 20, 30)", "isCorrect": false, "reason": "60 lebih besar dari 40, jadi harus ke kanan." },
+      { "text": "Ke sebelah kanan (50, 60, 70)", "isCorrect": true, "reason": "Karena target (60) > nilai mid (40), area pencarian dipersempit ke kanan (low = mid + 1)." },
+      { "text": "Mengulang dari awal", "isCorrect": false, "reason": "Pencarian tidak mengulang, tapi mempersempit rentang." }
+    ]
+  },
+  {
+    "question": "Berapa jumlah perbandingan maksimal (kasus terburuk) untuk Binary Search pada array dengan 8 elemen?",
+    "choices": [
+      { "text": "3", "isCorrect": false, "reason": "2^3 = 8, tapi biasanya perlu 4 langkah untuk memastikan jika data tidak ada." },
+      { "text": "4", "isCorrect": true, "reason": "Log2(8) = 3. Maksimal perbandingan adalah sekitar log2(N) + 1. Untuk 8 elemen, maksimal 4 kali perbandingan." },
+      { "text": "8", "isCorrect": false, "reason": "Ini adalah jumlah perbandingan Sequential Search." },
+      { "text": "1", "isCorrect": false, "reason": "Ini adalah kasus terbaik." }
+    ]
+  },
+  {
+    "question": "Pada array [2, 4, 6, 8, 10, 12, 14], jika mencari angka 2, berapa kali nilai 'mid' dihitung sampai ditemukan?",
+    "choices": [
+      { "text": "1", "isCorrect": false, "reason": "Mid pertama adalah 8." },
+      { "text": "2", "isCorrect": false, "reason": "Mid kedua adalah 4." },
+      { "text": "3", "isCorrect": true, "reason": "Langkah 1: mid=8. Langkah 2: mid=4. Langkah 3: mid=2 (Ditemukan)." },
+      { "text": "4", "isCorrect": false, "reason": "Hanya butuh 3 langkah." }
+    ]
+  },
+  {
+    "question": "Apa yang terjadi jika nilai 'low' menjadi lebih besar dari nilai 'high' dalam algoritma Binary Search?",
+    "choices": [
+      { "text": "Data ditemukan", "isCorrect": false, "reason": "Data ditemukan jika mid == target." },
+      { "text": "Data tidak ditemukan", "isCorrect": true, "reason": "Kondisi low > high adalah tanda bahwa ruang pencarian sudah habis dan target tidak ada." },
+      { "text": "Terjadi infinite loop", "isCorrect": false, "reason": "Ini justru kondisi untuk keluar dari loop." },
+      { "text": "Program error", "isCorrect": false, "reason": "Ini adalah logika normal algoritma." }
+    ]
+  },
+  {
+    "question": "Diberikan array [5, 10, 15, 20, 25]. Jika mencari angka 12, apa urutan nilai 'mid' yang diperiksa?",
+    "choices": [
+      { "text": "15, 10, 5", "isCorrect": false, "reason": "Angka 12 berada di antara 10 dan 15." },
+      { "text": "15, 5, 10", "isCorrect": false, "reason": "Salah urutan." },
+      { "text": "15, 10", "isCorrect": true, "reason": "Langkah 1: mid=15 (indeks 2). 12 < 15, cari ke kiri [5, 10]. Langkah 2: mid=10 (indeks 0 atau 1 tergantung pembulatan, biasanya 0). Karena low > high setelah itu, berhenti." },
+      { "text": "15, 20, 25", "isCorrect": false, "reason": "12 lebih kecil dari 15, tidak mungkin ke kanan." }
+    ]
+  },
+  {
+    "question": "Manakah pernyataan yang benar mengenai efisiensi Binary Search?",
+    "choices": [
+      { "text": "Lebih lambat dari Sequential Search untuk data terurut", "isCorrect": false, "reason": "Jauh lebih cepat." },
+      { "text": "Efisiensinya adalah O(N)", "isCorrect": false, "reason": "Efisiensinya adalah O(log N)." },
+      { "text": "Sangat efektif untuk dataset yang sangat besar dan sudah terurut", "isCorrect": true, "reason": "Karena setiap langkah memotong setengah sisa data, ia sangat cepat untuk data besar." },
+      { "text": "Hanya bisa digunakan pada linked list", "isCorrect": false, "reason": "Justru sulit di linked list karena tidak ada akses acak (random access) ke elemen tengah." }
+    ]
+  },
+  {
+    "question": "Jika mid = (low + high) / 2 menghasilkan bilangan desimal, apa yang biasanya dilakukan dalam pemrograman?",
+    "choices": [
+      { "text": "Dibulatkan ke atas", "isCorrect": false, "reason": "Biasanya dibulatkan ke bawah (floor)." },
+      { "text": "Dibulatkan ke bawah (diambil nilai integer)", "isCorrect": true, "reason": "Pembagian integer dalam banyak bahasa (seperti C++) otomatis membuang angka di belakang koma." },
+      { "text": "Program akan error", "isCorrect": false, "reason": "Tidak, selama variabel bertipe integer." },
+      { "text": "Menggunakan angka desimal tersebut sebagai indeks", "isCorrect": false, "reason": "Indeks array harus berupa bilangan bulat." }
+    ]
+  },
+  {
+    "question": "Berapa banyak langkah yang dibutuhkan Binary Search untuk mencari data pada array dengan 1.000.000 elemen dalam kasus terburuk?",
+    "choices": [
+      { "text": "Sekitar 20 langkah", "isCorrect": true, "reason": "2^20 adalah sekitar 1.048.576. Jadi maksimal hanya butuh sekitar 20 perbandingan." },
+      { "text": "500.000 langkah", "isCorrect": false, "reason": "Ini jika Sequential Search rata-rata." },
+      { "text": "1.000.000 langkah", "isCorrect": false, "reason": "Ini jika Sequential Search kasus terburuk." },
+      { "text": "100 langkah", "isCorrect": false, "reason": "Masih terlalu banyak." }
+    ]
+  }
+]

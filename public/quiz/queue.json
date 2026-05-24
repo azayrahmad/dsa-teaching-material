@@ -1,0 +1,92 @@
+[
+  {
+    "question": "Apa prinsip utama yang digunakan oleh struktur data Queue?",
+    "choices": [
+      { "text": "LIFO (Last In First Out)", "isCorrect": false, "reason": "LIFO digunakan oleh Stack." },
+      { "text": "FIFO (First In First Out)", "isCorrect": true, "reason": "Queue menggunakan prinsip di mana data yang pertama kali masuk akan menjadi yang pertama kali keluar." },
+      { "text": "Last In Last Out", "isCorrect": false, "reason": "Sama dengan FIFO, tapi istilah standar adalah FIFO." },
+      { "text": "Random Access", "isCorrect": false, "reason": "Akses Queue terbatas pada bagian depan (front) dan belakang (rear)." }
+    ]
+  },
+  {
+    "question": "Operasi untuk menambahkan elemen ke dalam Queue disebut...",
+    "choices": [
+      { "text": "Push", "isCorrect": false, "reason": "Push digunakan pada Stack." },
+      { "text": "Pop", "isCorrect": false, "reason": "Pop digunakan pada Stack." },
+      { "text": "Enqueue", "isCorrect": true, "reason": "Enqueue adalah operasi memasukkan data ke bagian belakang (rear) dari antrean." },
+      { "text": "Dequeue", "isCorrect": false, "reason": "Dequeue adalah operasi mengambil data." }
+    ]
+  },
+  {
+    "question": "Diberikan Queue kosong. Operasi: Enqueue(A), Enqueue(B), Dequeue(), Enqueue(C). Siapa yang berada di posisi paling depan (Front) sekarang?",
+    "choices": [
+      { "text": "A", "isCorrect": false, "reason": "A sudah dikeluarkan oleh Dequeue()." },
+      { "text": "B", "isCorrect": true, "reason": "Urutan: [A] -> [A, B] -> [B] -> [B, C]. Maka Front adalah B." },
+      { "text": "C", "isCorrect": false, "reason": "C berada di posisi belakang (Rear)." },
+      { "text": "Kosong", "isCorrect": false, "reason": "Masih ada B dan C." }
+    ]
+  },
+  {
+    "question": "Pada Linear Queue (antrean biasa) menggunakan array, apa masalah yang sering muncul?",
+    "choices": [
+      { "text": "Stack Overflow", "isCorrect": false, "reason": "Ini masalah pada Stack." },
+      { "text": "False Overflow", "isCorrect": true, "reason": "Terjadi ketika 'rear' sudah mencapai batas akhir array, sehingga antrean dianggap penuh padahal di bagian depan masih ada ruang kosong (bekas Dequeue)." },
+      { "text": "Infinite Loop", "isCorrect": false, "reason": "Bukan masalah utama struktur datanya." },
+      { "text": "Data tertukar otomatis", "isCorrect": false, "reason": "Data tidak tertukar sendiri." }
+    ]
+  },
+  {
+    "question": "Bagaimana Circular Queue mengatasi masalah False Overflow?",
+    "choices": [
+      { "text": "Dengan memperbesar ukuran array secara otomatis", "isCorrect": false, "reason": "Bukan mekanisme utama circular queue." },
+      { "text": "Dengan memindahkan semua elemen ke depan setiap kali ada Dequeue", "isCorrect": false, "reason": "Ini terlalu lambat (O(N))." },
+      { "text": "Dengan memanfaatkan operator modulo (%) untuk menghubungkan posisi akhir kembali ke posisi awal array", "isCorrect": true, "reason": "Indeks dihitung dengan (i + 1) % MAX, sehingga saat mencapai akhir, ia akan kembali ke 0 jika kosong." },
+      { "text": "Dengan menghapus data yang paling lama", "isCorrect": false, "reason": "Data hanya dihapus jika ada operasi Dequeue." }
+    ]
+  },
+  {
+    "question": "Operasi Dequeue dilakukan pada posisi...",
+    "choices": [
+      { "text": "Rear (Belakang)", "isCorrect": false, "reason": "Rear adalah tempat memasukkan data (Enqueue)." },
+      { "text": "Front (Depan)", "isCorrect": true, "reason": "Sesuai prinsip antrean, data diambil dari posisi paling depan." },
+      { "text": "Tengah", "isCorrect": false, "reason": "Queue tidak mengizinkan akses di tengah." },
+      { "text": "Mana saja", "isCorrect": false, "reason": "Akses Queue dibatasi di kedua ujungnya." }
+    ]
+  },
+  {
+    "question": "Jika sebuah Queue memiliki kapasitas 5 dan sudah berisi 5 elemen, apa yang terjadi jika kita melakukan Enqueue lagi?",
+    "choices": [
+      { "text": "Queue Underflow", "isCorrect": false, "reason": "Underflow terjadi jika mengambil dari queue kosong." },
+      { "text": "Queue Overflow", "isCorrect": true, "reason": "Overflow terjadi karena kapasitas memori untuk antrean sudah penuh." },
+      { "text": "Elemen pertama otomatis terhapus", "isCorrect": false, "reason": "Tidak, kecuali itu jenis antrean khusus (seperti buffer)." },
+      { "text": "Program menunggu sampai kosong", "isCorrect": false, "reason": "Tergantung implementasi, tapi secara standar menghasilkan error overflow." }
+    ]
+  },
+  {
+    "question": "Dalam Circular Queue dengan MAX=5, jika Front=2 dan ada 3 elemen, di manakah posisi Rear?",
+    "choices": [
+      { "text": "4", "isCorrect": true, "reason": "Elemen ada di indeks 2, 3, dan 4. Maka Rear berada di indeks 4." },
+      { "text": "5", "isCorrect": false, "reason": "Indeks maksimal adalah 4." },
+      { "text": "0", "isCorrect": false, "reason": "Belum berputar kembali ke 0." },
+      { "text": "1", "isCorrect": false, "reason": "Belum mencapai indeks 1." }
+    ]
+  },
+  {
+    "question": "Aplikasi nyata manakah yang menggunakan prinsip Queue?",
+    "choices": [
+      { "text": "Tumpukan piring", "isCorrect": false, "reason": "Ini analogi Stack (LIFO)." },
+      { "text": "Sistem penjadwalan proses pada CPU", "isCorrect": true, "reason": "Tugas yang datang lebih dulu akan diproses lebih dulu (First Come First Served), menggunakan prinsip Queue." },
+      { "text": "Browsing history (tombol back)", "isCorrect": false, "reason": "Ini menggunakan Stack." },
+      { "text": "Menyusun buku di rak", "isCorrect": false, "reason": "Tergantung cara menyusunnya, tapi biasanya bukan Queue murni." }
+    ]
+  },
+  {
+    "question": "Kapan sebuah Queue dikatakan kosong (IsEmpty)?",
+    "choices": [
+      { "text": "Saat Front == Rear + 1", "isCorrect": false, "reason": "Ini biasanya indikasi penuh pada beberapa implementasi circular queue." },
+      { "text": "Saat nilai Front dan Rear berada di posisi -1", "isCorrect": true, "reason": "Secara standar, menginisialisasi Front dan Rear ke -1 menandakan antrean belum berisi data sama sekali." },
+      { "text": "Saat Rear == MAX - 1", "isCorrect": false, "reason": "Ini tanda rear berada di akhir array." },
+      { "text": "Saat Front == 0", "isCorrect": false, "reason": "Front=0 berarti ada data di indeks ke-0." }
+    ]
+  }
+]

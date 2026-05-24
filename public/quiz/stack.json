@@ -1,0 +1,92 @@
+[
+  {
+    "question": "Apa prinsip dasar yang digunakan oleh struktur data Stack?",
+    "choices": [
+      { "text": "FIFO (First In First Out)", "isCorrect": false, "reason": "FIFO digunakan oleh Queue." },
+      { "text": "LIFO (Last In First Out)", "isCorrect": true, "reason": "Stack menggunakan prinsip di mana data yang terakhir masuk akan menjadi yang pertama kali keluar." },
+      { "text": "Random Access", "isCorrect": false, "reason": "Stack hanya mengizinkan akses pada elemen paling atas (top)." },
+      { "text": "Priority Access", "isCorrect": false, "reason": "Ini digunakan oleh Priority Queue." }
+    ]
+  },
+  {
+    "question": "Operasi apa yang digunakan untuk menambahkan elemen ke dalam Stack?",
+    "choices": [
+      { "text": "Pop", "isCorrect": false, "reason": "Pop digunakan untuk mengambil/menghapus data." },
+      { "text": "Push", "isCorrect": true, "reason": "Push adalah operasi untuk meletakkan data baru di posisi paling atas Stack." },
+      { "text": "Enqueue", "isCorrect": false, "reason": "Enqueue digunakan pada Queue." },
+      { "text": "Peek", "isCorrect": false, "reason": "Peek digunakan untuk melihat data teratas tanpa menghapusnya." }
+    ]
+  },
+  {
+    "question": "Diberikan sebuah Stack kosong. Dilakukan operasi: Push(10), Push(20), Pop(), Push(30). Berapa nilai yang ada di posisi TOP sekarang?",
+    "choices": [
+      { "text": "10", "isCorrect": false, "reason": "10 berada di bawah 30." },
+      { "text": "20", "isCorrect": false, "reason": "20 sudah dikeluarkan oleh operasi Pop()." },
+      { "text": "30", "isCorrect": true, "reason": "Urutan: [10] -> [10, 20] -> [10] -> [10, 30]. Maka TOP adalah 30." },
+      { "text": "Stack Kosong", "isCorrect": false, "reason": "Masih ada elemen 10 dan 30." }
+    ]
+  },
+  {
+    "question": "Apa fungsi dari operasi Peek (atau Top)?",
+    "choices": [
+      { "text": "Menghapus elemen teratas", "isCorrect": false, "reason": "Itu adalah fungsi Pop." },
+      { "text": "Melihat nilai elemen teratas tanpa menghapusnya", "isCorrect": true, "reason": "Peek hanya mengintip nilai di TOP agar kita tahu isinya tanpa mengubah isi Stack." },
+      { "text": "Menghitung jumlah elemen", "isCorrect": false, "reason": "Itu biasanya fungsi size()." },
+      { "text": "Mengosongkan Stack", "isCorrect": false, "reason": "Itu biasanya fungsi clear()." }
+    ]
+  },
+  {
+    "question": "Kondisi 'Stack Overflow' terjadi saat kita mencoba...",
+    "choices": [
+      { "text": "Mengambil data dari Stack yang kosong", "isCorrect": false, "reason": "Itu disebut Stack Underflow." },
+      { "text": "Menambah data ke Stack yang sudah penuh", "isCorrect": true, "reason": "Overflow berarti kapasitas penyimpanan sudah maksimal dan tidak bisa menampung data lagi." },
+      { "text": "Mencari data yang tidak ada", "isCorrect": false, "reason": "Bukan istilah overflow." },
+      { "text": "Menghapus data dua kali", "isCorrect": false, "reason": "Bukan istilah overflow." }
+    ]
+  },
+  {
+    "question": "Jika kita melakukan Push: 'A', 'B', 'C' secara berurutan, lalu melakukan Pop dua kali, apa isi Stack sekarang?",
+    "choices": [
+      { "text": "['A', 'B', 'C']", "isCorrect": false, "reason": "Data sudah berkurang." },
+      { "text": "['A']", "isCorrect": true, "reason": "Push A, B, C -> [A, B, C]. Pop pertama hapus C, Pop kedua hapus B. Tersisa A." },
+      { "text": "['C']", "isCorrect": false, "reason": "C adalah yang pertama kali dihapus." },
+      { "text": "Empty", "isCorrect": false, "reason": "Masih ada A." }
+    ]
+  },
+  {
+    "question": "Manakah dari aplikasi berikut yang menggunakan prinsip Stack?",
+    "choices": [
+      { "text": "Antrean cetak dokumen (Printer Queue)", "isCorrect": false, "reason": "Ini menggunakan Queue (FIFO)." },
+      { "text": "Fitur 'Undo' pada teks editor", "isCorrect": true, "reason": "Aksi terakhir yang dilakukan adalah yang pertama kali dibatalkan (Undo), sesuai prinsip LIFO." },
+      { "text": "Sistem antrean bank", "isCorrect": false, "reason": "Ini menggunakan Queue (FIFO)." },
+      { "text": "Pengiriman pesan instan (Chat)", "isCorrect": false, "reason": "Biasanya berdasarkan urutan waktu (FIFO)." }
+    ]
+  },
+  {
+    "question": "Dalam implementasi Stack menggunakan array, jika MAX_SIZE = 5 dan indeks dimulai dari 0, berapa nilai variabel 'top' saat stack penuh?",
+    "choices": [
+      { "text": "0", "isCorrect": false, "reason": "Ini stack berisi 1 elemen." },
+      { "text": "4", "isCorrect": true, "reason": "Indeks array 0, 1, 2, 3, 4 totalnya adalah 5 elemen." },
+      { "text": "5", "isCorrect": false, "reason": "Indeks 5 sudah di luar batas array ukuran 5." },
+      { "text": "-1", "isCorrect": false, "reason": "Ini biasanya tanda stack kosong." }
+    ]
+  },
+  {
+    "question": "Operasi IsEmpty() digunakan untuk mengecek...",
+    "choices": [
+      { "text": "Apakah stack sudah penuh", "isCorrect": false, "reason": "Itu IsFull()." },
+      { "text": "Apakah stack tidak memiliki elemen sama sekali", "isCorrect": true, "reason": "IsEmpty akan mengembalikan true jika stack kosong, penting dilakukan sebelum operasi Pop." },
+      { "text": "Nilai elemen teratas", "isCorrect": false, "reason": "Itu Peek()." },
+      { "text": "Kapasitas maksimal stack", "isCorrect": false, "reason": "Bukan fungsinya." }
+    ]
+  },
+  {
+    "question": "Diberikan urutan input: 5, 2, 8. Jika dimasukkan ke Stack dan kemudian dikeluarkan satu per satu, urutan keluarnya adalah...",
+    "choices": [
+      { "text": "5, 2, 8", "isCorrect": false, "reason": "Ini urutan masuk (FIFO)." },
+      { "text": "8, 2, 5", "isCorrect": true, "reason": "Karena prinsip LIFO, yang terakhir masuk (8) akan keluar pertama, diikuti 2, lalu 5." },
+      { "text": "2, 5, 8", "isCorrect": false, "reason": "Urutan tidak sesuai prinsip Stack." },
+      { "text": "8, 5, 2", "isCorrect": false, "reason": "Urutan tidak sesuai prinsip Stack." }
+    ]
+  }
+]

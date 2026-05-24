@@ -28,6 +28,7 @@ export default defineConfig({
         queue_topic: resolve(__dirname, 'topics/queue.html'),
         queue_slides: resolve(__dirname, 'slides/queue.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
+        quiz: resolve(__dirname, 'quiz.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
     },

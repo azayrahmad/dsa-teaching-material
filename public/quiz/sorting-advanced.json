@@ -1,0 +1,92 @@
+[
+  {
+    "question": "Apa prinsip utama dari algoritma Merge Sort?",
+    "choices": [
+      { "text": "Mencari nilai pivot dan membagi data", "isCorrect": false, "reason": "Ini adalah prinsip Quick Sort." },
+      { "text": "Memecah array menjadi bagian terkecil lalu menggabungkannya kembali secara terurut", "isCorrect": true, "reason": "Merge Sort menggunakan strategi Divide and Conquer: membagi hingga elemen tunggal, lalu menggabungkan (merge) kembali." },
+      { "text": "Melakukan lompatan indeks (gap) yang semakin mengecil", "isCorrect": false, "reason": "Ini adalah prinsip Shell Sort." },
+      { "text": "Menukar elemen terjauh secara acak", "isCorrect": false, "reason": "Bukan prinsip Merge Sort." }
+    ]
+  },
+  {
+    "question": "Pada Quick Sort, apa fungsi dari 'pivot'?",
+    "choices": [
+      { "text": "Sebagai penanda elemen terkecil", "isCorrect": false, "reason": "Bukan, itu tugas pencarian minimum." },
+      { "text": "Sebagai titik acuan untuk membagi array menjadi dua bagian (kiri lebih kecil, kanan lebih besar)", "isCorrect": true, "reason": "Pivot digunakan untuk mempartisi array sehingga elemen di kirinya <= pivot dan di kanannya >= pivot." },
+      { "text": "Sebagai tempat penyimpanan sementara saat swap", "isCorrect": false, "reason": "Penyimpanan sementara biasanya disebut 'temp'." },
+      { "text": "Sebagai nilai maksimal yang diizinkan", "isCorrect": false, "reason": "Pivot bisa berupa nilai apa saja dari array." }
+    ]
+  },
+  {
+    "question": "Bagaimana Shell Sort memperbaiki kelemahan Insertion Sort?",
+    "choices": [
+      { "text": "Dengan membagi array menjadi dua bagian sama besar", "isCorrect": false, "reason": "Ini cara Merge Sort." },
+      { "text": "Dengan memungkinkan perpindahan elemen dalam jarak jauh menggunakan sistem 'gap'", "isCorrect": true, "reason": "Shell Sort melakukan perbandingan dan perpindahan elemen yang berjauhan, sehingga mengurangi jumlah pergeseran yang dibutuhkan saat gap mengecil menjadi 1." },
+      { "text": "Dengan menggunakan fungsi rekursif yang lebih cepat", "isCorrect": false, "reason": "Shell sort biasanya diimplementasikan secara iteratif." },
+      { "text": "Dengan mengabaikan elemen yang sudah urut", "isCorrect": false, "reason": "Bukan mekanisme utama Shell Sort." }
+    ]
+  },
+  {
+    "question": "Kapan Merge Sort lebih dipilih dibandingkan Quick Sort?",
+    "choices": [
+      { "text": "Saat penggunaan memori harus seminimal mungkin", "isCorrect": false, "reason": "Merge Sort butuh memori tambahan O(N), sedangkan Quick Sort lebih hemat." },
+      { "text": "Saat kita memerlukan algoritma pengurutan yang stabil (stable sort)", "isCorrect": true, "reason": "Merge Sort mempertahankan urutan elemen yang bernilai sama, sedangkan Quick Sort standar tidak stabil." },
+      { "text": "Saat dataset sangat kecil", "isCorrect": false, "reason": "Untuk data kecil, algoritma sederhana seperti Insertion Sort seringkali lebih cepat." },
+      { "text": "Saat tidak ingin menggunakan rekursi", "isCorrect": false, "reason": "Keduanya biasanya menggunakan rekursi." }
+    ]
+  },
+  {
+    "question": "Jika kita memiliki array [38, 27, 43, 3, 9, 82, 10], berapa banyak elemen di setiap bagian setelah pembelahan pertama pada Merge Sort?",
+    "choices": [
+      { "text": "1 dan 6", "isCorrect": false, "reason": "Pembagian harus seimbang." },
+      { "text": "2 dan 5", "isCorrect": false, "reason": "Masih belum seimbang." },
+      { "text": "4 dan 3", "isCorrect": true, "reason": "7 elemen dibagi menjadi 4 elemen di kiri [38, 27, 43, 3] dan 3 elemen di kanan [9, 82, 10]." },
+      { "text": "Semua elemen digabung jadi satu", "isCorrect": false, "reason": "Itu tahap akhir, bukan pembelahan." }
+    ]
+  },
+  {
+    "question": "Apa kasus terburuk (worst case) dari Quick Sort (standar)?",
+    "choices": [
+      { "text": "Saat data sudah terurut atau terurut terbalik dengan pivot di ujung", "isCorrect": true, "reason": "Jika pivot selalu elemen terkecil atau terbesar, partisi menjadi sangat tidak seimbang dan kompleksitas menjadi O(N^2)." },
+      { "text": "Saat data teracak sempurna", "isCorrect": false, "reason": "Ini justru biasanya menghasilkan performa bagus O(N log N)." },
+      { "text": "Saat semua elemen bernilai sama", "isCorrect": false, "reason": "Ini bisa jadi masalah tapi tergantung implementasi partisinya." },
+      { "text": "Saat jumlah data adalah bilangan prima", "isCorrect": false, "reason": "Jumlah data tidak mempengaruhi kasus terburuk secara spesifik." }
+    ]
+  },
+  {
+    "question": "Berapa kompleksitas waktu rata-rata (average case) untuk Merge Sort dan Quick Sort?",
+    "choices": [
+      { "text": "O(N)", "isCorrect": false, "reason": "Terlalu cepat untuk pengurutan berbasis perbandingan." },
+      { "text": "O(N^2)", "isCorrect": false, "reason": "Ini kompleksitas algoritma dasar." },
+      { "text": "O(N log N)", "isCorrect": true, "reason": "Keduanya secara rata-rata sangat efisien dengan kompleksitas O(N log N)." },
+      { "text": "O(log N)", "isCorrect": false, "reason": "Ini kompleksitas pencarian, bukan pengurutan." }
+    ]
+  },
+  {
+    "question": "Jika gap pada Shell Sort bernilai 1, maka algoritma tersebut identik dengan...",
+    "choices": [
+      { "text": "Bubble Sort", "isCorrect": false, "reason": "Mekanismenya berbeda." },
+      { "text": "Selection Sort", "isCorrect": false, "reason": "Mekanismenya berbeda." },
+      { "text": "Insertion Sort", "isCorrect": true, "reason": "Shell sort dengan gap 1 bekerja persis seperti Insertion Sort biasa." },
+      { "text": "Quick Sort", "isCorrect": false, "reason": "Quick sort menggunakan pivot, bukan gap." }
+    ]
+  },
+  {
+    "question": "Dalam proses Merge Sort, setelah membagi array menjadi bagian-bagian terkecil (1 elemen), apa langkah selanjutnya?",
+    "choices": [
+      { "text": "Menghapus data", "isCorrect": false, "reason": "Data harus diurutkan, bukan dihapus." },
+      { "text": "Menggabungkan dua sub-array yang sudah terurut menjadi satu sub-array baru yang terurut", "isCorrect": true, "reason": "Proses merge membandingkan elemen terdepan dari dua bagian dan menyusunnya kembali secara terurut." },
+      { "text": "Memilih pivot baru", "isCorrect": false, "reason": "Pivot digunakan di Quick Sort." },
+      { "text": "Mengacak kembali data", "isCorrect": false, "reason": "Tujuan kita adalah mengurutkan." }
+    ]
+  },
+  {
+    "question": "Manakah pernyataan yang BENAR mengenai penggunaan memori tambahan (space complexity)?",
+    "choices": [
+      { "text": "Merge Sort lebih hemat memori dibanding Quick Sort", "isCorrect": false, "reason": "Terbalik, Merge Sort butuh O(N) memori tambahan untuk proses penggabungan." },
+      { "text": "Quick Sort (in-place) lebih hemat memori dibanding Merge Sort", "isCorrect": true, "reason": "Quick Sort bekerja langsung pada array asal (in-place) sehingga hanya butuh sedikit memori tambahan (untuk stack rekursi)." },
+      { "text": "Shell Sort memerlukan memori paling besar", "isCorrect": false, "reason": "Shell sort juga in-place." },
+      { "text": "Semua algoritma lanjutan tidak butuh memori tambahan", "isCorrect": false, "reason": "Setiap algoritma memiliki kebutuhan memori yang berbeda." }
+    ]
+  }
+]
