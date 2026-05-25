@@ -183,13 +183,13 @@
             <!-- Reason will be shown here -->
           </div>
           <a id="slide-link" href="#" target="_blank" class="slide-link-box">
-            <span>📖 Lihat materi terkait</span>
+            <span data-i18n="relatedMaterial">📖 Lihat materi terkait</span>
           </a>
         </div>
       </div>
 
       <div class="quiz-footer">
-        <span id="retry-msg" class="retry-msg" style="visibility: hidden;">Salah! Coba lagi sekali lagi.</span>
+        <span id="retry-msg" class="retry-msg" data-i18n="wrongRetry" style="visibility: hidden;">Salah! Coba lagi sekali lagi.</span>
         <button id="next-btn" class="btn btn-primary" style="display: none;">Lanjut</button>
       </div>
     </div>
@@ -220,7 +220,7 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let quizData = [];
-    let attempts = 0; // 0: first try, 1: second try
+    let attempts = 0;
 
     async function loadQuiz() {
       try {
@@ -253,6 +253,25 @@
       showQuestion();
     }
 
+    function getTranslation(key) {
+      const lang = localStorage.getItem('lang') || 'id';
+      const translations = {
+        id: {
+          score: "Skor",
+          question: "Pertanyaan",
+          next: "Lanjut",
+          seeResult: "Lihat Hasil"
+        },
+        en: {
+          score: "Score",
+          question: "Question",
+          next: "Next",
+          seeResult: "See Results"
+        }
+      };
+      return translations[lang][key];
+    }
+
     function showQuestion() {
       attempts = 0;
       const q = quizData[currentQuestionIndex];
@@ -265,7 +284,7 @@
       const retryMsg = document.getElementById('retry-msg');
 
       questionText.textContent = q.question;
-      counter.textContent = `Pertanyaan ${currentQuestionIndex + 1} / ${quizData.length}`;
+      counter.textContent = `${getTranslation('question')} ${currentQuestionIndex + 1} / ${quizData.length}`;
       progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
 
       choicesContainer.innerHTML = '';
@@ -295,15 +314,12 @@
 
       if (selectedChoice.isCorrect) {
         selectedBtn.classList.add('correct');
-        // Disable all
         btns.forEach(btn => btn.disabled = true);
 
-        // Scoring: Full point on first try, half point on second?
-        // User said "update the score". Let's give 1 point if correct.
         if (attempts === 0) {
            score += 1;
         } else {
-           score += 0.5; // Incentive for eventually getting it right
+           score += 0.5;
         }
 
         updateScoreDisplay();
@@ -315,25 +331,11 @@
         if (attempts === 0) {
           attempts = 1;
           retryMsg.style.visibility = 'visible';
-          // Show reason for the wrong choice
-          reasonContainer.textContent = selectedChoice.reason;
-          reasonContainer.classList.add('visible'); // temporarily show it?
-          // Actually, let's just update text and not show the full feedback box yet
-          // or show it but keep buttons active?
-          // Requirement: "Once quiz taker select a choice, lock it, update the score, and show the reason."
-          // But now we have "another chance".
-
-          // Let's show the reason for the wrong choice immediately.
           reasonContainer.textContent = "Salah: " + selectedChoice.reason;
           feedbackContainer.classList.add('visible');
-          slideLink.style.display = 'none'; // Don't show slide link yet
+          slideLink.style.display = 'none';
         } else {
-          // Second attempt failed
           btns.forEach(btn => btn.disabled = true);
-          retryMsg.style.visibility = 'hidden';
-
-          // Find correct choice to show its reason maybe?
-          // Or just show the reason for this second wrong choice.
           const correctChoice = question.choices.find(c => c.isCorrect);
           showFinalFeedback(`Salah lagi. ${selectedChoice.reason}. Jawaban yang benar adalah: ${correctChoice.text}.`, question.slideLink);
         }
@@ -345,22 +347,24 @@
       const reasonContainer = document.getElementById('reason-container');
       const slideLink = document.getElementById('slide-link');
       const nextBtn = document.getElementById('next-btn');
+      const retryMsg = document.getElementById('retry-msg');
 
+      retryMsg.style.visibility = 'hidden';
       reasonContainer.textContent = reason;
       slideLink.href = link;
       slideLink.style.display = 'flex';
       feedbackContainer.classList.add('visible');
 
       if (currentQuestionIndex < quizData.length - 1) {
-        nextBtn.textContent = 'Lanjut';
+        nextBtn.textContent = getTranslation('next');
       } else {
-        nextBtn.textContent = 'Lihat Hasil';
+        nextBtn.textContent = getTranslation('seeResult');
       }
       nextBtn.style.display = 'block';
     }
 
     function updateScoreDisplay() {
-      document.getElementById('score-display').textContent = `Skor: ${score}`;
+      document.getElementById('score-display').textContent = `${getTranslation('score')}: ${score}`;
     }
 
     document.getElementById('next-btn').onclick = () => {

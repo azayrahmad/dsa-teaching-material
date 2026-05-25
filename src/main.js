@@ -14,7 +14,15 @@ const translations = {
     back: "Kembali",
     comingSoon: "Segera Hadir",
     comingSoonDesc: "Materi untuk topik ini sedang dalam proses penyusunan.",
-    backHome: "Kembali ke Beranda"
+    backHome: "Kembali ke Beranda",
+    finalScore: "Skor Akhir",
+    tryAgain: "Coba Lagi",
+    score: "Skor",
+    question: "Pertanyaan",
+    next: "Lanjut",
+    seeResult: "Lihat Hasil",
+    relatedMaterial: "Lihat materi terkait",
+    wrongRetry: "Salah! Coba lagi sekali lagi."
   },
   en: {
     welcome: "Welcome to Data Structures & Algorithms Materials",
@@ -30,7 +38,15 @@ const translations = {
     back: "Back",
     comingSoon: "Coming Soon",
     comingSoonDesc: "Material for this topic is currently being prepared.",
-    backHome: "Back to Home"
+    backHome: "Back to Home",
+    finalScore: "Final Score",
+    tryAgain: "Try Again",
+    score: "Score",
+    question: "Question",
+    next: "Next",
+    seeResult: "See Results",
+    relatedMaterial: "See related material",
+    wrongRetry: "Wrong! Try one more time."
   }
 };
 
