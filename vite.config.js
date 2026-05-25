@@ -30,6 +30,7 @@ export default defineConfig({
         tree_topic: resolve(__dirname, 'topics/tree.html'),
         tree_slides: resolve(__dirname, 'slides/tree.html'),
         visualizer: resolve(__dirname, 'visualizer.html'),
+        quiz: resolve(__dirname, 'quiz.html'),
         coming_soon: resolve(__dirname, 'topics/coming-soon.html'),
       },
     },

@@ -1,0 +1,102 @@
+[
+  {
+    "question": "Bagaimana cara kerja satu iterasi utama pada Bubble Sort?",
+    "slideLink": "slides/sorting-basic.html#4",
+    "choices": [
+      { "text": "Mencari nilai terkecil dan menukarnya ke depan", "isCorrect": false, "reason": "Ini adalah cara kerja Selection Sort." },
+      { "text": "Membandingkan elemen yang bersebelahan dan menukarnya jika urutannya salah", "isCorrect": true, "reason": "Bubble sort membandingkan pasangan elemen yang berdekatan dan menukarnya (swap) secara terus menerus." },
+      { "text": "Menyisipkan elemen ke posisi yang tepat satu per satu", "isCorrect": false, "reason": "Ini adalah cara kerja Insertion Sort." },
+      { "text": "Membagi array menjadi dua bagian", "isCorrect": false, "reason": "Ini adalah cara kerja Merge Sort atau Quick Sort." }
+    ]
+  },
+  {
+    "question": "Diberikan array [5, 1, 4, 2]. Setelah iterasi pertama Bubble Sort (satu pass penuh), posisi angka 5 akan berada di mana?",
+    "slideLink": "slides/sorting-basic.html#7",
+    "choices": [
+      { "text": "Tetap di indeks 0", "isCorrect": false, "reason": "5 akan terus 'tenggelam' atau terdorong ke belakang." },
+      { "text": "Indeks 1", "isCorrect": false, "reason": "Belum selesai iterasi." },
+      { "text": "Indeks 2", "isCorrect": false, "reason": "Masih ada perbandingan lagi." },
+      { "text": "Indeks terakhir (indeks 3)", "isCorrect": true, "reason": "Pada Bubble Sort, setelah satu pass, elemen terbesar akan selalu sampai ke posisi akhirnya di paling kanan." }
+    ]
+  },
+  {
+    "question": "Apa ciri khas utama dari Selection Sort?",
+    "slideLink": "slides/sorting-basic.html#12",
+    "choices": [
+      { "text": "Banyak melakukan pertukaran data (swap) di setiap langkah", "isCorrect": false, "reason": "Bubble Sort yang banyak melakukan swap. Selection Sort hanya melakukan satu swap per iterasi." },
+      { "text": "Mencari elemen terkecil dan menempatkannya di posisi yang benar", "isCorrect": true, "reason": "Selection sort memindai sisa array untuk menemukan nilai minimum dan menukarnya ke posisi awal bagian yang belum terurut." },
+      { "text": "Sangat cepat untuk data yang hampir terurut", "isCorrect": false, "reason": "Insertion sort lebih unggul untuk data hampir terurut." },
+      { "text": "Menggunakan teknik divide and conquer", "isCorrect": false, "reason": "Selection sort adalah algoritma sederhana (brute force)." }
+    ]
+  },
+  {
+    "question": "Diberikan array [3, 10, 2, 5]. Menggunakan Selection Sort, elemen mana yang akan ditukar dengan angka 3 pada langkah pertama?",
+    "slideLink": "slides/sorting-basic.html#16",
+    "choices": [
+      { "text": "10", "isCorrect": false, "reason": "10 bukan yang terkecil." },
+      { "text": "2", "isCorrect": true, "reason": "Angka 2 adalah elemen terkecil di seluruh array, sehingga ia akan ditukar dengan elemen di indeks 0 (angka 3)." },
+      { "text": "5", "isCorrect": false, "reason": "5 bukan yang terkecil." },
+      { "text": "Tidak ada pertukaran", "isCorrect": false, "reason": "3 bukan elemen terkecil, jadi harus ada pertukaran." }
+    ]
+  },
+  {
+    "question": "Bagaimana analogi yang paling tepat untuk Insertion Sort?",
+    "slideLink": "slides/sorting-basic.html#21",
+    "choices": [
+      { "text": "Mengurutkan kartu di tangan", "isCorrect": true, "reason": "Seperti mengambil kartu satu per satu dan menyisipkannya ke posisi yang tepat di antara kartu yang sudah dipegang." },
+      { "text": "Gelembung sabun yang naik ke permukaan", "isCorrect": false, "reason": "Ini adalah analogi Bubble Sort." },
+      { "text": "Memilih buah paling kecil dari keranjang", "isCorrect": false, "reason": "Ini adalah analogi Selection Sort." },
+      { "text": "Membagi roti menjadi dua bagian terus menerus", "isCorrect": false, "reason": "Ini adalah analogi Merge Sort." }
+    ]
+  },
+  {
+    "question": "Pada Insertion Sort, apa yang terjadi pada elemen-elemen yang lebih besar dari 'key' yang sedang diproses?",
+    "slideLink": "slides/sorting-basic.html#22",
+    "choices": [
+      { "text": "Dihapus dari array", "isCorrect": false, "reason": "Data tidak boleh dihapus." },
+      { "text": "Digeser satu posisi ke kanan", "isCorrect": true, "reason": "Elemen yang lebih besar digeser untuk memberi ruang bagi 'key' yang akan disisipkan." },
+      { "text": "Ditukar langsung dengan key", "isCorrect": false, "reason": "Insertion sort menggunakan pergeseran (shift), bukan sekadar tukar (swap) sekali." },
+      { "text": "Tetap diam di tempatnya", "isCorrect": false, "reason": "Harus digeser agar urutan benar." }
+    ]
+  },
+  {
+    "question": "Algoritma mana yang tetap melakukan jumlah perbandingan yang sama meskipun data sudah terurut (tidak memiliki flag optimasi)?",
+    "slideLink": "slides/sorting-basic.html#16",
+    "choices": [
+      { "text": "Bubble Sort dan Selection Sort", "isCorrect": false, "reason": "Bubble sort bisa dioptimasi dengan flag." },
+      { "text": "Hanya Selection Sort", "isCorrect": true, "reason": "Selection sort selalu mencari nilai minimum di sisa array, tidak peduli datanya sudah urut atau belum." },
+      { "text": "Hanya Insertion Sort", "isCorrect": false, "reason": "Insertion sort justru sangat cepat jika data sudah urut (hanya 1 perbandingan per elemen)." },
+      { "text": "Semua algoritma di atas", "isCorrect": false, "reason": "Masing-masing memiliki karakteristik berbeda." }
+    ]
+  },
+  {
+    "question": "Jika array adalah [1, 2, 3, 4, 5] (sudah terurut), algoritma mana yang paling efisien?",
+    "slideLink": "slides/sorting-basic.html#22",
+    "choices": [
+      { "text": "Selection Sort", "isCorrect": false, "reason": "Tetap melakukan banyak perbandingan." },
+      { "text": "Bubble Sort (tanpa optimasi)", "isCorrect": false, "reason": "Tetap melakukan banyak perbandingan." },
+      { "text": "Insertion Sort", "isCorrect": true, "reason": "Hanya melakukan N-1 perbandingan dan nol pergeseran, menjadikannya sangat cepat (O(N))." },
+      { "text": "Semua sama saja", "isCorrect": false, "reason": "Efisiensinya berbeda tergantung kondisi data awal." }
+    ]
+  },
+  {
+    "question": "Apa kelemahan utama dari Bubble, Selection, dan Insertion Sort untuk data berjumlah jutaan?",
+    "slideLink": "slides/sorting-basic.html#27",
+    "choices": [
+      { "text": "Memerlukan memori yang sangat besar", "isCorrect": false, "reason": "Penggunaan memori mereka justru sangat kecil (O(1))." },
+      { "text": "Waktu eksekusi meningkat secara kuadratik (N^2)", "isCorrect": true, "reason": "Untuk data N=1.000.000, N^2 adalah satu triliun operasi, yang akan sangat lambat." },
+      { "text": "Tidak bisa mengurutkan data negatif", "isCorrect": false, "reason": "Bisa mengurutkan data angka apa saja." },
+      { "text": "Hanya bisa mengurutkan maksimal 100 data", "isCorrect": false, "reason": "Tidak ada batasan jumlah, hanya masalah waktu." }
+    ]
+  },
+  {
+    "question": "Diberikan array [9, 5, 1, 4, 3]. Setelah dua kali pertukaran (swap) pada Selection Sort, bagaimana urutan arraynya?",
+    "slideLink": "slides/sorting-basic.html#16",
+    "choices": [
+      { "text": "1, 3, 9, 4, 5", "isCorrect": true, "reason": "Langkah 1: 1 tukar dengan 9 -> [1, 5, 9, 4, 3]. Langkah 2: 3 tukar dengan 5 -> [1, 3, 9, 4, 5]." },
+      { "text": "1, 5, 9, 4, 3", "isCorrect": false, "reason": "Ini baru satu kali swap." },
+      { "text": "1, 2, 3, 4, 5", "isCorrect": false, "reason": "Ini sudah terurut sempurna." },
+      { "text": "5, 9, 1, 4, 3", "isCorrect": false, "reason": "Ini belum melakukan swap dengan benar." }
+    ]
+  }
+]

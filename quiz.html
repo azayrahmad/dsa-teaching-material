@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Persiapan UAS - DSA Materials</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/style.css">
+  <style>
+    .quiz-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    .quiz-stats {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent2);
+    }
+    .question-box h2 {
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .choice-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 16px 20px;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(255, 204, 51, 0.05);
+    }
+    .choice-btn:disabled {
+      cursor: default;
+    }
+    .choice-btn.correct {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .choice-btn.incorrect {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      opacity: 0.7;
+    }
+    .choice-btn .label {
+      font-weight: bold;
+      color: var(--accent);
+      min-width: 24px;
+    }
+    .feedback-container {
+      margin-top: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .feedback-container.visible {
+      display: flex;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .reason-box {
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border-left: 4px solid var(--accent);
+      background: var(--surface2);
+    }
+    .slide-link-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent3);
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 8px 12px;
+      border: 1px dashed var(--accent3);
+      border-radius: 6px;
+      width: fit-content;
+    }
+    .slide-link-box:hover {
+      background: rgba(147, 197, 253, 0.1);
+    }
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .retry-msg {
+      color: var(--accent4);
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    #result-screen {
+      text-align: center;
+      display: none;
+    }
+    #result-screen h1 {
+      font-size: 3rem;
+      color: var(--accent);
+      margin: 20px 0;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-links">
+      <a href="./index.html" data-i18n="home">Beranda</a>
+      <span style="color: var(--border)">/</span>
+      <span style="color: var(--accent)">Kuis UAS</span>
+    </div>
+    <div class="controls">
+      <button class="control-btn" id="lang-toggle">ID / EN</button>
+      <button class="control-btn" id="theme-toggle" data-i18n="theme">Tema</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="quiz-screen" class="quiz-container">
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div class="quiz-header">
+        <span class="quiz-stats" id="question-counter">Pertanyaan 1 / 12</span>
+        <span class="quiz-stats" id="score-display">Skor: 0</span>
+      </div>
+
+      <div class="question-box">
+        <h2 id="question-text">Memuat pertanyaan...</h2>
+        <div id="choices-container" class="choices-grid">
+          <!-- Choices will be injected here -->
+        </div>
+
+        <div id="feedback-container" class="feedback-container">
+          <div id="reason-container" class="reason-box">
+            <!-- Reason will be shown here -->
+          </div>
+          <a id="slide-link" href="#" target="_blank" class="slide-link-box">
+            <span data-i18n="relatedMaterial">📖 Lihat materi terkait</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="quiz-footer">
+        <span id="retry-msg" class="retry-msg" data-i18n="wrongRetry" style="visibility: hidden;">Salah! Coba lagi sekali lagi.</span>
+        <button id="next-btn" class="btn btn-primary" style="display: none;">Lanjut</button>
+      </div>
+    </div>
+
+    <div id="result-screen" class="quiz-container">
+      <h2 data-i18n="finalScore">Skor Akhir</h2>
+      <h1 id="final-score">0</h1>
+      <p id="score-message"></p>
+      <div style="margin-top: 32px;">
+        <button id="restart-btn" class="btn btn-primary" data-i18n="tryAgain">Coba Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initApp } from './src/main.js';
+    initApp();
+
+    const topics = [
+      'searching-basic',
+      'searching-advanced',
+      'sorting-basic',
+      'sorting-advanced',
+      'stack',
+      'queue'
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let quizData = [];
+    let attempts = 0;
+
+    async function loadQuiz() {
+      try {
+        const promises = topics.map(topic =>
+          fetch(`./quiz/${topic}.json`).then(res => res.json())
+        );
+        const results = await Promise.all(promises);
+
+        quizData = [];
+        results.forEach(questions => {
+          const shuffled = questions.sort(() => 0.5 - Math.random());
+          quizData.push(...shuffled.slice(0, 2));
+        });
+
+        quizData = quizData.sort(() => 0.5 - Math.random());
+
+        startQuiz();
+      } catch (err) {
+        console.error("Failed to load quiz data:", err);
+        document.getElementById('question-text').textContent = "Gagal memuat kuis. Silakan coba lagi nanti.";
+      }
+    }
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById('quiz-screen').style.display = 'block';
+      document.getElementById('result-screen').style.display = 'none';
+      updateScoreDisplay();
+      showQuestion();
+    }
+
+    function getTranslation(key) {
+      const lang = localStorage.getItem('lang') || 'id';
+      const translations = {
+        id: {
+          score: "Skor",
+          question: "Pertanyaan",
+          next: "Lanjut",
+          seeResult: "Lihat Hasil"
+        },
+        en: {
+          score: "Score",
+          question: "Question",
+          next: "Next",
+          seeResult: "See Results"
+        }
+      };
+      return translations[lang][key];
+    }
+
+    function showQuestion() {
+      attempts = 0;
+      const q = quizData[currentQuestionIndex];
+      const questionText = document.getElementById('question-text');
+      const choicesContainer = document.getElementById('choices-container');
+      const feedbackContainer = document.getElementById('feedback-container');
+      const nextBtn = document.getElementById('next-btn');
+      const counter = document.getElementById('question-counter');
+      const progressBar = document.getElementById('progress-bar');
+      const retryMsg = document.getElementById('retry-msg');
+
+      questionText.textContent = q.question;
+      counter.textContent = `${getTranslation('question')} ${currentQuestionIndex + 1} / ${quizData.length}`;
+      progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+
+      choicesContainer.innerHTML = '';
+      feedbackContainer.classList.remove('visible');
+      nextBtn.style.display = 'none';
+      retryMsg.style.visibility = 'hidden';
+
+      const shuffledChoices = [...q.choices].sort(() => 0.5 - Math.random());
+
+      shuffledChoices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = `<span class="label">${String.fromCharCode(65 + index)}.</span> <span>${choice.text}</span>`;
+        btn.onclick = () => selectChoice(btn, choice, q);
+        choicesContainer.appendChild(btn);
+      });
+    }
+
+    function selectChoice(selectedBtn, selectedChoice, question) {
+      const choicesContainer = document.getElementById('choices-container');
+      const btns = choicesContainer.querySelectorAll('.choice-btn');
+      const feedbackContainer = document.getElementById('feedback-container');
+      const reasonContainer = document.getElementById('reason-container');
+      const nextBtn = document.getElementById('next-btn');
+      const retryMsg = document.getElementById('retry-msg');
+      const slideLink = document.getElementById('slide-link');
+
+      if (selectedChoice.isCorrect) {
+        selectedBtn.classList.add('correct');
+        btns.forEach(btn => btn.disabled = true);
+
+        if (attempts === 0) {
+           score += 1;
+        } else {
+           score += 0.5;
+        }
+
+        updateScoreDisplay();
+        showFinalFeedback(selectedChoice.reason, question.slideLink);
+      } else {
+        selectedBtn.classList.add('incorrect');
+        selectedBtn.disabled = true;
+
+        if (attempts === 0) {
+          attempts = 1;
+          retryMsg.style.visibility = 'visible';
+          reasonContainer.textContent = "Salah: " + selectedChoice.reason;
+          feedbackContainer.classList.add('visible');
+          slideLink.style.display = 'none';
+        } else {
+          btns.forEach(btn => btn.disabled = true);
+          const correctChoice = question.choices.find(c => c.isCorrect);
+          showFinalFeedback(`Salah lagi. ${selectedChoice.reason}. Jawaban yang benar adalah: ${correctChoice.text}.`, question.slideLink);
+        }
+      }
+    }
+
+    function showFinalFeedback(reason, link) {
+      const feedbackContainer = document.getElementById('feedback-container');
+      const reasonContainer = document.getElementById('reason-container');
+      const slideLink = document.getElementById('slide-link');
+      const nextBtn = document.getElementById('next-btn');
+      const retryMsg = document.getElementById('retry-msg');
+
+      retryMsg.style.visibility = 'hidden';
+      reasonContainer.textContent = reason;
+      slideLink.href = link;
+      slideLink.style.display = 'flex';
+      feedbackContainer.classList.add('visible');
+
+      if (currentQuestionIndex < quizData.length - 1) {
+        nextBtn.textContent = getTranslation('next');
+      } else {
+        nextBtn.textContent = getTranslation('seeResult');
+      }
+      nextBtn.style.display = 'block';
+    }
+
+    function updateScoreDisplay() {
+      document.getElementById('score-display').textContent = `${getTranslation('score')}: ${score}`;
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    };
+
+    function showResults() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'block';
+      document.getElementById('final-score').textContent = score;
+
+      const message = document.getElementById('score-message');
+      const total = quizData.length;
+      const percentage = (score / total) * 100;
+
+      if (percentage === 100) message.textContent = "Sempurna! Kamu sudah siap UAS!";
+      else if (percentage >= 80) message.textContent = "Luar biasa! Pemahamanmu sangat baik.";
+      else if (percentage >= 60) message.textContent = "Bagus! Teruslah belajar.";
+      else message.textContent = "Jangan menyerah, coba pelajari lagi materi yang belum dikuasai.";
+
+      document.getElementById('progress-bar').style.width = '100%';
+    }
+
+    document.getElementById('restart-btn').onclick = () => {
+      loadQuiz();
+    };
+
+    loadQuiz();
+  </script>
+</body>
+</html>
