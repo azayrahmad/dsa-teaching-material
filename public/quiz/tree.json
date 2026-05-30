@@ -1,0 +1,102 @@
+[
+  {
+    "question": "Apa perbedaan utama antara struktur data linear (seperti Stack/Queue) dengan Tree?",
+    "slideLink": "slides/tree.html#3",
+    "choices": [
+      { "text": "Tree hanya bisa menampung data angka", "isCorrect": false, "reason": "Semua struktur data bisa menampung berbagai tipe data." },
+      { "text": "Tree memiliki hubungan hierarkis (non-linear), bukan berurutan", "isCorrect": true, "reason": "Berbeda dengan linear yang berurutan satu jalur, Tree bercabang dan memiliki tingkatan (hierarki)." },
+      { "text": "Tree tidak menggunakan memori dinamis", "isCorrect": false, "reason": "Tree justru sangat bergantung pada alokasi memori dinamis (pointer)." },
+      { "text": "Stack lebih cepat daripada Tree untuk semua operasi", "isCorrect": false, "reason": "Kecepatan bergantung pada jenis operasinya; Tree unggul dalam pencarian data terorganisir." }
+    ]
+  },
+  {
+    "question": "Dalam terminologi Tree, apa yang dimaksud dengan 'Leaf Node'?",
+    "slideLink": "slides/tree.html#7",
+    "choices": [
+      { "text": "Node yang berada di paling atas", "isCorrect": false, "reason": "Itu adalah Root." },
+      { "text": "Node yang memiliki tepat dua anak", "isCorrect": false, "reason": "Itu adalah Internal Node (pada binary tree)." },
+      { "text": "Node yang tidak memiliki anak (child)", "isCorrect": true, "reason": "Leaf (daun) adalah ujung dari cabang tree yang tidak memiliki turunan lagi." },
+      { "text": "Node yang memiliki nilai paling besar", "isCorrect": false, "reason": "Nilai node tidak menentukan apakah ia Leaf atau bukan." }
+    ]
+  },
+  {
+    "question": "Pada Binary Search Tree (BST), jika kita ingin memasukkan data yang nilainya lebih kecil dari Root, ke mana data tersebut harus diletakkan?",
+    "slideLink": "slides/tree.html#26",
+    "choices": [
+      { "text": "Ke sebelah kanan Root", "isCorrect": false, "reason": "Subtree kanan untuk nilai yang lebih besar." },
+      { "text": "Ke sebelah kiri Root", "isCorrect": true, "reason": "Aturan dasar BST: nilai lebih kecil ke kiri, nilai lebih besar ke kanan." },
+      { "text": "Menjadi Root baru", "isCorrect": false, "reason": "Root hanya diganti pada operasi tertentu seperti penyeimbangan (balancing)." },
+      { "text": "Diletakkan secara acak", "isCorrect": false, "reason": "BST memiliki aturan penempatan yang baku agar pencarian efisien." }
+    ]
+  },
+  {
+    "question": "Manakah urutan yang benar untuk Preorder Traversal?",
+    "slideLink": "slides/tree.html#19",
+    "choices": [
+      { "text": "Kiri -> Root -> Kanan", "isCorrect": false, "reason": "Ini adalah Inorder." },
+      { "text": "Kiri -> Kanan -> Root", "isCorrect": false, "reason": "Ini adalah Postorder." },
+      { "text": "Root -> Kiri -> Kanan", "isCorrect": true, "reason": "Preorder berarti mengunjungi Root terlebih dahulu sebelum anak-anaknya." },
+      { "text": "Root -> Kanan -> Kiri", "isCorrect": false, "reason": "Urutan standar selalu mendahulukan kiri sebelum kanan." }
+    ]
+  },
+  {
+    "question": "Apa keunikan hasil dari Inorder Traversal jika dilakukan pada sebuah Binary Search Tree (BST)?",
+    "slideLink": "slides/tree.html#26",
+    "choices": [
+      { "text": "Hasilnya akan terbalik", "isCorrect": false, "reason": "Tidak terbalik, melainkan terurut." },
+      { "text": "Data akan tampil secara acak", "isCorrect": false, "reason": "Data akan mengikuti pola tertentu." },
+      { "text": "Data akan tampil berurutan dari terkecil ke terbesar", "isCorrect": true, "reason": "Karena pola Kiri (kecil) -> Root -> Kanan (besar), hasilnya akan otomatis terurut (sorted)." },
+      { "text": "Hanya Leaf Node yang akan ditampilkan", "isCorrect": false, "reason": "Semua node dikunjungi dalam traversal." }
+    ]
+  },
+  {
+    "question": "Sebuah Binary Tree sederhana memiliki Root A. A memiliki anak kiri B dan anak kanan C. Bagaimana urutan kunjungannya jika menggunakan Postorder Traversal?",
+    "slideLink": "slides/tree.html#21",
+    "choices": [
+      { "text": "A, B, C", "isCorrect": false, "reason": "Ini Preorder." },
+      { "text": "B, A, C", "isCorrect": false, "reason": "Ini Inorder." },
+      { "text": "B, C, A", "isCorrect": true, "reason": "Postorder mengunjungi anak-anak dulu (B, C) baru kemudian Root (A)." },
+      { "text": "C, B, A", "isCorrect": false, "reason": "Urutan kiri (B) harus sebelum kanan (C)." }
+    ]
+  },
+  {
+    "question": "Berapakah jumlah maksimal anak (child) yang boleh dimiliki oleh setiap node dalam struktur Binary Tree?",
+    "slideLink": "slides/tree.html#12",
+    "choices": [
+      { "text": "Tidak terbatas", "isCorrect": false, "reason": "Itu adalah General Tree." },
+      { "text": "1", "isCorrect": false, "reason": "Boleh 1, tapi maksimalnya adalah 2." },
+      { "text": "2", "isCorrect": true, "reason": "Sesuai namanya, 'Binary' berarti maksimal dua (kiri dan kanan)." },
+      { "text": "3", "isCorrect": false, "reason": "Itu disebut Ternary Tree." }
+    ]
+  },
+  {
+    "question": "Apa yang dimaksud dengan 'Height' dari sebuah node pada Tree?",
+    "slideLink": "slides/tree.html#10",
+    "choices": [
+      { "text": "Jarak dari Root ke node tersebut", "isCorrect": false, "reason": "Itu adalah Depth." },
+      { "text": "Jumlah seluruh node dalam tree", "isCorrect": false, "reason": "Itu adalah Size." },
+      { "text": "Jarak terjauh dari node tersebut ke sebuah Leaf", "isCorrect": true, "reason": "Height (tinggi) mengukur seberapa jauh node tersebut dari dasar tree." },
+      { "text": "Jumlah anak yang dimiliki node tersebut", "isCorrect": false, "reason": "Itu adalah Degree." }
+    ]
+  },
+  {
+    "question": "Mengapa operasi pada Tree (seperti traversal atau search) sangat cocok menggunakan fungsi Rekursif?",
+    "slideLink": "slides/tree.html#22",
+    "choices": [
+      { "text": "Karena memori yang digunakan lebih sedikit", "isCorrect": false, "reason": "Rekursi justru menggunakan stack memory yang cukup banyak." },
+      { "text": "Karena setiap subtree di dalam tree juga merupakan sebuah tree", "isCorrect": true, "reason": "Sifat Tree yang 'self-similar' (struktur yang berulang) sangat sesuai dengan prinsip rekursi." },
+      { "text": "Karena C++ tidak mendukung loop untuk Tree", "isCorrect": false, "reason": "Tree bisa dijelajahi dengan loop (iteratif), tapi kodenya lebih kompleks." },
+      { "text": "Agar program berjalan lebih lambat", "isCorrect": false, "reason": "Kecepatan bukan alasan utama penggunaan rekursi di sini." }
+    ]
+  },
+  {
+    "question": "Manakah dari contoh berikut yang paling tepat merepresentasikan penggunaan Tree di dunia nyata?",
+    "slideLink": "slides/tree.html#4",
+    "choices": [
+      { "text": "Antrean di kasir supermarket", "isCorrect": false, "reason": "Ini adalah Queue." },
+      { "text": "Tumpukan piring di dapur", "isCorrect": false, "reason": "Ini adalah Stack." },
+      { "text": "Susunan folder dan file di dalam komputer", "isCorrect": true, "reason": "Folder memiliki subfolder dan file, membentuk struktur hierarki yang persis seperti Tree." },
+      { "text": "Daftar kontak telepon yang disusun alfabetis", "isCorrect": false, "reason": "Ini lebih tepat direpresentasikan sebagai Array atau Linked List." }
+    ]
+  }
+]
