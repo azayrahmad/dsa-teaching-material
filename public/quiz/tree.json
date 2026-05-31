@@ -98,5 +98,15 @@
       { "text": "Susunan folder dan file di dalam komputer", "isCorrect": true, "reason": "Folder memiliki subfolder dan file, membentuk struktur hierarki yang persis seperti Tree." },
       { "text": "Daftar kontak telepon yang disusun alfabetis", "isCorrect": false, "reason": "Ini lebih tepat direpresentasikan sebagai Array atau Linked List." }
     ]
+  },
+  {
+    "question": "Diberikan Binary Search Tree (BST) awal:<pre>    30\n   /  \\\n  20  40</pre>Jika kita memasukkan angka <b>27</b> dan kemudian mencari angka tersebut, proses traversal apa yang paling cepat menemukannya?",
+    "slideLink": "slides/tree.html#28",
+    "choices": [
+      { "text": "Pencarian BST (Search) secara rekursif/iteratif.", "isCorrect": true, "reason": "Pencarian BST langsung menuju ke target berdasarkan nilai (30 -> 20 -> 27), sedangkan traversal seperti Inorder harus mengunjungi semua node di subtree kiri sebelum sampai ke 27." },
+      { "text": "Inorder Traversal", "isCorrect": false, "reason": "Inorder mengunjungi node secara terurut (20, 27, 30, 40), tapi bukan metode tercepat untuk menemukan satu node spesifik." },
+      { "text": "Preorder Traversal", "isCorrect": false, "reason": "Preorder mengunjungi Root dulu (30, 20, 27, 40), tapi tetap harus melewati node lain." },
+      { "text": "Postorder Traversal", "isCorrect": false, "reason": "Postorder mengunjungi anak-anak dulu; 27 akan ditemukan setelah 20." }
+    ]
   }
 ]

@@ -98,5 +98,15 @@
       { "text": "1.000.000 langkah", "isCorrect": false, "reason": "Ini jika Sequential Search kasus terburuk." },
       { "text": "100 langkah", "isCorrect": false, "reason": "Masih terlalu banyak." }
     ]
+  },
+  {
+    "question": "Jika kita memiliki data yang sudah terurut, mengapa Binary Search dianggap jauh lebih efisien daripada Sequential Search?",
+    "slideLink": "slides/searching-advanced.html#16",
+    "choices": [
+      { "text": "Karena Binary Search membagi sisa data menjadi dua bagian di setiap langkah (eliminasi setengah data).", "isCorrect": true, "reason": "Dengan membagi dua sisa data di setiap perbandingan, Binary Search mencapai kompleksitas O(log N), jauh lebih cepat dari Sequential Search O(N)." },
+      { "text": "Karena Binary Search hanya memeriksa elemen pertama dan terakhir saja.", "isCorrect": false, "reason": "Binary search memeriksa elemen tengah (mid) di setiap langkahnya." },
+      { "text": "Karena Sequential Search tidak bisa digunakan pada data yang sudah terurut.", "isCorrect": false, "reason": "Sequential search bisa digunakan pada data apa saja, tapi performanya tetap linear (lambat)." },
+      { "text": "Karena Binary Search menggunakan algoritma sorting internal sebelum mencari.", "isCorrect": false, "reason": "Binary Search justru mensyaratkan data sudah terurut sebelum pencarian dimulai." }
+    ]
   }
 ]
