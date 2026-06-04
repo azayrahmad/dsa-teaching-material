@@ -148,6 +148,16 @@
                 text-align: left;
             }
             .comparison-table th { background: rgba(var(--accent-rgb), 0.1); }
+
+            .subtree-border {
+                position: absolute;
+                border: 2px dashed var(--accent);
+                border-radius: 8px;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                z-index: 0;
+                background: rgba(var(--accent-rgb), 0.05);
+            }
         </style>
     </head>
     <body>
@@ -401,10 +411,10 @@
                         <div class="col" style="flex: 0.8;">
                             <div class="interactive-box">
                                 <ul style="list-style: none; padding: 0; margin: 0;">
-                                    <li style="margin-bottom: 10px;"><strong>Root:</strong> Node 10 (A)</li>
-                                    <li style="margin-bottom: 10px;"><strong>Sibling B:</strong> Node 20 (C)</li>
-                                    <li style="margin-bottom: 10px;"><strong>Leaf Nodes:</strong> 3, 7, 30 (D, E, F)</li>
-                                    <li style="margin-bottom: 10px;"><strong>Subtree:</strong> Node 5 beserta anak-anaknya (D, E)</li>
+                                    <li style="margin-bottom: 10px;"><strong>Root:</strong> Node A</li>
+                                    <li style="margin-bottom: 10px;"><strong>Sibling B:</strong> Node C</li>
+                                    <li style="margin-bottom: 10px;"><strong>Leaf Nodes:</strong> D, E, F</li>
+                                    <li style="margin-bottom: 10px;"><strong>Subtree:</strong> Node B beserta anak-anaknya (D, E)</li>
                                 </ul>
                             </div>
                         </div>
@@ -469,7 +479,7 @@
             </div>
 
             <!-- SLIDE 14: Visual Binary Tree -->
-            <div class="slide" id="slide-13" data-notes="Tunjukkan left child dan right child. Bahas arah traversal dan hubungan pointer.">
+            <div class="slide" id="slide-13" data-notes="Bandingkan binary tree (maksimal 2 anak) dengan general tree (bisa > 2 anak). Tekankan pada keterbatasan jumlah anak pada binary tree.">
                 <div class="corner corner-tl"></div>
                 <div class="corner corner-tr"></div>
                 <div class="corner corner-bl"></div>
@@ -477,7 +487,18 @@
                 <div class="section-badge"><span class="dot"></span>Visual</div>
                 <div class="slide-title">Visualisasi <span class="highlight">Binary Tree</span></div>
                 <div class="slide-body">
-                    <div id="visual-binary-tree" class="tree-container"></div>
+                    <div class="cols">
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: var(--accent);">Binary Tree</h4>
+                            <div id="visual-binary-tree" class="tree-container" style="height: 250px;"></div>
+                            <p style="font-size: 0.8rem;">Setiap node maksimal 2 anak.</p>
+                        </div>
+                        <div class="col" style="text-align: center;">
+                            <h4 style="color: var(--text-muted);">General Tree (Bukan Binary)</h4>
+                            <div id="visual-not-binary-tree" class="tree-container" style="height: 250px;"></div>
+                            <p style="font-size: 0.8rem;">Node bisa memiliki lebih dari 2 anak.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -489,19 +510,22 @@
                 <div class="corner corner-br"></div>
                 <div class="section-badge"><span class="dot"></span>Variasi</div>
                 <div class="slide-title">Jenis <span class="highlight">Binary Tree</span></div>
-                <div class="slide-body">
-                    <div class="cols">
+                <div class="slide-body" style="max-width: 1100px;">
+                    <div class="cols" style="gap: 10px;">
                         <div class="col" style="text-align: center;">
-                            <h4 style="color: var(--accent);">Full</h4>
-                            <p style="font-size: 0.8rem;">Setiap node punya 0 atau 2 anak.</p>
+                            <h4 style="color: var(--accent); margin-bottom: 5px;">Full</h4>
+                            <div id="tree-full" class="tree-container" style="height: 180px;"></div>
+                            <p style="font-size: 0.75rem; margin-top: 5px;">Setiap node punya 0 atau 2 anak.</p>
                         </div>
                         <div class="col" style="text-align: center;">
-                            <h4 style="color: var(--accent2);">Complete</h4>
-                            <p style="font-size: 0.8rem;">Tiap level penuh, level terakhir terisi dari kiri.</p>
+                            <h4 style="color: var(--accent2); margin-bottom: 5px;">Complete</h4>
+                            <div id="tree-complete" class="tree-container" style="height: 180px;"></div>
+                            <p style="font-size: 0.75rem; margin-top: 5px;">Level terakhir terisi dari kiri.</p>
                         </div>
                         <div class="col" style="text-align: center;">
-                            <h4 style="color: #ff5555;">Skewed</h4>
-                            <p style="font-size: 0.8rem;">Miring ke satu sisi (seperti linked list).</p>
+                            <h4 style="color: #ff5555; margin-bottom: 5px;">Skewed</h4>
+                            <div id="tree-skewed" class="tree-container" style="height: 180px;"></div>
+                            <p style="font-size: 0.75rem; margin-top: 5px;">Miring ke satu sisi.</p>
                         </div>
                     </div>
                 </div>
@@ -517,7 +541,7 @@
                 <div class="slide-title">Struktur Node pada <span class="highlight">C++</span></div>
                 <div class="slide-body">
                     <pre><code class="language-cpp">struct Node {
-    int data;
+    char data;
     Node* left;
     Node* right;
 };</code></pre>
@@ -536,7 +560,7 @@
                 <div class="section-badge"><span class="dot"></span>Implementasi</div>
                 <div class="slide-title">Membuat <span class="highlight">Node Baru</span></div>
                 <div class="slide-body">
-                    <pre><code class="language-cpp">Node* newNode(int value) {
+                    <pre><code class="language-cpp">Node* newNode(char value) {
     Node* node = new Node();
     node-&gt;data = value;
     node-&gt;left = NULL;
@@ -558,16 +582,16 @@
                 <div class="slide-body">
                     <div class="cols">
                         <div class="col">
-                            <pre><code class="language-cpp">root = newNode(10);
+                            <pre><code class="language-cpp">root = newNode('A');
 
-root-&gt;left = newNode(5);
-root-&gt;right = newNode(20);</code></pre>
+root-&gt;left = newNode('B');
+root-&gt;right = newNode('C');</code></pre>
                         </div>
                         <div class="col" style="text-align: center; border-left: 1px solid var(--border); padding-left: 20px;">
                             <div style="font-family: monospace; font-size: 1.5rem; margin-top: 20px;">
-                                &nbsp;&nbsp;10<br>
+                                &nbsp;&nbsp;A<br>
                                 &nbsp;/&nbsp;&nbsp;\<br>
-                                5&nbsp;&nbsp;&nbsp;&nbsp;20
+                                B&nbsp;&nbsp;&nbsp;&nbsp;C
                             </div>
                         </div>
                     </div>
@@ -712,9 +736,9 @@ root-&gt;right = newNode(20);</code></pre>
                 <div class="slide-title">Demo <span class="highlight">Output</span></div>
                 <div class="slide-body">
                     <div class="interactive-box" style="background: #000; color: #0f0; font-family: monospace; padding: 20px;">
-                        Preorder  : 10 5 20 <br>
-                        Inorder   : 5 10 20 <br>
-                        Postorder : 5 20 10
+                        Preorder  : A B C <br>
+                        Inorder   : B A C <br>
+                        Postorder : B C A
                     </div>
                     <div style="text-align: center; margin-top: 40px;">
                         <a href="../15_Tree/tree_basic.cpp" download class="btn btn-primary">Unduh Kode Lengkap</a>
@@ -1046,21 +1070,88 @@ root-&gt;right = newNode(20);</code></pre>
 
                 resetHighlights() {
                     this.nodes.forEach(n => n.el.classList.remove('active', 'visited', 'highlight-root', 'highlight-leaf', 'highlight-parent', 'highlight-child', 'highlight-sibling', 'highlight-internal'));
+                    this.removeSubtreeBorders();
+                }
+
+                drawSubtreeBorder(nodeId) {
+                    const node = this.nodes.find(n => n.id === nodeId);
+                    if (!node) return;
+
+                    const descendants = this.getAllDescendants(nodeId) || [];
+                    const relevantNodes = this.nodes.filter(n => descendants.includes(n.id) || n.id === nodeId);
+
+                    if (relevantNodes.length === 0) return;
+
+                    const padding = 10;
+                    const minX = Math.min(...relevantNodes.map(n => n.x - 25)) - padding;
+                    const maxX = Math.max(...relevantNodes.map(n => n.x + 25)) + padding;
+                    const minY = Math.min(...relevantNodes.map(n => n.y)) - padding;
+                    const maxY = Math.max(...relevantNodes.map(n => n.y + 50)) + padding;
+
+                    const border = document.createElement('div');
+                    border.className = 'subtree-border';
+                    border.id = `subtree-${this.container.id}-${nodeId}`;
+                    border.style.left = `${minX}px`;
+                    border.style.top = `${minY}px`;
+                    border.style.width = `${maxX - minX}px`;
+                    border.style.height = `${maxY - minY}px`;
+                    this.container.appendChild(border);
+                }
+
+                removeSubtreeBorders() {
+                    const borders = this.container.querySelectorAll('.subtree-border');
+                    borders.forEach(b => b.remove());
+                }
+
+                removeSubtreeBorder(nodeId) {
+                    const border = this.container.querySelector(`#subtree-${this.container.id}-${nodeId}`);
+                    if (border) border.remove();
+                }
+
+                getAllDescendants(nodeId, node = this.data) {
+                    if (!node) return null;
+                    if (node.id === nodeId) {
+                        return this.collectAllIds(node).filter(id => id !== nodeId);
+                    }
+                    if (node.children) {
+                        for (let child of node.children) {
+                            const res = this.getAllDescendants(nodeId, child);
+                            if (res !== null) return res;
+                        }
+                    } else {
+                        const left = this.getAllDescendants(nodeId, node.left);
+                        if (left !== null) return left;
+                        const right = this.getAllDescendants(nodeId, node.right);
+                        if (right !== null) return right;
+                    }
+                    return null;
+                }
+
+                collectAllIds(node) {
+                    if (!node) return [];
+                    let ids = [node.id];
+                    if (node.children) {
+                        node.children.forEach(c => ids = ids.concat(this.collectAllIds(c)));
+                    } else {
+                        ids = ids.concat(this.collectAllIds(node.left));
+                        ids = ids.concat(this.collectAllIds(node.right));
+                    }
+                    return ids;
                 }
             }
 
             const sampleTree = {
-                id: 'A', val: '10',
-                left: { id: 'B', val: '5', left: { id: 'D', val: '3' }, right: { id: 'E', val: '7' } },
-                right: { id: 'C', val: '20', right: { id: 'F', val: '30' } }
+                id: 'A', val: 'A',
+                left: { id: 'B', val: 'B', left: { id: 'D', val: 'D' }, right: { id: 'E', val: 'E' } },
+                right: { id: 'C', val: 'C', right: { id: 'F', val: 'F' } }
             };
 
-            window.sampleTreeNodes = { 'A': '10', 'B': '5', 'C': '20', 'D': '3', 'E': '7', 'F': '30' };
+            window.sampleTreeNodes = { 'A': 'A', 'B': 'B', 'C': 'C', 'D': 'D', 'E': 'E', 'F': 'F' };
 
             const simpleTree = {
-                id: 'A', val: '10',
-                left: { id: 'B', val: '5' },
-                right: { id: 'C', val: '20' }
+                id: 'A', val: 'A',
+                left: { id: 'B', val: 'B' },
+                right: { id: 'C', val: 'C' }
             };
 
             // Initialize Visuals
@@ -1106,7 +1197,33 @@ root-&gt;right = newNode(20);</code></pre>
                             const v = new TreeVisualizer('visual-tree-levels', sampleTree);
                             v.render();
                         }
-                        if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                        if (id === "slide-13") {
+                            new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                            new TreeVisualizer('visual-not-binary-tree', {
+                                id: 'R', val: 'A',
+                                children: [
+                                    { id: 'C1', val: 'B' },
+                                    { id: 'C2', val: 'C' },
+                                    { id: 'C3', val: 'D' }
+                                ]
+                            }).render();
+                        }
+                        if (id === "slide-14") {
+                            new TreeVisualizer('tree-full', {
+                                id: 'R', val: 'A',
+                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
+                                right: { id: 'R1', val: 'C' }
+                            }).render();
+                            new TreeVisualizer('tree-complete', {
+                                id: 'R', val: 'A',
+                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
+                                right: { id: 'R1', val: 'C' }
+                            }).render();
+                            new TreeVisualizer('tree-skewed', {
+                                id: 'R', val: 'A',
+                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
+                            }).render();
+                        }
                         if (id === "slide-19") {
                             window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
                             window.preVis.render();
@@ -1181,7 +1298,33 @@ root-&gt;right = newNode(20);</code></pre>
                     const v = new TreeVisualizer('visual-tree-levels', sampleTree);
                     v.render();
                 }
-                if (id === "slide-13") new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                if (id === "slide-13") {
+                    new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                    new TreeVisualizer('visual-not-binary-tree', {
+                        id: 'R', val: 'A',
+                        children: [
+                            { id: 'C1', val: 'B' },
+                            { id: 'C2', val: 'C' },
+                            { id: 'C3', val: 'D' }
+                        ]
+                    }).render();
+                }
+                if (id === "slide-14") {
+                    new TreeVisualizer('tree-full', {
+                        id: 'R', val: 'A',
+                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
+                        right: { id: 'R1', val: 'C' }
+                    }).render();
+                    new TreeVisualizer('tree-complete', {
+                        id: 'R', val: 'A',
+                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
+                        right: { id: 'R1', val: 'C' }
+                    }).render();
+                    new TreeVisualizer('tree-skewed', {
+                        id: 'R', val: 'A',
+                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
+                    }).render();
+                }
                 if (id === "slide-19") {
                     window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
                     window.preVis.render();
@@ -1234,14 +1377,23 @@ root-&gt;right = newNode(20);</code></pre>
             function handleNextStep(visId) {
                 const state = localSimStates[visId];
                 if (!state) return;
-                if (state.current < state.steps.length - 1) {
+
+                while (state.current < state.steps.length - 1) {
                     state.current++;
-                    const nodeId = state.steps[state.current];
-                    state.vis.highlight(nodeId, 'visited');
-                    const nodeVal = window.sampleTreeNodes[nodeId];
-                    document.getElementById(state.outId).textContent += nodeVal + ' ';
-                    if (state.current === state.steps.length - 1) {
-                        document.getElementById(state.nextBtnId).disabled = true;
+                    const step = state.steps[state.current];
+
+                    if (step.type === 'visit') {
+                        state.vis.highlight(step.id, 'visited');
+                        const nodeVal = window.sampleTreeNodes[step.id];
+                        document.getElementById(state.outId).textContent += nodeVal + ' ';
+                        if (state.current === state.steps.length - 1) {
+                            document.getElementById(state.nextBtnId).disabled = true;
+                        }
+                        break; // Stop at each visit
+                    } else if (step.type === 'enter') {
+                        state.vis.drawSubtreeBorder(step.id);
+                    } else if (step.type === 'exit') {
+                        state.vis.removeSubtreeBorder(step.id);
                     }
                 }
             }
@@ -1389,19 +1541,24 @@ root-&gt;right = newNode(20);</code></pre>
 
             function generateSteps(node, type, steps) {
                 if (!node) return;
+
+                steps.push({ type: 'enter', id: node.id });
+
                 if (type === 'preorder') {
-                    steps.push(node.id);
+                    steps.push({ type: 'visit', id: node.id });
                     generateSteps(node.left, type, steps);
                     generateSteps(node.right, type, steps);
                 } else if (type === 'inorder') {
                     generateSteps(node.left, type, steps);
-                    steps.push(node.id);
+                    steps.push({ type: 'visit', id: node.id });
                     generateSteps(node.right, type, steps);
                 } else if (type === 'postorder') {
                     generateSteps(node.left, type, steps);
                     generateSteps(node.right, type, steps);
-                    steps.push(node.id);
+                    steps.push({ type: 'visit', id: node.id });
                 }
+
+                steps.push({ type: 'exit', id: node.id });
             }
 
             // Recursive Call Stack Simulation
