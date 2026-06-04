@@ -98,5 +98,15 @@
       { "text": "2, 5, 8", "isCorrect": false, "reason": "Urutan tidak sesuai prinsip Stack." },
       { "text": "8, 5, 2", "isCorrect": false, "reason": "Urutan tidak sesuai prinsip Stack." }
     ]
+  },
+  {
+    "question": "Jika kita memiliki Stack piring dengan urutan (dari bawah ke atas): <b>Merah, Kuning</b>. Operasi <code>popAndEnQueue()</code> dijalankan. Apa warna piring yang dipindahkan ke Queue?",
+    "slideLink": "slides/stack.html#10",
+    "choices": [
+      { "text": "Kuning", "isCorrect": true, "reason": "Berdasarkan prinsip LIFO, elemen teratas (terakhir masuk) yaitu Kuning akan dikeluarkan (Pop) terlebih dahulu." },
+      { "text": "Merah", "isCorrect": false, "reason": "Merah berada di posisi bawah; harus menunggu Kuning dikeluarkan dulu." },
+      { "text": "Kuning dan Merah", "isCorrect": false, "reason": "Operasi Pop hanya mengambil satu elemen teratas." },
+      { "text": "Tidak ada", "isCorrect": false, "reason": "Piring Kuning tersedia untuk di-Pop." }
+    ]
   }
 ]

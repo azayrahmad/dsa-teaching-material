@@ -34,6 +34,23 @@
       margin-bottom: 24px;
       line-height: 1.5;
     }
+    .question-box pre {
+      background: var(--surface2);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      margin: 16px 0;
+    }
+    .question-box code {
+      background: var(--surface2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+    }
     .choices-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -284,7 +301,7 @@
       const progressBar = document.getElementById('progress-bar');
       const retryMsg = document.getElementById('retry-msg');
 
-      questionText.textContent = q.question;
+      questionText.innerHTML = q.question;
       counter.textContent = `${getTranslation('question')} ${currentQuestionIndex + 1} / ${quizData.length}`;
       progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
 

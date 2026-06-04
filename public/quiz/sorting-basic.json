@@ -98,5 +98,15 @@
       { "text": "1, 2, 3, 4, 5", "isCorrect": false, "reason": "Ini sudah terurut sempurna." },
       { "text": "5, 9, 1, 4, 3", "isCorrect": false, "reason": "Ini belum melakukan swap dengan benar." }
     ]
+  },
+  {
+    "question": "Diberikan array <code>[40, 10, 50, 20, 30]</code>. Manakah pernyataan yang benar mengenai jumlah pertukaran (swap) jika diurutkan secara ascending?",
+    "slideLink": "slides/sorting-basic.html#27",
+    "choices": [
+      { "text": "Selection Sort memiliki jumlah pertukaran lebih sedikit daripada Bubble Sort.", "isCorrect": true, "reason": "Selection Sort hanya melakukan maksimal 1 swap per iterasi luar (N-1 total), sementara Bubble Sort bisa melakukan banyak swap di setiap pass jika data belum urut." },
+      { "text": "Bubble Sort lebih hemat dalam jumlah pertukaran dibandingkan Selection Sort.", "isCorrect": false, "reason": "Bubble Sort justru terkenal boros swap karena menukar setiap pasangan yang salah urutan." },
+      { "text": "Kedua metode tersebut selalu memiliki jumlah pertukaran yang sama.", "isCorrect": false, "reason": "Mekanisme pemindahan datanya berbeda; Selection Sort meminimalkan swap." },
+      { "text": "Insertion Sort melakukan lebih banyak pertukaran daripada Bubble Sort.", "isCorrect": false, "reason": "Insertion sort menggunakan pergeseran (shift), bukan swap antar elemen yang berjauhan." }
+    ]
   }
 ]

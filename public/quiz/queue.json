@@ -98,5 +98,25 @@
       { "text": "Saat Rear == MAX - 1", "isCorrect": false, "reason": "Ini tanda rear berada di akhir array." },
       { "text": "Saat Front == 0", "isCorrect": false, "reason": "Front=0 berarti ada data di indeks ke-0." }
     ]
+  },
+  {
+    "question": "Sebuah mesin cuci piring (Queue) memiliki kapasitas 2. Jika saat ini berisi <b>Kuning, Hijau</b>, dan perintah <code>deQueue()</code> dijalankan, piring warna apa yang keluar?",
+    "slideLink": "slides/queue.html#12",
+    "choices": [
+      { "text": "Kuning", "isCorrect": true, "reason": "Queue menggunakan prinsip FIFO (First In First Out), maka piring yang pertama masuk (Kuning) akan keluar pertama kali." },
+      { "text": "Hijau", "isCorrect": false, "reason": "Hijau berada di posisi belakang (Rear); akan keluar setelah Kuning." },
+      { "text": "Kuning dan Hijau", "isCorrect": false, "reason": "Operasi Dequeue hanya mengeluarkan satu elemen terdepan." },
+      { "text": "Tidak ada (Overflow)", "isCorrect": false, "reason": "Overflow terjadi saat memasukkan data ke antrean penuh, bukan saat mengambil (Dequeue)." }
+    ]
+  },
+  {
+    "question": "Jika mesin cuci piring (Queue) memiliki kapasitas 2 dan sudah terisi penuh, apa yang terjadi pada operasi <code>popAndEnQueue()</code> piring berikutnya?",
+    "slideLink": "slides/queue.html#15",
+    "choices": [
+      { "text": "Piring dari tumpukan (Stack) tidak dapat dipindahkan karena mesin cuci penuh (Queue Overflow).", "isCorrect": true, "reason": "Karena mesin cuci sudah mencapai kapasitas maksimal (2), piring baru tidak bisa dimasukkan (Enqueue) hingga ada piring yang keluar (Dequeue)." },
+      { "text": "Piring otomatis masuk dan menimpa piring terlama.", "isCorrect": false, "reason": "Dalam Queue standar, data baru tidak menimpa data lama saat penuh." },
+      { "text": "Tumpukan piring akan meledak.", "isCorrect": false, "reason": "Secara logika program, ini hanya akan menghasilkan kondisi Overflow atau penolakan operasi." },
+      { "text": "Piring masuk ke Stack lagi.", "isCorrect": false, "reason": "Operasi popAndEnQueue memindahkan data dari Stack ke Queue; jika Queue penuh, data tetap tertahan." }
+    ]
   }
 ]
