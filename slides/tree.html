@@ -98,7 +98,19 @@
             }
             .stack-frame.active {
                 border-color: var(--accent);
-                background: rgba(var(--accent-rgb), 0.1);
+                background: rgba(var(--accent-rgb), 0.15);
+                box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
+                transform: scale(1.02);
+                z-index: 2;
+            }
+            .stack-frame.inactive {
+                opacity: 0.6;
+                filter: grayscale(0.5);
+            }
+            .stack-frame.base-case {
+                border-color: var(--text-muted);
+                font-style: italic;
+                color: var(--text-muted);
             }
 
             @keyframes slideIn {
@@ -721,6 +733,10 @@ root-&gt;right = newNode('C');</code></pre>
                             <h4 style="text-align: center;">Call Stack</h4>
                             <div class="call-stack" id="recursive-stack"></div>
                             <button class="btn btn-primary" id="btn-step-recursion" style="width: 100%; margin-top: 10px;">Langkah</button>
+                            <div class="interactive-box" style="margin-top: 10px; font-size: 0.8rem;">
+                                <strong>Hasil Traversal (Preorder):</strong>
+                                <div id="recursion-output" style="font-family: 'JetBrains Mono', monospace; color: var(--accent); margin-top: 5px; min-height: 1.2em;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1086,7 +1102,7 @@ root-&gt;right = newNode('C');</code></pre>
                     const minX = Math.min(...relevantNodes.map(n => n.x - 25)) - padding;
                     const maxX = Math.max(...relevantNodes.map(n => n.x + 25)) + padding;
                     const minY = Math.min(...relevantNodes.map(n => n.y)) - padding;
-                    const maxY = Math.max(...relevantNodes.map(n => n.y + 50)) + padding;
+                    const maxY = Math.max(...relevantNodes.map(n => n.y + 40)) + padding; // Use node height instead of 50
 
                     const border = document.createElement('div');
                     border.className = 'subtree-border';
@@ -1119,10 +1135,14 @@ root-&gt;right = newNode('C');</code></pre>
                             if (res !== null) return res;
                         }
                     } else {
-                        const left = this.getAllDescendants(nodeId, node.left);
-                        if (left !== null) return left;
-                        const right = this.getAllDescendants(nodeId, node.right);
-                        if (right !== null) return right;
+                        if (node.left) {
+                            const left = this.getAllDescendants(nodeId, node.left);
+                            if (left !== null) return left;
+                        }
+                        if (node.right) {
+                            const right = this.getAllDescendants(nodeId, node.right);
+                            if (right !== null) return right;
+                        }
                     }
                     return null;
                 }
@@ -1160,30 +1180,31 @@ root-&gt;right = newNode('C');</code></pre>
                     if (m.target.classList.contains("active")) {
                         const id = m.target.id;
                         if (id === "slide-5") {
-                             new TreeVisualizer('tree-binary-intro', simpleTree).render();
-                             new TreeVisualizer('tree-general-intro', {
-                                 id: 'R', val: '1',
-                                 children: [
-                                     { id: 'C1', val: '2' },
-                                     { id: 'C2', val: '3' },
-                                     { id: 'C3', val: '4' }
-                                 ]
-                             }).render();
-                             new TreeVisualizer('tree-not-intro', null, {
-                                 manualNodes: [
-                                     { id: 'N1', val: 'A', x: 100, y: 30 },
-                                     { id: 'N2', val: 'B', x: 50, y: 100 },
-                                     { id: 'N3', val: 'C', x: 150, y: 100 }
-                                 ],
-                                 manualEdges: [
-                                     { from: 'N1', to: 'N2' },
-                                     { from: 'N2', to: 'N3' },
-                                     { from: 'N3', to: 'N1' }
-                                 ]
-                             }).render();
+                             setTimeout(() => {
+                                 new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                                 new TreeVisualizer('tree-general-intro', {
+                                     id: 'R', val: '1',
+                                     children: [
+                                         { id: 'C1', val: '2' },
+                                         { id: 'C2', val: '3' },
+                                         { id: 'C3', val: '4' }
+                                     ]
+                                 }).render();
+                                 new TreeVisualizer('tree-not-intro', null, {
+                                     manualNodes: [
+                                         { id: 'N1', val: 'A', x: 100, y: 30 },
+                                         { id: 'N2', val: 'B', x: 50, y: 100 },
+                                         { id: 'N3', val: 'C', x: 150, y: 100 }
+                                     ],
+                                     manualEdges: [
+                                         { from: 'N1', to: 'N2' },
+                                         { from: 'N2', to: 'N3' },
+                                         { from: 'N3', to: 'N1' }
+                                     ]
+                                 }).render();
+                             }, 300);
                         }
                         if (id === "slide-7") {
-                            // Ensure cleanup of previous instances if needed, though here we just re-render
                             setTimeout(() => {
                                 if (!window.compVis) {
                                     window.compVis = new TreeVisualizer('visual-tree-components', sampleTree);
@@ -1191,66 +1212,79 @@ root-&gt;right = newNode('C');</code></pre>
                                 window.compVis.render();
                             }, 300);
                         }
-                        if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
-                        if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                        if (id === "slide-8") setTimeout(() => new TreeVisualizer('visual-tree-quiz', sampleTree).render(), 300);
+                        if (id === "slide-9") setTimeout(() => new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render(), 300);
                         if (id === "slide-10") {
-                            const v = new TreeVisualizer('visual-tree-levels', sampleTree);
-                            v.render();
+                            setTimeout(() => {
+                                const v = new TreeVisualizer('visual-tree-levels', sampleTree);
+                                v.render();
+                            }, 300);
                         }
                         if (id === "slide-13") {
-                            new TreeVisualizer('visual-binary-tree', sampleTree).render();
-                            new TreeVisualizer('visual-not-binary-tree', {
-                                id: 'R', val: 'A',
-                                children: [
-                                    { id: 'C1', val: 'B' },
-                                    { id: 'C2', val: 'C' },
-                                    { id: 'C3', val: 'D' }
-                                ]
-                            }).render();
+                            setTimeout(() => {
+                                new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                                new TreeVisualizer('visual-not-binary-tree', {
+                                    id: 'R', val: 'A',
+                                    children: [
+                                        { id: 'C1', val: 'B' },
+                                        { id: 'C2', val: 'C' },
+                                        { id: 'C3', val: 'D' }
+                                    ]
+                                }).render();
+                            }, 300);
                         }
                         if (id === "slide-14") {
-                            new TreeVisualizer('tree-full', {
-                                id: 'R', val: 'A',
-                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
-                                right: { id: 'R1', val: 'C' }
-                            }).render();
-                            new TreeVisualizer('tree-complete', {
-                                id: 'R', val: 'A',
-                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
-                                right: { id: 'R1', val: 'C' }
-                            }).render();
-                            new TreeVisualizer('tree-skewed', {
-                                id: 'R', val: 'A',
-                                left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
-                            }).render();
+                            setTimeout(() => {
+                                new TreeVisualizer('tree-full', {
+                                    id: 'R', val: 'A',
+                                    left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
+                                    right: { id: 'R1', val: 'C' }
+                                }).render();
+                                new TreeVisualizer('tree-complete', {
+                                    id: 'R', val: 'A',
+                                    left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
+                                    right: { id: 'R1', val: 'C' }
+                                }).render();
+                                new TreeVisualizer('tree-skewed', {
+                                    id: 'R', val: 'A',
+                                    left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
+                                }).render();
+                            }, 300);
                         }
                         if (id === "slide-19") {
-                            window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
-                            window.preVis.render();
+                            setTimeout(() => {
+                                window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                                window.preVis.render();
+                            }, 300);
                         }
                         if (id === "slide-20") {
-                            window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
-                            window.inVis.render();
+                            setTimeout(() => {
+                                window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                                window.inVis.render();
+                            }, 300);
                         }
                         if (id === "slide-21") {
-                            window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
-                            window.postVis.render();
+                            setTimeout(() => {
+                                window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                                window.postVis.render();
+                            }, 300);
                         }
-                        if (id === "slide-24") {
-                             window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
-                             window.recVis.render();
-                        }
-                        if (id === "slide-26") {
-                            // BST Concept slide - no specific visualizer needed yet or can highlight property
+                        if (id === "slide-23") {
+                             setTimeout(() => {
+                                 window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
+                                 window.recVis.render();
+                             }, 300);
                         }
                         if (id === "slide-27") {
-                            if (!window.bstVis) {
-                                window.bstVis = new TreeVisualizer('bst-visualizer', null);
-                                initBSTLogic();
-                            }
-                            window.bstVis.render();
+                            setTimeout(() => {
+                                if (!window.bstVis) {
+                                    window.bstVis = new TreeVisualizer('bst-visualizer', null);
+                                    initBSTLogic();
+                                }
+                                window.bstVis.render();
+                            }, 300);
                         }
-                        if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                        if (id === "slide-25") setTimeout(() => new TreeVisualizer('visual-tree-exercise', sampleTree).render(), 300);
                     }
                 });
             });
@@ -1262,27 +1296,29 @@ root-&gt;right = newNode('C');</code></pre>
                 const id = s.id;
                 // Reuse the same logic as observer
                 if (id === "slide-5") {
-                     new TreeVisualizer('tree-binary-intro', simpleTree).render();
-                     new TreeVisualizer('tree-general-intro', {
-                         id: 'R', val: '1',
-                         children: [
-                             { id: 'C1', val: '2' },
-                             { id: 'C2', val: '3' },
-                             { id: 'C3', val: '4' }
-                         ]
-                     }).render();
-                     new TreeVisualizer('tree-not-intro', null, {
-                         manualNodes: [
-                             { id: 'N1', val: 'A', x: 100, y: 30 },
-                             { id: 'N2', val: 'B', x: 50, y: 100 },
-                             { id: 'N3', val: 'C', x: 150, y: 100 }
-                         ],
-                         manualEdges: [
-                             { from: 'N1', to: 'N2' },
-                             { from: 'N2', to: 'N3' },
-                             { from: 'N3', to: 'N1' }
-                         ]
-                     }).render();
+                     setTimeout(() => {
+                         new TreeVisualizer('tree-binary-intro', simpleTree).render();
+                         new TreeVisualizer('tree-general-intro', {
+                             id: 'R', val: '1',
+                             children: [
+                                 { id: 'C1', val: '2' },
+                                 { id: 'C2', val: '3' },
+                                 { id: 'C3', val: '4' }
+                             ]
+                         }).render();
+                         new TreeVisualizer('tree-not-intro', null, {
+                             manualNodes: [
+                                 { id: 'N1', val: 'A', x: 100, y: 30 },
+                                 { id: 'N2', val: 'B', x: 50, y: 100 },
+                                 { id: 'N3', val: 'C', x: 150, y: 100 }
+                             ],
+                             manualEdges: [
+                                 { from: 'N1', to: 'N2' },
+                                 { from: 'N2', to: 'N3' },
+                                 { from: 'N3', to: 'N1' }
+                             ]
+                         }).render();
+                     }, 300);
                 }
                 if (id === "slide-7") {
                     setTimeout(() => {
@@ -1292,63 +1328,79 @@ root-&gt;right = newNode('C');</code></pre>
                         window.compVis.render();
                     }, 300);
                 }
-                if (id === "slide-8") new TreeVisualizer('visual-tree-quiz', sampleTree).render();
-                if (id === "slide-9") new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render();
+                if (id === "slide-8") setTimeout(() => new TreeVisualizer('visual-tree-quiz', sampleTree).render(), 300);
+                if (id === "slide-9") setTimeout(() => new TreeVisualizer('visual-tree-quiz-ans', sampleTree).render(), 300);
                 if (id === "slide-10") {
-                    const v = new TreeVisualizer('visual-tree-levels', sampleTree);
-                    v.render();
+                    setTimeout(() => {
+                        const v = new TreeVisualizer('visual-tree-levels', sampleTree);
+                        v.render();
+                    }, 300);
                 }
                 if (id === "slide-13") {
-                    new TreeVisualizer('visual-binary-tree', sampleTree).render();
-                    new TreeVisualizer('visual-not-binary-tree', {
-                        id: 'R', val: 'A',
-                        children: [
-                            { id: 'C1', val: 'B' },
-                            { id: 'C2', val: 'C' },
-                            { id: 'C3', val: 'D' }
-                        ]
-                    }).render();
+                    setTimeout(() => {
+                        new TreeVisualizer('visual-binary-tree', sampleTree).render();
+                        new TreeVisualizer('visual-not-binary-tree', {
+                            id: 'R', val: 'A',
+                            children: [
+                                { id: 'C1', val: 'B' },
+                                { id: 'C2', val: 'C' },
+                                { id: 'C3', val: 'D' }
+                            ]
+                        }).render();
+                    }, 300);
                 }
                 if (id === "slide-14") {
-                    new TreeVisualizer('tree-full', {
-                        id: 'R', val: 'A',
-                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
-                        right: { id: 'R1', val: 'C' }
-                    }).render();
-                    new TreeVisualizer('tree-complete', {
-                        id: 'R', val: 'A',
-                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
-                        right: { id: 'R1', val: 'C' }
-                    }).render();
-                    new TreeVisualizer('tree-skewed', {
-                        id: 'R', val: 'A',
-                        left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
-                    }).render();
+                    setTimeout(() => {
+                        new TreeVisualizer('tree-full', {
+                            id: 'R', val: 'A',
+                            left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' }, right: { id: 'LR', val: 'E' } },
+                            right: { id: 'R1', val: 'C' }
+                        }).render();
+                        new TreeVisualizer('tree-complete', {
+                            id: 'R', val: 'A',
+                            left: { id: 'L', val: 'B', left: { id: 'LL', val: 'D' } },
+                            right: { id: 'R1', val: 'C' }
+                        }).render();
+                        new TreeVisualizer('tree-skewed', {
+                            id: 'R', val: 'A',
+                            left: { id: 'L', val: 'B', left: { id: 'LL', val: 'C' } }
+                        }).render();
+                    }, 300);
                 }
                 if (id === "slide-19") {
-                    window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
-                    window.preVis.render();
+                    setTimeout(() => {
+                        window.preVis = new TreeVisualizer('visual-preorder', sampleTree);
+                        window.preVis.render();
+                    }, 300);
                 }
                 if (id === "slide-20") {
-                    window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
-                    window.inVis.render();
+                    setTimeout(() => {
+                        window.inVis = new TreeVisualizer('visual-inorder', sampleTree);
+                        window.inVis.render();
+                    }, 300);
                 }
                 if (id === "slide-21") {
-                    window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
-                    window.postVis.render();
+                    setTimeout(() => {
+                        window.postVis = new TreeVisualizer('visual-postorder', sampleTree);
+                        window.postVis.render();
+                    }, 300);
                 }
-                if (id === "slide-24") {
-                     window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
-                     window.recVis.render();
+                if (id === "slide-23") {
+                     setTimeout(() => {
+                         window.recVis = new TreeVisualizer('visual-recursion-tree', simpleTree);
+                         window.recVis.render();
+                     }, 300);
                 }
                 if (id === "slide-27") {
-                    if (!window.bstVis) {
-                        window.bstVis = new TreeVisualizer('bst-visualizer', null);
-                        initBSTLogic();
-                    }
-                    window.bstVis.render();
+                    setTimeout(() => {
+                        if (!window.bstVis) {
+                            window.bstVis = new TreeVisualizer('bst-visualizer', null);
+                            initBSTLogic();
+                        }
+                        window.bstVis.render();
+                    }, 300);
                 }
-                if (id === "slide-25") new TreeVisualizer('visual-tree-exercise', sampleTree).render();
+                if (id === "slide-25") setTimeout(() => new TreeVisualizer('visual-tree-exercise', sampleTree).render(), 300);
             });
 
             // Traversal Simulator Logic (Local)
@@ -1567,26 +1619,42 @@ root-&gt;right = newNode('C');</code></pre>
 
             function buildRecSteps(node) {
                 if (!node) {
-                    recSteps.push({ type: 'return', node: null });
+                    recSteps.push({ type: 'call_null' });
+                    recSteps.push({ type: 'pop_null' });
                     return;
                 }
+
+                // preorder: visit root, left, right
                 recSteps.push({ type: 'call', node: node });
+                recSteps.push({ type: 'visit', node: node });
+
                 buildRecSteps(node.left);
                 buildRecSteps(node.right);
+
                 recSteps.push({ type: 'pop', node: node });
             }
 
             document.getElementById('btn-step-recursion').onclick = () => {
                 if (recSteps.length === 0) buildRecSteps(simpleTree);
+                const stackEl = document.getElementById('recursive-stack');
+                const outputEl = document.getElementById('recursion-output');
+
                 if (currentRecStep >= recSteps.length) {
                     currentRecStep = 0;
-                    document.getElementById('recursive-stack').innerHTML = '';
+                    stackEl.innerHTML = '';
+                    outputEl.innerHTML = '';
                     window.recVis.resetHighlights();
                     return;
                 }
 
                 const step = recSteps[currentRecStep];
-                const stackEl = document.getElementById('recursive-stack');
+
+                // Deactivate current top
+                const currentFrames = stackEl.querySelectorAll('.stack-frame');
+                if (currentFrames.length > 0) {
+                    currentFrames[currentFrames.length - 1].classList.remove('active');
+                    currentFrames[currentFrames.length - 1].classList.add('inactive');
+                }
 
                 if (step.type === 'call') {
                     const frame = document.createElement('div');
@@ -1595,10 +1663,39 @@ root-&gt;right = newNode('C');</code></pre>
                     frame.textContent = `preorder(Node ${step.node.val})`;
                     stackEl.appendChild(frame);
                     window.recVis.highlight(step.node.id, 'active');
+                } else if (step.type === 'call_null') {
+                    const frame = document.createElement('div');
+                    frame.className = 'stack-frame active base-case';
+                    frame.id = `stack-null-${currentRecStep}`;
+                    frame.textContent = `preorder(NULL) -> return`;
+                    stackEl.appendChild(frame);
+                } else if (step.type === 'visit') {
+                    window.recVis.highlight(step.node.id, 'visited');
+                    outputEl.textContent += step.node.val + ' ';
+                    // Keep the frame active
+                    const frame = document.getElementById(`stack-${step.node.id}`);
+                    if (frame) {
+                        frame.classList.remove('inactive');
+                        frame.classList.add('active');
+                    }
                 } else if (step.type === 'pop') {
                     const frame = document.getElementById(`stack-${step.node.id}`);
                     if (frame) frame.remove();
-                    window.recVis.highlight(step.node.id, 'visited');
+                    // Reactivate new top
+                    const newFrames = stackEl.querySelectorAll('.stack-frame');
+                    if (newFrames.length > 0) {
+                        newFrames[newFrames.length - 1].classList.remove('inactive');
+                        newFrames[newFrames.length - 1].classList.add('active');
+                    }
+                } else if (step.type === 'pop_null') {
+                    const frame = document.getElementById(`stack-null-${currentRecStep - 1}`);
+                    if (frame) frame.remove();
+                    // Reactivate new top
+                    const newFrames = stackEl.querySelectorAll('.stack-frame');
+                    if (newFrames.length > 0) {
+                        newFrames[newFrames.length - 1].classList.remove('inactive');
+                        newFrames[newFrames.length - 1].classList.add('active');
+                    }
                 }
 
                 currentRecStep++;
